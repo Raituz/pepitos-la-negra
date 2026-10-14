@@ -1,0 +1,22 @@
+{
+  "name": "Pepitos La Negra",
+  "short_name": "PepitosLaNegra",
+  "description": "Tienda Oficial de Comida Rápida y Delivery - Pepitos La Negra",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0F0E0C",
+  "theme_color": "#F59E0B",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./assets/logo-opt.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "./assets/logo-opt.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
