@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es" class="dark scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Pepitos La Negra | Tienda Virtual & App de Gestión</title>
-  <meta name="description" content="El auténtico sabor venezolano. Pepitos gigantes, hamburguesas brutales y marquesas caseras.">
+  <title>Pepitos La Negra | El Auténtico Sabor Venezolano</title>
+  <meta name="description" content="Pepitos gigantes de 30cm, hamburguesas brutales y marquesas artesanales. Pide online con delivery express y pago móvil verificado al instante.">
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#181512">
   <link rel="icon" type="image/jpeg" href="./assets/logo-opt.jpg">
@@ -25,14 +25,14 @@
               300: '#fcd34d',
               400: '#fbbf24',
               500: '#f59e0b', // Primary Amber Gold
-              600: '#ea580c', // Fiery Orange
+              600: '#ea580c', // Fiery Flame Orange
               700: '#c2410c',
               800: '#9a3412',
               900: '#7c2d12',
-              dark: '#0f0e0c',
-              card: '#181512',
-              cardHover: '#231e19',
-              border: '#2e2620'
+              dark: '#0c0b0a',
+              card: '#161310',
+              cardHover: '#1f1a15',
+              border: '#2c241c'
             }
           },
           fontFamily: {
@@ -41,7 +41,14 @@
           },
           animation: {
             'bounce-short': 'bounce 0.6s ease-in-out 2',
-            'pulse-fast': 'pulse 1.2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+            'pulse-fast': 'pulse 1.2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 3s ease-in-out infinite'
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-6px)' }
+            }
           }
         }
       }
@@ -51,7 +58,7 @@
   <!-- Google Fonts & Canvas Confetti -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,600;0,700;0,800;0,900;1,800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <!-- React 18 & Babel for fast client-side modern React execution -->
@@ -65,34 +72,39 @@
       color: #f3f4f6;
       font-family: 'Inter', sans-serif;
       -webkit-tap-highlight-color: transparent;
+      overflow-x: hidden;
     }
     .custom-scroll::-webkit-scrollbar {
       width: 6px;
       height: 6px;
     }
     .custom-scroll::-webkit-scrollbar-track {
-      background: #181512;
+      background: #161310;
     }
     .custom-scroll::-webkit-scrollbar-thumb {
-      background: #3a3028;
+      background: #3a2e22;
       border-radius: 9999px;
     }
     .text-glow {
-      text-shadow: 0 0 16px rgba(245, 158, 11, 0.45);
+      text-shadow: 0 0 20px rgba(245, 158, 11, 0.55), 0 0 40px rgba(234, 88, 12, 0.3);
     }
     .box-glow {
-      box-shadow: 0 8px 30px rgba(234, 88, 12, 0.15);
+      box-shadow: 0 10px 40px -10px rgba(245, 158, 11, 0.25);
+    }
+    .hero-mask {
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
     }
   </style>
 </head>
 <body class="bg-[#0c0b0a] text-gray-100 min-h-screen selection:bg-brand-500 selection:text-black">
   <div id="root"></div>
 
-  <!-- React Code Component -->
+  <!-- React Application Script -->
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
 
-    // --- SOUND EFFECTS (Web Audio API Synthesizer - 0 external dependencies) ---
+    // --- SYNTHESIZED SOUND EFFECTS (Web Audio API - 0 external files) ---
     const playSound = (type) => {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -109,7 +121,6 @@
           osc.start();
           osc.stop(ctx.currentTime + 0.12);
         } else if (type === 'cash') {
-          // Cash register bell
           const osc1 = ctx.createOscillator();
           const osc2 = ctx.createOscillator();
           const gain = ctx.createGain();
@@ -130,8 +141,8 @@
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(784, ctx.currentTime); // G5
-          osc.frequency.setValueAtTime(1046.5, ctx.currentTime + 0.1); // C6
+          osc.frequency.setValueAtTime(784, ctx.currentTime);
+          osc.frequency.setValueAtTime(1046.5, ctx.currentTime + 0.1);
           gain.gain.setValueAtTime(0.25, ctx.currentTime);
           gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
           osc.connect(gain);
@@ -140,7 +151,7 @@
           osc.stop(ctx.currentTime + 0.35);
         }
       } catch (e) {
-        console.warn('Audio not allowed yet or not supported', e);
+        console.warn('Audio note allowed yet', e);
       }
     };
 
@@ -193,11 +204,6 @@
         <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M5 16h2.5l3-6 4 2h3.5M16 10l-2-4H9" />
       </svg>
     );
-    const IconShieldCheck = ({ className = "w-5 h-5" }) => (
-      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-      </svg>
-    );
     const IconX = ({ className = "w-5 h-5" }) => (
       <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -209,9 +215,9 @@
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
       </svg>
     );
-    const IconBell = ({ className = "w-5 h-5" }) => (
+    const IconChevronDown = ({ className = "w-4 h-4" }) => (
       <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
       </svg>
     );
 
@@ -219,12 +225,13 @@
     const PRODUCTS = [
       {
         id: 'pepito-la-negra',
+        category: 'pepitos',
         name: 'Pepito La Negra (Especial Mixto)',
-        tagline: '⭐ El más pedido de la casa • 30 cm de puro sabor',
-        description: 'Pan baguette artesanal recién tostado, carne tierna a la plancha, pechuga de pollo marinada, tocineta crocante, queso de mano derretido, lluvia de papitas al hilo y queso parmesano.',
+        tagline: '⭐ El más pedido • 30 cm de puro sabor guaro',
+        description: 'Pan baguette artesanal recién horneado y tostado, carne tierna a la plancha, pechuga de pollo marinada, tocineta crujiente, queso de mano fundido, lluvia de papitas al hilo y queso parmesano.',
         price: 8.50,
         image: './assets/pepito-opt.jpg',
-        imageAlt: './assets/pepito-alt-opt.jpg',
+        imageHero: './assets/pepito-alt-opt.jpg',
         hasOptions: true,
         defaultSauces: ['Tártara de la Casa', 'Ajo Criollo', 'Maíz Dulce'],
         availableSauces: ['Tártara de la Casa', 'Ajo Criollo', 'Maíz Dulce', 'BBQ Ahumada', 'Tocineta', 'Kétchup & Mayonesa'],
@@ -237,12 +244,13 @@
       },
       {
         id: 'hamburguesa-la-negra',
+        category: 'hamburguesas',
         name: 'Hamburguesa Especial La Negra',
         tagline: '🔥 Doble carne smash 150g + Pollo crispy',
         description: 'Pan brioche tostado a la mantequilla, doble carne smash 100% Angus, pollo tierno sazonado, doble queso cheddar americano, cebolla caramelizada, lechuga fresca y salsa secreta.',
         price: 6.00,
         image: './assets/hamburguesa-opt.jpg',
-        imageAlt: './assets/hamburguesa-alt-opt.jpg',
+        imageHero: './assets/hamburguesa-alt-opt.jpg',
         hasOptions: true,
         defaultSauces: ['Salsa Especial La Negra', 'Tártara'],
         availableSauces: ['Salsa Especial La Negra', 'Tártara', 'Ajo Criollo', 'BBQ Ahumada', 'Kétchup'],
@@ -254,12 +262,13 @@
       },
       {
         id: 'marquesa-chocolate',
+        category: 'postres',
         name: 'Marquesa de Chocolate Tentación',
         tagline: '🍫 Postre Casero Tradicional • Con Oreo & Pirulín',
         description: 'Capas generosas de galleta María humedecidas en toque de café y leche, pudín cremoso de chocolate belga, coronada con lluvia de galletas Oreo trituradas y pirulines crujientes.',
         price: 3.50,
         image: './assets/marquesa-opt.jpg',
-        imageAlt: './assets/marquesa-alt-opt.jpg',
+        imageHero: './assets/marquesa-alt-opt.jpg',
         hasOptions: false,
         defaultSauces: [],
         availableSauces: [],
@@ -269,10 +278,8 @@
       }
     ];
 
-    // Bank transfer rate (Simulated Venezuelan BCV rate)
     const BCV_RATE = 50.50;
 
-    // Default Seed Orders for demo
     const INITIAL_ORDERS = [
       {
         id: 'PLN-9410',
@@ -308,34 +315,32 @@
         driverPhone: '0414-9988771',
         deliveryPhoto: null,
         messages: [
-          { sender: 'system', text: '¡Pedido recibido! Validando referencia de Pago Móvil con Banco Provincial...', time: '19:15' },
+          { sender: 'system', text: '¡Pedido recibido! Validando referencia con Banco Provincial...', time: '19:15' },
           { sender: 'system', text: '✅ Pago de Bs. 732.25 verificado exitosamente (Ref: 8492). En cola de cocina.', time: '19:16' },
           { sender: 'admin', text: '¡Hola Andrés! Ya tu pepito está en la plancha con bastante queso fundido 🥖🧀', time: '19:18' }
         ]
       }
     ];
 
-    // --- MAIN APP CONTAINER ---
+    // ==========================================
+    // MAIN APP ROOT COMPONENT
+    // ==========================================
     function App() {
-      // Role: 'client' | 'admin' | 'driver'
       const [role, setRole] = useState('client');
       const [orders, setOrders] = useState(() => {
         const saved = localStorage.getItem('pepitos_orders');
         return saved ? JSON.parse(saved) : INITIAL_ORDERS;
       });
-      const [activeOrderId, setActiveOrderId] = useState(() => {
-        return orders[0]?.id || null;
-      });
-      const [clientView, setClientView] = useState('menu'); // 'menu' | 'cart' | 'checkout' | 'tracking'
+      const [activeOrderId, setActiveOrderId] = useState(() => orders[0]?.id || null);
+      const [clientView, setClientView] = useState('menu');
       const [cart, setCart] = useState([]);
-      const [selectedProduct, setSelectedProduct] = useState(null); // for customize modal
+      const [selectedProduct, setSelectedProduct] = useState(null);
       const [chatOpen, setChatOpen] = useState(false);
       const [activeChatOrder, setActiveChatOrder] = useState(null);
       const [newMessage, setNewMessage] = useState('');
       const [smsNotification, setSmsNotification] = useState(null);
       const [installPrompt, setInstallPrompt] = useState(null);
 
-      // Save orders to localStorage & notify other tabs
       useEffect(() => {
         localStorage.setItem('pepitos_orders', JSON.stringify(orders));
         try {
@@ -345,7 +350,6 @@
         } catch (e) {}
       }, [orders]);
 
-      // BroadcastChannel listener
       useEffect(() => {
         try {
           const channel = new BroadcastChannel('pepitos_channel');
@@ -358,7 +362,6 @@
         } catch (e) {}
       }, []);
 
-      // PWA Install prompt listener
       useEffect(() => {
         window.addEventListener('beforeinstallprompt', (e) => {
           e.preventDefault();
@@ -366,22 +369,21 @@
         });
       }, []);
 
-      // Trigger automatic simulated verification for orders in Status 1 (Por pagar)
+      // Auto simulation for orders in state 1
       useEffect(() => {
         const pendingOrder = orders.find(o => o.status === 1);
         if (pendingOrder) {
           const timer = setTimeout(() => {
             simulateProvincialSMS(pendingOrder.id, pendingOrder.reference, pendingOrder.totalBs);
-          }, 6000); // Auto verifies in 6s for demo magic!
+          }, 6000);
           return () => clearTimeout(timer);
         }
       }, [orders]);
 
-      // Helper: Trigger simulated SMS
       const simulateProvincialSMS = (orderId, ref, amountBs) => {
         playSound('cash');
         try {
-          confetti({ particleCount: 50, spread: 60, origin: { y: 0.2 } });
+          confetti({ particleCount: 60, spread: 70, origin: { y: 0.25 } });
         } catch (e) {}
 
         const smsText = `Provincial: Pago Movil recibido por Bs. ${amountBs} de CI 32.705.849, Ref: ****${ref} exitoso.`;
@@ -391,7 +393,6 @@
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         });
 
-        // Update order status to 2
         setOrders(prev => prev.map(o => {
           if (o.id === orderId && o.status === 1) {
             return {
@@ -410,12 +411,9 @@
           return o;
         }));
 
-        setTimeout(() => {
-          setSmsNotification(null);
-        }, 8000);
+        setTimeout(() => setSmsNotification(null), 8000);
       };
 
-      // Add to cart
       const addToCart = (product, options) => {
         playSound('pop');
         const itemTotal = (product.price + (options.extrasTotal || 0)) * options.quantity;
@@ -435,20 +433,14 @@
         setSelectedProduct(null);
       };
 
-      const removeFromCart = (cartId) => {
-        setCart(prev => prev.filter(item => item.cartId !== cartId));
-      };
+      const removeFromCart = (cartId) => setCart(prev => prev.filter(item => item.cartId !== cartId));
 
       const updateQuantity = (cartId, delta) => {
         setCart(prev => prev.map(item => {
           if (item.cartId === cartId) {
             const newQty = item.quantity + delta;
             if (newQty <= 0) return null;
-            return {
-              ...item,
-              quantity: newQty,
-              itemTotal: item.unitPrice * newQty
-            };
+            return { ...item, quantity: newQty, itemTotal: item.unitPrice * newQty };
           }
           return item;
         }).filter(Boolean));
@@ -459,7 +451,6 @@
       const cartTotal = cartSubtotal + deliveryFee;
       const cartTotalBs = (cartTotal * BCV_RATE).toFixed(2);
 
-      // Create Order
       const createOrder = (orderData) => {
         playSound('ding');
         const newOrderId = 'PLN-' + Math.floor(1000 + Math.random() * 9000);
@@ -484,7 +475,7 @@
           totalBs: (orderData.deliveryType === 'delivery' ? cartTotalBs : (cartSubtotal * BCV_RATE).toFixed(2)),
           paymentMethod: 'Pago Móvil Banco Provincial',
           reference: orderData.reference,
-          status: 1, // 1: Por pagar / esperando verificación
+          status: 1,
           createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           assignedDriver: 'Carlos Gómez (Repartidor Oficial)',
           driverPhone: '0414-9988771',
@@ -504,7 +495,6 @@
         setClientView('tracking');
       };
 
-      // Send Chat Message
       const handleSendMessage = () => {
         if (!newMessage.trim() || !activeChatOrder) return;
         playSound('pop');
@@ -526,7 +516,6 @@
         });
         setOrders(updatedOrders);
         setNewMessage('');
-        // Update activeChatOrder reference
         setActiveChatOrder(updatedOrders.find(o => o.id === activeChatOrder.id));
       };
 
@@ -534,87 +523,183 @@
 
       return (
         <div className="min-h-screen flex flex-col bg-[#0c0b0a]">
-          
-          {/* Top Demo Bar / Role Switcher Header */}
-          <header className="sticky top-0 z-50 bg-[#161310]/95 backdrop-blur-md border-b border-brand-border px-3 py-2 flex flex-wrap items-center justify-between gap-2 shadow-xl">
+
+          {/* 1. DISCRETE DEMO CONTROLS BAR (For client presentation) */}
+          <div className="bg-[#120f0d] border-b border-brand-border/60 px-3 py-1.5 text-xs flex flex-wrap items-center justify-between gap-2 z-50">
             <div className="flex items-center gap-2">
-              <img src="./assets/logo-opt.jpg" alt="Logo Pepitos La Negra" className="w-8 h-8 rounded-full border border-brand-500/50 shadow" />
-              <div>
-                <span className="font-extrabold text-sm tracking-wide text-white uppercase flex items-center gap-1 font-display">
-                  Pepitos La Negra <span className="text-brand-400 text-xs px-1.5 py-0.5 rounded bg-brand-500/20 border border-brand-500/30">DEMO</span>
-                </span>
+              <span className="font-mono text-[11px] font-bold text-gray-400 flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+                <span>MODO PRESENTACIÓN:</span>
+              </span>
+              <div className="flex items-center bg-black/60 rounded-lg p-0.5 border border-white/10">
+                <button
+                  onClick={() => setRole('client')}
+                  className={`px-2.5 py-1 rounded-md font-bold transition-all ${
+                    role === 'client' ? 'bg-brand-500 text-black shadow' : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  🛍️ Tienda Cliente
+                </button>
+                <button
+                  onClick={() => setRole('admin')}
+                  className={`px-2.5 py-1 rounded-md font-bold transition-all relative ${
+                    role === 'admin' ? 'bg-brand-600 text-white shadow' : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  👑 Panel Admin
+                  {orders.filter(o => o.status === 1 || o.status === 2).length > 0 && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 absolute top-1 right-1"></span>
+                  )}
+                </button>
+                <button
+                  onClick={() => setRole('driver')}
+                  className={`px-2.5 py-1 rounded-md font-bold transition-all ${
+                    role === 'driver' ? 'bg-emerald-600 text-white shadow' : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  🛵 Repartidor
+                </button>
               </div>
             </div>
 
-            {/* Role Buttons */}
-            <div className="flex items-center bg-black/60 p-1 rounded-xl border border-white/10 text-xs">
-              <button
-                onClick={() => setRole('client')}
-                className={`px-3 py-1.5 rounded-lg font-semibold transition-all flex items-center gap-1.5 ${
-                  role === 'client'
-                    ? 'bg-brand-500 text-black shadow-lg shadow-brand-500/30'
-                    : 'text-gray-300 hover:text-white'
-                }`}
-              >
-                <span>🛍️</span>
-                <span className="hidden sm:inline">Modo</span> Cliente (PWA)
-              </button>
-              <button
-                onClick={() => setRole('admin')}
-                className={`px-3 py-1.5 rounded-lg font-semibold transition-all flex items-center gap-1.5 relative ${
-                  role === 'admin'
-                    ? 'bg-brand-600 text-white shadow-lg shadow-brand-600/30'
-                    : 'text-gray-300 hover:text-white'
-                }`}
-              >
-                <span>👑</span>
-                <span className="hidden sm:inline">Panel</span> Admin
-                {orders.filter(o => o.status === 1 || o.status === 2).length > 0 && (
-                  <span className="w-2 h-2 rounded-full bg-yellow-400 animate-ping absolute top-1 right-1"></span>
-                )}
-              </button>
-              <button
-                onClick={() => setRole('driver')}
-                className={`px-3 py-1.5 rounded-lg font-semibold transition-all flex items-center gap-1.5 ${
-                  role === 'driver'
-                    ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30'
-                    : 'text-gray-300 hover:text-white'
-                }`}
-              >
-                <IconMotorcycle className="w-4 h-4" />
-                <span className="hidden sm:inline">App</span> Repartidor
-              </button>
-            </div>
-
-            {/* Quick Demo Action: Simulate Provincial SMS */}
             <div className="flex items-center gap-2">
               <button
                 onClick={() => {
                   const targetOrder = orders.find(o => o.status === 1) || orders[0];
-                  if (targetOrder) {
-                    simulateProvincialSMS(targetOrder.id, targetOrder.reference, targetOrder.totalBs);
-                  }
+                  if (targetOrder) simulateProvincialSMS(targetOrder.id, targetOrder.reference, targetOrder.totalBs);
                 }}
-                title="Prueba cómo el sistema verifica en segundo plano un SMS del Banco Provincial"
-                className="text-xs bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-bold px-2.5 py-1.5 rounded-lg shadow-md flex items-center gap-1.5 transition-transform active:scale-95 border border-emerald-400/40"
+                className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-[11px] px-2.5 py-1 rounded-md shadow flex items-center gap-1.5 border border-emerald-400/30"
               >
-                <span className="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span>
-                <span>🔔 Simular SMS Provincial</span>
+                <span>📲</span> Simular SMS Provincial
               </button>
+              {installPrompt && (
+                <button
+                  onClick={() => {
+                    installPrompt.prompt();
+                    installPrompt.userChoice.then(() => setInstallPrompt(null));
+                  }}
+                  className="bg-brand-500/20 hover:bg-brand-500/30 text-brand-300 border border-brand-500/40 px-2 py-1 rounded-md font-bold text-[11px]"
+                >
+                  📲 Instalar PWA
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* 2. HIGH-IMPACT RESTAURANT BRAND NAVBAR */}
+          <header className="sticky top-0 z-40 bg-[#161310]/95 backdrop-blur-xl border-b border-brand-border/80 shadow-2xl transition-all">
+            <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+              
+              {/* Brand Logo & Name */}
+              <div
+                onClick={() => { setRole('client'); setClientView('menu'); }}
+                className="flex items-center gap-3 cursor-pointer group"
+              >
+                <div className="relative">
+                  <div className="w-11 h-11 rounded-full p-0.5 bg-gradient-to-tr from-brand-600 via-brand-400 to-yellow-200 shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform">
+                    <img
+                      src="./assets/logo-opt.jpg"
+                      alt="Logo Pepitos La Negra"
+                      className="w-full h-full object-cover rounded-full bg-[#161310]"
+                    />
+                  </div>
+                  <span className="absolute -bottom-1 -right-1 bg-emerald-500 w-3.5 h-3.5 rounded-full border-2 border-black" title="Abierto"></span>
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-display font-black text-lg sm:text-xl text-white tracking-wider uppercase group-hover:text-brand-400 transition-colors">
+                      Pepitos <span className="text-brand-500 text-glow">La Negra</span>
+                    </span>
+                    <span className="text-sm">👑</span>
+                  </div>
+                  <div className="text-[11px] font-semibold text-gray-400 flex items-center gap-2">
+                    <span className="text-brand-400 font-bold">Barquisimeto</span>
+                    <span>•</span>
+                    <span className="text-emerald-400 font-bold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                      Abierto Ahora
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Navigation Links for Client */}
+              <nav className="hidden md:flex items-center gap-1 lg:gap-2 text-xs font-extrabold text-gray-300">
+                <button
+                  onClick={() => { setRole('client'); setClientView('menu'); }}
+                  className={`px-3 py-2 rounded-xl transition-all ${
+                    role === 'client' && clientView === 'menu'
+                      ? 'bg-brand-500/15 text-brand-400 border border-brand-500/30'
+                      : 'hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  🥖 Especialidades
+                </button>
+                <button
+                  onClick={() => { setRole('client'); setClientView('tracking'); }}
+                  className={`px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
+                    role === 'client' && clientView === 'tracking'
+                      ? 'bg-brand-500/15 text-brand-400 border border-brand-500/30'
+                      : 'hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  <span>🛵 Mis Pedidos</span>
+                  {orders.length > 0 && (
+                    <span className="bg-emerald-500 text-black text-[10px] font-black px-1.5 py-0.2 rounded-full">
+                      {orders.length}
+                    </span>
+                  )}
+                </button>
+                <a
+                  href="#zonas"
+                  className="px-3 py-2 rounded-xl hover:text-white hover:bg-white/5 transition-all"
+                >
+                  📍 Cobertura
+                </a>
+                <a
+                  href="https://wa.me/584120424336?text=Hola%20Pepitos%20La%20Negra!%20Quisiera%20hacer%20un%20pedido"
+                  target="_blank"
+                  className="px-3 py-2 rounded-xl text-emerald-400 hover:bg-emerald-500/10 transition-all flex items-center gap-1"
+                >
+                  <span>💬</span> WhatsApp
+                </a>
+              </nav>
+
+              {/* Cart CTA & Orders Button */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => { setRole('client'); setClientView('cart'); }}
+                  className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-400 hover:to-brand-500 text-black font-black px-3.5 sm:px-4 py-2 rounded-xl shadow-lg shadow-brand-500/30 flex items-center gap-2.5 transition-all active:scale-95 border border-brand-400/40"
+                >
+                  <div className="relative">
+                    <IconCart className="w-5 h-5 text-black" />
+                    {cart.length > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-black text-brand-400 text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-brand-500">
+                        {cart.reduce((a, b) => a + b.quantity, 0)}
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-left text-xs font-bold leading-tight">
+                    <span className="hidden sm:inline">Carrito </span>
+                    <span className="text-black font-black">${cartTotal.toFixed(2)}</span>
+                  </div>
+                </button>
+              </div>
+
             </div>
           </header>
 
-          {/* SMS Notification Banner (Live background verification demo) */}
+          {/* SMS Notification Banner (Live simulation) */}
           {smsNotification && (
-            <div className="bg-gradient-to-r from-emerald-950 via-gray-900 to-black border-b border-emerald-500/50 p-3 text-sm text-emerald-200 animate-bounce-short shadow-2xl flex items-center justify-between gap-3 z-40">
+            <div className="bg-gradient-to-r from-emerald-950 via-gray-900 to-black border-b border-emerald-500/50 p-3 text-sm text-emerald-200 animate-bounce-short shadow-2xl flex items-center justify-between gap-3 z-50">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-emerald-300 text-lg">
+                <div className="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-emerald-300 text-lg shrink-0">
                   📲
                 </div>
                 <div>
-                  <div className="font-extrabold text-white flex items-center gap-2">
+                  <div className="font-extrabold text-white flex items-center gap-2 text-xs sm:text-sm">
                     <span>SMS BANCO PROVINCIAL DETECTADO</span>
-                    <span className="text-xs font-normal bg-emerald-500/30 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/40">
+                    <span className="text-[10px] font-bold bg-emerald-500/30 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/40">
                       Auto-Verificado ✓
                     </span>
                   </div>
@@ -630,8 +715,8 @@
             </div>
           )}
 
-          {/* MAIN VIEW SWITCHER ACCORDING TO ROLE */}
-          <main className="flex-1 pb-24">
+          {/* MAIN CONTENT AREA */}
+          <main className="flex-1">
             {role === 'client' && (
               <ClientAppView
                 view={clientView}
@@ -683,6 +768,126 @@
               />
             )}
           </main>
+
+          {/* 3. HIGH-IMPACT RESTAURANT FOOTER */}
+          <footer id="zonas" className="bg-[#120f0d] border-t border-brand-border text-gray-300 pt-12 pb-24 sm:pb-12 mt-16">
+            <div className="max-w-6xl mx-auto px-4">
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-12 border-b border-white/5">
+                
+                {/* Col 1: Brand & Slogan */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <img src="./assets/logo-opt.jpg" alt="Pepitos La Negra" className="w-12 h-12 rounded-full border border-brand-500 shadow-md" />
+                    <div>
+                      <h4 className="font-display font-black text-xl text-white tracking-wide">
+                        PEPITOS <span className="text-brand-500">LA NEGRA</span>
+                      </h4>
+                      <p className="text-xs text-brand-400 font-bold">El auténtico sabor venezolano 🇻🇪</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-400 leading-relaxed">
+                    Especialistas en pepitos gigantes de 30 cm, hamburguesas smash a la parrilla y marquesas caseras de puro chocolate belga. Calidad de calle con sazón gourmet.
+                  </p>
+                  <div className="flex items-center gap-3 pt-1">
+                    <a
+                      href="https://instagram.com"
+                      target="_blank"
+                      className="w-9 h-9 rounded-full bg-white/5 hover:bg-brand-500/20 hover:text-brand-400 border border-white/10 flex items-center justify-center transition-all text-sm"
+                      title="Instagram"
+                    >
+                      📸
+                    </a>
+                    <a
+                      href="https://wa.me/584120424336"
+                      target="_blank"
+                      className="w-9 h-9 rounded-full bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/30 flex items-center justify-center transition-all text-sm"
+                      title="WhatsApp Pedidos"
+                    >
+                      💬
+                    </a>
+                    <a
+                      href="#"
+                      className="w-9 h-9 rounded-full bg-white/5 hover:bg-brand-500/20 hover:text-brand-400 border border-white/10 flex items-center justify-center transition-all text-sm"
+                      title="TikTok"
+                    >
+                      🎵
+                    </a>
+                  </div>
+                </div>
+
+                {/* Col 2: Horarios & Delivery */}
+                <div className="space-y-3">
+                  <h5 className="font-display font-black text-sm text-white uppercase tracking-wider flex items-center gap-2">
+                    <span>⏱️</span> Horarios & Atención
+                  </h5>
+                  <ul className="text-xs space-y-2 text-gray-400">
+                    <li className="flex justify-between border-b border-white/5 pb-1">
+                      <span>Lunes a Jueves:</span>
+                      <span className="text-white font-bold">5:00 PM - 11:30 PM</span>
+                    </li>
+                    <li className="flex justify-between border-b border-white/5 pb-1">
+                      <span>Viernes a Domingo:</span>
+                      <span className="text-white font-bold">4:30 PM - 12:00 AM</span>
+                    </li>
+                    <li className="flex justify-between border-b border-white/5 pb-1">
+                      <span>Tiempo Promedio:</span>
+                      <span className="text-brand-400 font-bold">25 - 40 min</span>
+                    </li>
+                    <li className="text-[11px] text-emerald-400 pt-1 flex items-center gap-1 font-semibold">
+                      <span>⚡</span> Delivery Express en Barquisimeto & Zonas Cercanas
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Col 3: Datos de Pago Móvil Oficial */}
+                <div className="space-y-3">
+                  <h5 className="font-display font-black text-sm text-white uppercase tracking-wider flex items-center gap-2">
+                    <span>💳</span> Pago Móvil Exclusivo
+                  </h5>
+                  <div className="bg-black/50 border border-white/10 rounded-2xl p-3 space-y-1.5 text-xs font-mono">
+                    <div className="text-[10px] text-brand-400 font-sans font-bold uppercase">Banco Provincial (0108)</div>
+                    <div className="text-gray-300">C.I: <span className="text-white font-bold">32.705.849</span></div>
+                    <div className="text-gray-300">Telf: <span className="text-white font-bold">0412-0424336</span></div>
+                    <div className="text-gray-300">Titular: <span className="text-white font-bold">Lismaury Torres</span></div>
+                    <div className="text-[10px] text-emerald-400 font-sans pt-1">
+                      ✓ Verificación automática por SMS
+                    </div>
+                  </div>
+                </div>
+
+                {/* Col 4: Zonas de Cobertura & Contacto */}
+                <div className="space-y-3">
+                  <h5 className="font-display font-black text-sm text-white uppercase tracking-wider flex items-center gap-2">
+                    <span>📍</span> Zonas de Cobertura
+                  </h5>
+                  <p className="text-xs text-gray-400 leading-relaxed">
+                    Entregamos calientito en: <strong>Nueva Segovia, Este de Barquisimeto, Av. Lara, Cabudare Centro, Los Leones, Urbanización El Parral</strong> y alrededores.
+                  </p>
+                  <div className="pt-2">
+                    <span className="text-xs text-gray-400 block font-semibold">Línea Directa de Pedidos:</span>
+                    <a href="tel:04120424336" className="text-sm font-black text-brand-400 hover:underline">
+                      📞 0412-0424336
+                    </a>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Bottom Copyright */}
+              <div className="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-3">
+                <div>
+                  © 2026 Pepitos La Negra • Todos los derechos reservados.
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="text-brand-400/80">PWA Progresiva con React</span>
+                  <span>•</span>
+                  <a href="#" className="hover:text-white transition-colors">Volver arriba ⬆️</a>
+                </div>
+              </div>
+
+            </div>
+          </footer>
 
           {/* CUSTOMIZATION MODAL (PEPITO SALSAS Y EXTRAS) */}
           {selectedProduct && (
@@ -760,193 +965,247 @@
       openChat,
       installPrompt
     }) {
+      const [filterCategory, setFilterCategory] = useState('all');
+
+      const filteredProducts = PRODUCTS.filter(p => {
+        if (filterCategory === 'all') return true;
+        return p.category === filterCategory;
+      });
+
       return (
-        <div className="max-w-2xl mx-auto px-4 py-4">
-
-          {/* Sub Navigation Tabs for Client App */}
-          <div className="flex items-center justify-between border-b border-brand-border pb-3 mb-6">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setView('menu')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-bold transition-all ${
-                  view === 'menu'
-                    ? 'bg-brand-500 text-black shadow-md'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                🍔 Menú
-              </button>
-              <button
-                onClick={() => setView('cart')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-bold transition-all flex items-center gap-1.5 ${
-                  view === 'cart' || view === 'checkout'
-                    ? 'bg-brand-500 text-black shadow-md'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                <span>🛒 Carrito</span>
-                {cart.length > 0 && (
-                  <span className="bg-black text-brand-400 text-xs px-1.5 py-0.2 rounded-full font-black">
-                    {cart.reduce((a, b) => a + b.quantity, 0)}
-                  </span>
-                )}
-              </button>
-              <button
-                onClick={() => setView('tracking')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-bold transition-all flex items-center gap-1.5 ${
-                  view === 'tracking'
-                    ? 'bg-brand-500 text-black shadow-md'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                <span>🛵 Mis Pedidos</span>
-                {orders.length > 0 && (
-                  <span className="bg-emerald-500 text-black text-xs px-1.5 py-0.2 rounded-full font-black">
-                    {orders.length}
-                  </span>
-                )}
-              </button>
-            </div>
-
-            {/* PWA Install Button */}
-            {installPrompt && (
-              <button
-                onClick={() => {
-                  installPrompt.prompt();
-                  installPrompt.userChoice.then(() => setInstallPrompt(null));
-                }}
-                className="text-xs bg-brand-500/20 hover:bg-brand-500/30 text-brand-300 border border-brand-500/40 px-2.5 py-1 rounded-full font-bold flex items-center gap-1"
-              >
-                <span>📲</span> Instalar App
-              </button>
-            )}
-          </div>
+        <div className="max-w-6xl mx-auto px-4 py-4">
 
           {/* VIEW: MENU */}
           {view === 'menu' && (
             <div>
-              {/* Hero Banner / Brand Presentation */}
-              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#241c14] via-[#1a1510] to-[#0c0b0a] border border-brand-500/30 p-6 mb-8 shadow-2xl">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
-                <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
-                  <div className="w-32 h-32 md:w-36 md:h-36 rounded-full p-1.5 bg-gradient-to-tr from-brand-600 via-brand-400 to-yellow-200 shadow-2xl shadow-brand-500/30 shrink-0">
-                    <img
-                      src="./assets/logo-opt.jpg"
-                      alt="Pepitos La Negra Logo"
-                      className="w-full h-full object-cover rounded-full bg-[#181512]"
-                    />
+
+              {/* === ULTRA-MODERN CINEMATIC HERO SECTION === */}
+              <div className="relative overflow-hidden rounded-3xl bg-[#161310] border border-brand-500/30 mb-10 shadow-2xl">
+                
+                {/* Background Hero Image with Dark Gradient Wash */}
+                <div className="absolute inset-0 z-0">
+                  <img
+                    src="./assets/pepito-alt-opt.jpg"
+                    alt="Pepitos La Negra Hero"
+                    className="w-full h-full object-cover object-center scale-105 filter brightness-75 contrast-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-[#0c0b0a] via-[#0c0b0a]/90 sm:via-[#0c0b0a]/80 to-transparent"></div>
+                  <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#0c0b0a]/60 to-[#0c0b0a]"></div>
+                </div>
+
+                {/* Content Overlay */}
+                <div className="relative z-10 p-6 sm:p-10 lg:p-12 max-w-2xl flex flex-col justify-center min-h-[440px] sm:min-h-[500px]">
+                  
+                  {/* Glowing Pill Tag */}
+                  <div className="inline-flex items-center gap-2 bg-black/70 backdrop-blur-md border border-brand-500/50 px-3.5 py-1.5 rounded-full mb-4 w-fit shadow-lg shadow-brand-500/10">
+                    <span className="w-2.5 h-2.5 rounded-full bg-brand-500 animate-ping"></span>
+                    <span className="text-xs font-black uppercase tracking-wider text-brand-300">
+                      🔥 EL AUTÉNTICO PEPITO GUARO DE 30 CM
+                    </span>
                   </div>
-                  <div className="text-center md:text-left flex-1">
-                    <div className="inline-flex items-center gap-1.5 bg-brand-500/20 text-brand-400 border border-brand-500/40 text-xs font-bold px-3 py-1 rounded-full mb-2">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                      <span>Abierto • Delivery Activo</span>
+
+                  {/* Main Headline */}
+                  <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-display text-white tracking-tight leading-[1.08] mb-4">
+                    Los Pepitos Más <span className="text-brand-500 text-glow">Brutales</span> y Cargados de la Ciudad
+                  </h1>
+
+                  {/* Subheadline */}
+                  <p className="text-sm sm:text-base text-gray-200 mb-6 leading-relaxed font-normal max-w-xl">
+                    Pan baguette artesanal recién tostado, carne a la plancha, pollo marinado, tocineta crujiente, queso de mano fundido y cascadas de salsas secretas.
+                  </p>
+
+                  {/* Highlights Grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mb-8 text-xs font-bold text-gray-200">
+                    <div className="bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-2.5 flex items-center gap-2">
+                      <span className="text-base">🥖</span>
+                      <span>Baguette 30 cm</span>
                     </div>
-                    <h1 className="text-3xl sm:text-4xl font-black text-white font-display tracking-tight leading-tight">
-                      Pepitos <span className="text-brand-500 text-glow">La Negra</span>
-                    </h1>
-                    <p className="text-sm text-gray-300 mt-1 max-w-md">
-                      El auténtico sabor venezolano. Los pepitos más cargados, hamburguesas jugosas y marquesas artesanales de pura calidad.
-                    </p>
-                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-3 text-xs text-gray-300">
-                      <div className="flex items-center gap-1 text-brand-400 font-bold">
-                        <span>⭐</span> 4.9 (180+ reseñas)
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span>⏱️</span> 25 - 40 min
-                      </div>
-                      <div className="flex items-center gap-1 text-emerald-400">
-                        <span>💵</span> Tasa Oficial: {BCV_RATE.toFixed(2)} Bs/$
-                      </div>
+                    <div className="bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-2.5 flex items-center gap-2">
+                      <span className="text-base">🧀</span>
+                      <span>Queso Fundido</span>
                     </div>
+                    <div className="bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-2.5 flex items-center gap-2 col-span-2 sm:col-span-1">
+                      <span className="text-base">⚡</span>
+                      <span>Delivery 25-40 min</span>
+                    </div>
+                  </div>
+
+                  {/* CTA Buttons */}
+                  <div className="flex flex-wrap items-center gap-3">
+                    <a
+                      href="#menu-catalogo"
+                      className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-400 hover:to-brand-500 text-black font-black text-sm px-7 py-4 rounded-2xl shadow-xl shadow-brand-500/30 flex items-center gap-2 uppercase tracking-wider transition-all active:scale-95"
+                    >
+                      <span>🚀 ¡Pedir Mi Pepito Ahora!</span>
+                    </a>
+                    <button
+                      onClick={() => setView('tracking')}
+                      className="bg-black/60 hover:bg-black/90 backdrop-blur-md text-white border border-white/20 font-bold text-sm px-5 py-4 rounded-2xl flex items-center gap-2 transition-all"
+                    >
+                      <span>🛵 Seguir Mi Pedido</span>
+                    </button>
+                  </div>
+
+                </div>
+
+                {/* Bottom Trust Ticker */}
+                <div className="relative z-10 bg-black/85 backdrop-blur-md border-t border-white/10 px-6 py-3 flex flex-wrap items-center justify-between gap-4 text-xs font-semibold text-gray-300">
+                  <div className="flex items-center gap-2 text-brand-400">
+                    <span>⭐</span> 4.9/5 Calificación de clientes en Barquisimeto
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span>🛵</span> Envíos Gratis en compras mayores a $20
+                  </div>
+                  <div className="flex items-center gap-2 text-emerald-400">
+                    <span>💳</span> Pago Móvil Banco Provincial con Verificación Instantánea
                   </div>
                 </div>
+
               </div>
 
-              {/* Category Title */}
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-black text-white font-display flex items-center gap-2">
-                  <span>🔥</span> Especialidades Destacadas
-                </h2>
-                <span className="text-xs text-gray-400 font-medium">Precios en USD y Bs</span>
-              </div>
+              {/* CATEGORY FILTER & CATALOG SECTION */}
+              <div id="menu-catalogo" className="scroll-mt-24 space-y-6">
+                
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-3 border-b border-brand-border">
+                  <div>
+                    <span className="text-xs uppercase font-extrabold text-brand-500 tracking-wider flex items-center gap-1.5">
+                      <span>🍴</span> Selecciona tu antojo de hoy
+                    </span>
+                    <h2 className="text-2xl sm:text-3xl font-black text-white font-display mt-0.5">
+                      Especialidades Destacadas
+                    </h2>
+                  </div>
 
-              {/* Products List (3 Core Products) */}
-              <div className="space-y-6">
-                {PRODUCTS.map(product => {
-                  const priceBs = (product.price * BCV_RATE).toFixed(2);
-                  return (
-                    <div
-                      key={product.id}
-                      className="bg-brand-card hover:bg-brand-cardHover transition-all border border-brand-border hover:border-brand-500/50 rounded-3xl p-4 sm:p-5 flex flex-col sm:flex-row gap-5 shadow-xl group"
+                  {/* Filter Pills */}
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 custom-scroll text-xs font-bold">
+                    <button
+                      onClick={() => setFilterCategory('all')}
+                      className={`px-3 py-1.5 rounded-xl transition-all ${
+                        filterCategory === 'all'
+                          ? 'bg-brand-500 text-black shadow font-black'
+                          : 'bg-brand-card text-gray-400 hover:text-white border border-white/5'
+                      }`}
                     >
-                      {/* Product Image */}
-                      <div className="relative w-full sm:w-48 h-52 sm:h-44 rounded-2xl overflow-hidden shrink-0 bg-black/50 border border-white/5">
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                        <div className="absolute top-2 left-2 bg-black/80 backdrop-blur-md text-brand-400 text-xs font-extrabold px-2.5 py-1 rounded-full border border-brand-500/30">
-                          {product.tagline.split('•')[0]}
-                        </div>
-                      </div>
+                      🔥 Todos ({PRODUCTS.length})
+                    </button>
+                    <button
+                      onClick={() => setFilterCategory('pepitos')}
+                      className={`px-3 py-1.5 rounded-xl transition-all ${
+                        filterCategory === 'pepitos'
+                          ? 'bg-brand-500 text-black shadow font-black'
+                          : 'bg-brand-card text-gray-400 hover:text-white border border-white/5'
+                      }`}
+                    >
+                      🥖 Pepitos
+                    </button>
+                    <button
+                      onClick={() => setFilterCategory('hamburguesas')}
+                      className={`px-3 py-1.5 rounded-xl transition-all ${
+                        filterCategory === 'hamburguesas'
+                          ? 'bg-brand-500 text-black shadow font-black'
+                          : 'bg-brand-card text-gray-400 hover:text-white border border-white/5'
+                      }`}
+                    >
+                      🍔 Hamburguesas
+                    </button>
+                    <button
+                      onClick={() => setFilterCategory('postres')}
+                      className={`px-3 py-1.5 rounded-xl transition-all ${
+                        filterCategory === 'postres'
+                          ? 'bg-brand-500 text-black shadow font-black'
+                          : 'bg-brand-card text-gray-400 hover:text-white border border-white/5'
+                      }`}
+                    >
+                      🍫 Postres
+                    </button>
+                  </div>
+                </div>
 
-                      {/* Product Info */}
-                      <div className="flex-1 flex flex-col justify-between">
-                        <div>
-                          <h3 className="text-lg font-black text-white font-display leading-snug group-hover:text-brand-400 transition-colors">
-                            {product.name}
-                          </h3>
-                          <p className="text-xs font-semibold text-brand-400/90 mt-0.5">
-                            {product.tagline}
-                          </p>
-                          <p className="text-xs text-gray-300 mt-2 leading-relaxed">
-                            {product.description}
-                          </p>
-
-                          {/* Quick features */}
-                          {product.hasOptions && (
-                            <div className="mt-2 flex flex-wrap gap-1 text-[11px] text-gray-400">
-                              <span className="bg-white/5 px-2 py-0.5 rounded-md border border-white/10">
-                                🥣 Elige tus salsas
-                              </span>
-                              <span className="bg-white/5 px-2 py-0.5 rounded-md border border-white/10">
-                                🧀 Extras disponibles
-                              </span>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Price & Add Button */}
-                        <div className="flex items-center justify-between mt-4 pt-3 border-t border-white/5">
-                          <div>
-                            <div className="text-2xl font-black text-white font-display">
-                              ${product.price.toFixed(2)}
-                            </div>
-                            <div className="text-xs font-bold text-brand-400">
-                              Bs. {priceBs}
-                            </div>
+                {/* 3 Core Products Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredProducts.map(product => {
+                    const priceBs = (product.price * BCV_RATE).toFixed(2);
+                    return (
+                      <div
+                        key={product.id}
+                        className="bg-brand-card hover:bg-brand-cardHover transition-all duration-300 border border-brand-border hover:border-brand-500/50 rounded-3xl overflow-hidden shadow-xl flex flex-col justify-between group"
+                      >
+                        {/* Image Showcase */}
+                        <div className="relative h-60 w-full overflow-hidden bg-black/60">
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#161310] via-transparent to-transparent"></div>
+                          
+                          <div className="absolute top-3 left-3 bg-black/80 backdrop-blur-md text-brand-400 text-xs font-black px-3 py-1 rounded-full border border-brand-500/30">
+                            {product.tagline.split('•')[0]}
                           </div>
 
-                          <button
-                            onClick={() => onSelectProduct(product)}
-                            className="bg-brand-500 hover:bg-brand-400 active:scale-95 text-black font-extrabold text-sm px-4 py-2.5 rounded-xl shadow-lg shadow-brand-500/20 flex items-center gap-2 transition-all"
-                          >
-                            <IconPlus className="w-4 h-4 text-black" />
-                            <span>{product.hasOptions ? 'Personalizar' : 'Agregar'}</span>
-                          </button>
+                          <div className="absolute bottom-3 right-3 bg-brand-500/90 text-black font-black text-xs px-2.5 py-1 rounded-xl shadow-lg">
+                            {product.category.toUpperCase()}
+                          </div>
+                        </div>
+
+                        {/* Product Body */}
+                        <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                          <div>
+                            <h3 className="text-xl font-black text-white font-display group-hover:text-brand-400 transition-colors leading-tight">
+                              {product.name}
+                            </h3>
+                            <p className="text-xs font-bold text-brand-400/90 mt-1">
+                              {product.tagline}
+                            </p>
+                            <p className="text-xs text-gray-300 mt-2 leading-relaxed">
+                              {product.description}
+                            </p>
+
+                            {product.hasOptions && (
+                              <div className="mt-3 flex flex-wrap gap-1.5 text-[11px] text-gray-400">
+                                <span className="bg-black/50 px-2.5 py-1 rounded-lg border border-white/5">
+                                  🥣 Elige tus salsas favoritas
+                                </span>
+                                <span className="bg-black/50 px-2.5 py-1 rounded-lg border border-white/5">
+                                  🧀 Agrega extras
+                                </span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Price & Add to Cart button */}
+                          <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                            <div>
+                              <div className="text-2xl font-black text-white font-display">
+                                ${product.price.toFixed(2)}
+                              </div>
+                              <div className="text-xs font-bold text-brand-400">
+                                Bs. {priceBs}
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={() => onSelectProduct(product)}
+                              className="bg-brand-500 hover:bg-brand-400 active:scale-95 text-black font-extrabold text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-brand-500/25 flex items-center gap-2 transition-all"
+                            >
+                              <IconPlus className="w-4 h-4 text-black stroke-[3]" />
+                              <span>{product.hasOptions ? 'Personalizar' : 'Agregar'}</span>
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
+
               </div>
+
             </div>
           )}
 
           {/* VIEW: CART */}
           {view === 'cart' && (
-            <div className="bg-brand-card border border-brand-border rounded-3xl p-6 shadow-2xl">
+            <div className="max-w-2xl mx-auto bg-brand-card border border-brand-border rounded-3xl p-6 shadow-2xl">
               <div className="flex items-center justify-between pb-4 border-b border-brand-border mb-4">
                 <h2 className="text-xl font-black text-white font-display flex items-center gap-2">
                   <IconCart className="w-6 h-6 text-brand-500" />
@@ -1065,27 +1324,31 @@
 
           {/* VIEW: CHECKOUT */}
           {view === 'checkout' && (
-            <CheckoutForm
-              cartTotal={cartTotal}
-              cartTotalBs={cartTotalBs}
-              cartSubtotal={cartSubtotal}
-              deliveryFee={deliveryFee}
-              bcvRate={BCV_RATE}
-              onBack={() => setView('cart')}
-              onConfirmOrder={onCreateOrder}
-            />
+            <div className="max-w-2xl mx-auto">
+              <CheckoutForm
+                cartTotal={cartTotal}
+                cartTotalBs={cartTotalBs}
+                cartSubtotal={cartSubtotal}
+                deliveryFee={deliveryFee}
+                bcvRate={BCV_RATE}
+                onBack={() => setView('cart')}
+                onConfirmOrder={onCreateOrder}
+              />
+            </div>
           )}
 
           {/* VIEW: TRACKING / MIS PEDIDOS */}
           {view === 'tracking' && (
-            <OrderTrackingView
-              orders={orders}
-              activeOrderId={activeOrderId}
-              setActiveOrderId={setActiveOrderId}
-              currentOrder={currentOrder}
-              openChat={openChat}
-              onBackToMenu={() => setView('menu')}
-            />
+            <div className="max-w-2xl mx-auto">
+              <OrderTrackingView
+                orders={orders}
+                activeOrderId={activeOrderId}
+                setActiveOrderId={setActiveOrderId}
+                currentOrder={currentOrder}
+                openChat={openChat}
+                onBackToMenu={() => setView('menu')}
+              />
+            </div>
           )}
 
         </div>
@@ -1098,7 +1361,7 @@
     function CheckoutForm({ cartTotal, cartTotalBs, onBack, onConfirmOrder }) {
       const [customerName, setCustomerName] = useState('Cliente Demo');
       const [phone, setPhone] = useState('0412-1234567');
-      const [deliveryType, setDeliveryType] = useState('delivery'); // 'delivery' | 'pickup'
+      const [deliveryType, setDeliveryType] = useState('delivery');
       const [address, setAddress] = useState('Urb. Nueva Segovia, Carrera 1 con Calle 4, Casa #12');
       const [locationGeo, setLocationGeo] = useState(null);
       const [geoLoading, setGeoLoading] = useState(false);
@@ -1107,7 +1370,6 @@
       const [copiedField, setCopiedField] = useState(null);
       const [errorMsg, setErrorMsg] = useState('');
 
-      // Geolocation API Integration
       const handleGetLocation = () => {
         if (!navigator.geolocation) {
           alert('Tu navegador no soporta geolocalización.');
@@ -1125,7 +1387,6 @@
           },
           (error) => {
             console.warn('Geolocation error:', error);
-            // Fallback simulated coordinates for demo
             setLocationGeo({ lat: 10.0636, lng: -69.3248 });
             setAddress(prev => `${prev || 'Ubicación actual'} (GPS Simulado: 10.0636, -69.3248)`);
             setGeoLoading(false);
@@ -1228,7 +1489,6 @@
               <span>2. Entrega y Ubicación</span>
             </h3>
 
-            {/* Delivery vs Pickup */}
             <div className="grid grid-cols-2 gap-3 mb-3">
               <button
                 type="button"
@@ -1266,7 +1526,6 @@
                   className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-brand-500"
                 />
 
-                {/* Geolocation Button */}
                 <div className="flex flex-wrap items-center gap-2 pt-1">
                   <button
                     type="button"
@@ -1288,13 +1547,12 @@
             )}
           </div>
 
-          {/* 3. PAGO MÓVIL EXCLUSIVO (Datos bancarios provistos) */}
+          {/* 3. PAGO MÓVIL EXCLUSIVO */}
           <div>
             <h3 className="text-xs uppercase tracking-wider font-extrabold text-brand-400 mb-3 flex items-center gap-1.5">
               <span>💳</span> 3. Pago Móvil Exclusivo
             </h3>
 
-            {/* Bank Card Graphic */}
             <div className="bg-gradient-to-br from-[#1e1b18] via-[#2a241e] to-[#120f0c] border border-brand-500/40 rounded-2xl p-4 sm:p-5 shadow-2xl relative overflow-hidden">
               <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-3">
                 <div className="flex items-center gap-2">
@@ -1310,9 +1568,7 @@
                 </div>
               </div>
 
-              {/* Bank Details Grid with 1-click Copy */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                {/* Banco */}
                 <div className="flex items-center justify-between bg-black/40 p-2 rounded-xl border border-white/5">
                   <div>
                     <span className="text-gray-400 text-[10px] block">Banco</span>
@@ -1328,7 +1584,6 @@
                   </button>
                 </div>
 
-                {/* Teléfono */}
                 <div className="flex items-center justify-between bg-black/40 p-2 rounded-xl border border-white/5">
                   <div>
                     <span className="text-gray-400 text-[10px] block">Teléfono</span>
@@ -1344,7 +1599,6 @@
                   </button>
                 </div>
 
-                {/* Cédula */}
                 <div className="flex items-center justify-between bg-black/40 p-2 rounded-xl border border-white/5">
                   <div>
                     <span className="text-gray-400 text-[10px] block">Cédula</span>
@@ -1360,7 +1614,6 @@
                   </button>
                 </div>
 
-                {/* Monto exacto */}
                 <div className="flex items-center justify-between bg-black/40 p-2 rounded-xl border border-white/5">
                   <div>
                     <span className="text-gray-400 text-[10px] block">Monto Exacto (Bs)</span>
@@ -1378,7 +1631,6 @@
               </div>
             </div>
 
-            {/* Reference Input */}
             <div className="mt-4 bg-black/30 border border-brand-500/30 rounded-2xl p-4">
               <label className="block text-xs font-bold text-white mb-1">
                 Últimos 4 dígitos de la Referencia de Pago Móvil:
@@ -1400,7 +1652,6 @@
             </div>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="w-full bg-gradient-to-r from-brand-500 via-brand-600 to-brand-500 hover:from-brand-400 hover:to-brand-500 text-black font-black py-4 rounded-2xl shadow-2xl shadow-brand-500/30 text-base uppercase tracking-wider transition-all active:scale-98"
@@ -1432,42 +1683,16 @@
         );
       }
 
-      // 4 Timeline States:
-      // 1: Por pagar
-      // 2: Pago completado y verificado
-      // 3: En preparación para el delivery
-      // 4: Entregado al cliente
       const states = [
-        {
-          num: 1,
-          title: 'Por pagar',
-          desc: 'Esperando validación de la referencia bancaria',
-          icon: '🟡'
-        },
-        {
-          num: 2,
-          title: 'Pago completado y verificado',
-          desc: 'Verificado automáticamente con Banco Provincial',
-          icon: '🟢'
-        },
-        {
-          num: 3,
-          title: 'En preparación para delivery',
-          desc: 'Cocina preparando tus pepitos y empacando caliente',
-          icon: '🔵'
-        },
-        {
-          num: 4,
-          title: 'Entregado al cliente',
-          desc: '¡Buen provecho! Pedido entregado en tus manos',
-          icon: '🟣'
-        }
+        { num: 1, title: 'Por pagar', desc: 'Esperando validación de la referencia bancaria', icon: '🟡' },
+        { num: 2, title: 'Pago completado y verificado', desc: 'Verificado automáticamente con Banco Provincial', icon: '🟢' },
+        { num: 3, title: 'En preparación para delivery', desc: 'Cocina preparando tus pepitos y empacando caliente', icon: '🔵' },
+        { num: 4, title: 'Entregado al cliente', desc: '¡Buen provecho! Pedido entregado en tus manos', icon: '🟣' }
       ];
 
       return (
         <div className="space-y-6">
 
-          {/* Active Order Selector if multiple */}
           {orders.length > 1 && (
             <div className="flex items-center gap-2 overflow-x-auto pb-2 custom-scroll">
               <span className="text-xs text-gray-400 shrink-0">Tus pedidos:</span>
@@ -1487,7 +1712,6 @@
             </div>
           )}
 
-          {/* Status Header Card */}
           <div className="bg-brand-card border border-brand-border rounded-3xl p-6 shadow-2xl relative overflow-hidden">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-brand-border">
               <div>
@@ -1502,7 +1726,6 @@
                 </div>
               </div>
 
-              {/* Digital Receipt Trigger */}
               <button
                 onClick={() => setShowReceipt(true)}
                 className="bg-black/60 hover:bg-black text-brand-400 border border-brand-500/40 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow"
@@ -1520,7 +1743,6 @@
 
                   return (
                     <div key={st.num} className="relative flex items-start gap-4">
-                      {/* Circle Dot */}
                       <div
                         className={`absolute -left-6 sm:-left-8 top-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all shadow-md ${
                           isDone
@@ -1583,7 +1805,6 @@
               </div>
             )}
 
-            {/* If state < 3: Direct chat with restaurant */}
             {currentOrder.status < 3 && (
               <div className="mt-4 pt-3 border-t border-white/5 flex justify-end">
                 <button
@@ -1597,7 +1818,6 @@
             )}
           </div>
 
-          {/* Delivery Details Card */}
           <div className="bg-brand-card border border-brand-border rounded-3xl p-5 shadow-xl">
             <h3 className="text-xs uppercase tracking-wider font-extrabold text-gray-400 mb-3">
               Detalles del Pedido
@@ -1617,7 +1837,6 @@
               </div>
             </div>
 
-            {/* Order Items List */}
             <div className="mt-4 space-y-1.5">
               <span className="text-[11px] font-bold text-brand-400 block uppercase">Productos:</span>
               {currentOrder.items.map((it, idx) => (
@@ -1637,7 +1856,6 @@
             </div>
           </div>
 
-          {/* DIGITAL RECEIPT MODAL */}
           {showReceipt && (
             <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
               <div className="bg-[#1a1613] border-2 border-brand-500/50 rounded-3xl max-w-sm w-full p-6 shadow-2xl relative">
@@ -1648,7 +1866,6 @@
                   <IconX className="w-5 h-5" />
                 </button>
 
-                {/* Receipt Thermal Header */}
                 <div className="text-center pb-4 border-b border-dashed border-gray-600">
                   <img src="./assets/logo-opt.jpg" alt="Logo" className="w-16 h-16 rounded-full mx-auto mb-2 border border-brand-500" />
                   <h3 className="font-black text-xl text-white font-display">Pepitos La Negra</h3>
@@ -1659,7 +1876,6 @@
                   </div>
                 </div>
 
-                {/* Receipt Body */}
                 <div className="py-4 space-y-2 text-xs font-mono">
                   <div className="flex justify-between">
                     <span className="text-gray-400">Fecha/Hora:</span>
@@ -1715,7 +1931,6 @@
     // 4. ADMIN DASHBOARD & SMS SIMULATOR VIEW
     // ==========================================
     function AdminDashboardView({ orders, setOrders, openChat, onSimulateSMS }) {
-      // 3 Main Tabs: 'active' (2 and 3) | 'delivered' (4) | 'all' (All)
       const [tab, setTab] = useState('active');
       const [searchRef, setSearchRef] = useState('');
 
@@ -1726,10 +1941,9 @@
         }
         if (tab === 'active') return o.status === 2 || o.status === 3 || o.status === 1;
         if (tab === 'delivered') return o.status === 4;
-        return true; // 'all'
+        return true;
       });
 
-      // Advance Order Status Helper
       const updateOrderStatus = (orderId, newStatus) => {
         playSound('pop');
         setOrders(prev => prev.map(o => {
@@ -1757,9 +1971,7 @@
       const totalSalesUsd = orders.filter(o => o.status >= 2).reduce((a, b) => a + b.total, 0);
 
       return (
-        <div className="max-w-4xl mx-auto px-4 py-4 space-y-6">
-
-          {/* Admin Header & Stats */}
+        <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
           <div className="bg-brand-card border border-brand-border rounded-3xl p-6 shadow-2xl">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-brand-border">
               <div>
@@ -1772,7 +1984,6 @@
                 </h1>
               </div>
 
-              {/* Provincial Service Status indicator */}
               <div className="bg-black/50 border border-emerald-500/40 rounded-2xl p-3 flex items-center gap-3">
                 <div className="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></div>
                 <div className="text-xs">
@@ -1782,7 +1993,6 @@
               </div>
             </div>
 
-            {/* Metrics */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
               <div className="bg-black/40 p-3 rounded-2xl border border-white/5">
                 <span className="text-[10px] text-gray-400 uppercase font-bold block">Ventas Verificadas</span>
@@ -1816,9 +2026,7 @@
             </div>
           </div>
 
-          {/* Tabs & Search */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            {/* 3 Main Tabs */}
             <div className="flex items-center bg-brand-card p-1 rounded-2xl border border-brand-border text-xs font-bold">
               <button
                 onClick={() => setTab('active')}
@@ -1828,7 +2036,7 @@
                     : 'text-gray-400 hover:text-white'
                 }`}
               >
-                Activos (Estados 2 y 3) ({orders.filter(o => o.status === 2 || o.status === 3 || o.status === 1).length})
+                Activos ({orders.filter(o => o.status === 2 || o.status === 3 || o.status === 1).length})
               </button>
               <button
                 onClick={() => setTab('delivered')}
@@ -1838,7 +2046,7 @@
                     : 'text-gray-400 hover:text-white'
                 }`}
               >
-                Entregados (Estado 4) ({orders.filter(o => o.status === 4).length})
+                Entregados ({orders.filter(o => o.status === 4).length})
               </button>
               <button
                 onClick={() => setTab('all')}
@@ -1852,7 +2060,6 @@
               </button>
             </div>
 
-            {/* Search Input */}
             <input
               type="text"
               value={searchRef}
@@ -1862,7 +2069,6 @@
             />
           </div>
 
-          {/* Orders List */}
           <div className="space-y-4">
             {filteredOrders.length === 0 ? (
               <div className="text-center py-12 bg-brand-card border border-brand-border rounded-3xl p-6 text-gray-400 text-xs">
@@ -1882,7 +2088,6 @@
                     key={order.id}
                     className="bg-brand-card border border-brand-border hover:border-brand-500/40 rounded-3xl p-5 shadow-xl transition-all"
                   >
-                    {/* Header */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-brand-border">
                       <div className="flex items-center gap-3">
                         <span className="text-lg font-black text-white font-display">
@@ -1906,7 +2111,6 @@
                       </div>
                     </div>
 
-                    {/* Customer & Location */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 py-3 text-xs border-b border-white/5">
                       <div>
                         <span className="text-gray-400 block font-semibold">Cliente:</span>
@@ -1926,7 +2130,6 @@
                       </div>
                     </div>
 
-                    {/* Items */}
                     <div className="py-2 space-y-1">
                       {order.items.map((it, idx) => (
                         <div key={idx} className="text-xs text-gray-300 flex justify-between">
@@ -1940,10 +2143,8 @@
                       ))}
                     </div>
 
-                    {/* Actions Toolbar */}
                     <div className="pt-3 border-t border-brand-border flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        {/* Chat button */}
                         <button
                           onClick={() => openChat(order)}
                           className="bg-black/50 hover:bg-black text-gray-300 hover:text-white border border-white/10 text-xs px-3 py-1.5 rounded-xl flex items-center gap-1.5 font-bold"
@@ -1957,7 +2158,6 @@
                           )}
                         </button>
 
-                        {/* If in Status 1: Trigger SMS simulation button */}
                         {order.status === 1 && (
                           <button
                             onClick={() => onSimulateSMS(order)}
@@ -1968,7 +2168,6 @@
                         )}
                       </div>
 
-                      {/* Advance States */}
                       <div className="flex items-center gap-2">
                         {order.status === 2 && (
                           <button
@@ -1993,7 +2192,6 @@
               })
             )}
           </div>
-
         </div>
       );
     }
@@ -2036,9 +2234,7 @@
       };
 
       return (
-        <div className="max-w-xl mx-auto px-4 py-4 space-y-6">
-
-          {/* Repartidor Profile Header */}
+        <div className="max-w-xl mx-auto px-4 py-6 space-y-6">
           <div className="bg-brand-card border border-brand-border rounded-3xl p-5 shadow-2xl flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-2xl shadow">
@@ -2089,7 +2285,6 @@
                     </div>
                   </div>
 
-                  {/* Address & GPS */}
                   <div className="bg-black/40 border border-white/5 rounded-2xl p-3 space-y-2 text-xs">
                     <div className="flex items-start gap-2">
                       <IconMapPin className="w-5 h-5 text-brand-500 shrink-0 mt-0.5" />
@@ -2116,7 +2311,6 @@
                     </div>
                   </div>
 
-                  {/* Chat & Mark as Delivered Buttons */}
                   <div className="flex items-center gap-2 pt-2">
                     <button
                       onClick={() => openChat(order)}
@@ -2139,7 +2333,6 @@
             </div>
           )}
 
-          {/* PHOTO EVIDENCE / CONFIRMATION MODAL */}
           {photoModalOrder && (
             <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
               <div className="bg-[#1a1613] border-2 border-purple-500/50 rounded-3xl max-w-sm w-full p-6 shadow-2xl relative">
@@ -2158,7 +2351,6 @@
                   <p className="text-xs text-gray-400">Pedido #{photoModalOrder.id} • {photoModalOrder.customerName}</p>
                 </div>
 
-                {/* Simulated Camera / Photo Uploader */}
                 <div className="my-4 bg-black/50 border-2 border-dashed border-gray-700 rounded-2xl p-4 text-center">
                   {uploadedPhoto ? (
                     <div>
@@ -2199,7 +2391,6 @@
               </div>
             </div>
           )}
-
         </div>
       );
     }
@@ -2237,8 +2428,7 @@
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
           <div className="bg-[#181512] border-t sm:border border-brand-500/40 rounded-t-3xl sm:rounded-3xl max-w-md w-full max-h-[90vh] flex flex-col shadow-2xl relative overflow-hidden">
             
-            {/* Header Image */}
-            <div className="relative h-44 w-full bg-black shrink-0">
+            <div className="relative h-48 w-full bg-black shrink-0">
               <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
               <button
                 onClick={onClose}
@@ -2248,14 +2438,12 @@
               </button>
             </div>
 
-            {/* Content Scrollable */}
             <div className="p-5 overflow-y-auto custom-scroll flex-1 space-y-4">
               <div>
                 <h3 className="text-xl font-black text-white font-display">{product.name}</h3>
                 <p className="text-xs text-gray-300 mt-1 leading-relaxed">{product.description}</p>
               </div>
 
-              {/* Sauces Selection */}
               {product.availableSauces && product.availableSauces.length > 0 && (
                 <div className="border-t border-brand-border pt-3">
                   <h4 className="text-xs font-black uppercase tracking-wider text-brand-400 mb-2">
@@ -2284,7 +2472,6 @@
                 </div>
               )}
 
-              {/* Extras Selection */}
               {product.availableExtras && product.availableExtras.length > 0 && (
                 <div className="border-t border-brand-border pt-3">
                   <h4 className="text-xs font-black uppercase tracking-wider text-brand-400 mb-2">
@@ -2318,7 +2505,6 @@
                 </div>
               )}
 
-              {/* Kitchen Notes */}
               <div className="border-t border-brand-border pt-3">
                 <label className="text-[11px] font-bold text-gray-400 block mb-1">
                   Instrucciones especiales para el cocinero (Opcional):
@@ -2333,9 +2519,7 @@
               </div>
             </div>
 
-            {/* Bottom Actions */}
             <div className="p-4 border-t border-brand-border bg-black/60 flex items-center gap-3">
-              {/* Quantity */}
               <div className="flex items-center bg-black border border-white/10 rounded-xl px-2 py-1">
                 <button
                   type="button"
@@ -2354,7 +2538,6 @@
                 </button>
               </div>
 
-              {/* Add to Cart button */}
               <button
                 type="button"
                 onClick={() => {
@@ -2395,7 +2578,6 @@
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
           <div className="bg-[#181512] border border-brand-border rounded-3xl max-w-md w-full h-[520px] flex flex-col shadow-2xl relative overflow-hidden">
             
-            {/* Chat Header */}
             <div className="bg-[#201b16] px-4 py-3 border-b border-brand-border flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded-full bg-brand-500/20 border border-brand-400 flex items-center justify-center text-lg">
@@ -2417,7 +2599,6 @@
               </button>
             </div>
 
-            {/* Quick replies for Admin */}
             {role !== 'client' && (
               <div className="bg-black/40 px-3 py-1.5 border-b border-white/5 flex gap-1.5 overflow-x-auto text-[11px] custom-scroll">
                 <button
@@ -2441,7 +2622,6 @@
               </div>
             )}
 
-            {/* Messages Area */}
             <div className="flex-1 p-4 overflow-y-auto custom-scroll space-y-3 bg-[#110f0d]">
               {order.messages.map((m, idx) => {
                 const isMe = (role === 'client' && m.sender === 'customer') ||
@@ -2481,7 +2661,6 @@
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input Footer */}
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -2509,11 +2688,9 @@
       );
     }
 
-    // Render React App
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
 
-    // Register Service Worker for PWA
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
