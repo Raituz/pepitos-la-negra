@@ -760,7 +760,80 @@
       .hero-container { grid-template-columns: 1fr; gap: 40px; text-align: center; }
       .hero-content { align-items: center; }
       .hero-subtitle { margin: 0 auto; }
-      .hero-cta-group { justify-content: center; }
+    /* =========================================================================
+       5. CHAT MODAL OVERLAY & WORKSPACE (PRIORIDAD MÁXIMA Z-INDEX: 999999)
+       ========================================================================= */
+    .chat-modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999999 !important;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 18px;
+      animation: fadeInModal 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeInModal {
+      from { opacity: 0; transform: scale(0.97); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .chat-modal-box {
+      background: #100a07;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      width: 100%;
+      max-width: 880px;
+      height: 90vh;
+      max-height: 840px;
+      border-radius: 24px;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.98), 0 0 45px rgba(245, 158, 11, 0.18);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    @media (max-width: 640px) {
+      .chat-modal-overlay {
+        padding: 0;
+      }
+      .chat-modal-box {
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        border: none;
+      }
+    }
+
+    /* Ocultar barra de scroll horizontal en respuestas rápidas en todos los navegadores */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none !important;
+      scrollbar-width: none !important;
+    }
+
+    /* Scrollbar vertical sutil y estilizado para los mensajes */
+    .chat-scroll-area::-webkit-scrollbar {
+      width: 6px;
+    }
+    .chat-scroll-area::-webkit-scrollbar-track {
+      background: #0d0705;
+    }
+    .chat-scroll-area::-webkit-scrollbar-thumb {
+      background: rgba(245, 158, 11, 0.3);
+      border-radius: 9999px;
+    }
+    .chat-scroll-area::-webkit-scrollbar-thumb:hover {
+      background: rgba(245, 158, 11, 0.6);
     }
   </style>
 
@@ -935,6 +1008,17 @@
           setTimeout(() => {
             chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
           }, 80);
+          const handleKeyDown = (e) => {
+            if (e.key === 'Escape') setChatOpen(false);
+          };
+          window.addEventListener('keydown', handleKeyDown);
+          document.body.style.overflow = 'hidden';
+          return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = '';
+          };
+        } else {
+          document.body.style.overflow = '';
         }
       }, [chatOpen, activeChatOrder?.messages]);
 
@@ -1972,7 +2056,7 @@
 
           {/* MODAL PERSONALIZAR */}
           {selectedProduct && (
-            <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-[999999] bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
               <div className="bg-[#140d0a] border border-amber-500/40 rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
                 <button onClick={() => setSelectedProduct(null)} className="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">✕</button>
                 <img src={selectedProduct.image} alt={selectedProduct.name} className="w-full h-44 object-cover rounded-2xl mb-4" />
@@ -1995,103 +2079,131 @@
                CHAT EN PANEL ENTERO (WORKSPACE COMPLETO PARA CLIENTE Y GERENTE)
                ========================================================================= */}
           {chatOpen && activeChatOrder && (
-            <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col justify-center items-center p-0 md:p-6 animate-fade-in">
-              <div className="bg-[#120b08] border border-amber-500/30 w-full h-full md:max-w-5xl md:h-[94vh] md:rounded-3xl shadow-2xl flex flex-col overflow-hidden relative">
+            <div 
+              className="chat-modal-overlay" 
+              onClick={(e) => { if (e.target === e.currentTarget) setChatOpen(false); }}
+            >
+              <div className="chat-modal-box" onClick={(e) => e.stopPropagation()}>
                 
-                {/* 1. Header del Panel Entero */}
-                <div className="bg-[#1a0f0a] border-b border-amber-500/20 p-4 sm:px-6 flex items-center justify-between gap-4 flex-shrink-0">
+                {/* 1. Header del Panel Entero con Botón Cerrar y Volver */}
+                <div className="bg-[#180f0a] border-b border-amber-500/25 p-3 sm:px-6 flex items-center justify-between gap-3 flex-shrink-0">
+                  
+                  {/* Lado Izquierdo: Volver + Avatar + Nombre */}
                   <div className="flex items-center gap-3">
                     <button 
                       onClick={() => setChatOpen(false)}
-                      className="w-10 h-10 rounded-full bg-white/5 hover:bg-amber-500/20 text-white hover:text-amber-400 flex items-center justify-center transition text-lg"
-                      title="Volver"
+                      className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-gray-200 hover:text-white flex items-center gap-1.5 transition text-xs font-bold border border-white/10 shadow"
+                      title="Volver a la vista anterior (Esc)"
                     >
-                      ←
+                      <span className="text-base leading-none">←</span>
+                      <span className="hidden sm:inline">Volver</span>
                     </button>
-                    <div className="relative">
-                      <img src="./assets/logo-opt.jpg" alt="Logo" className="w-11 h-11 rounded-full object-cover border border-amber-500/40" />
-                      <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-[#1a0f0a] rounded-full"></span>
+
+                    <div className="relative flex-shrink-0">
+                      <img src="./assets/logo-opt.jpg" alt="Logo Pepitos La Negra" className="w-10 h-10 rounded-full object-cover border-2 border-amber-500/50 shadow" />
+                      <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-[#180f0a] rounded-full"></span>
                     </div>
+
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="font-black text-white text-base font-display">Pepitos La Negra</h3>
-                        <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded-full">En línea</span>
+                        <h3 className="font-black text-white text-sm sm:text-base font-display tracking-wide">
+                          Pepitos La Negra
+                        </h3>
+                        <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded-full border border-emerald-500/30">
+                          En línea
+                        </span>
                       </div>
-                      <p className="text-xs text-amber-400/90 font-mono">
-                        Chat Pedido #{activeChatOrder.id} • {activeChatOrder.customerName}
+                      <p className="text-[11px] text-amber-400 font-mono mt-0.5">
+                        Pedido #{activeChatOrder.id} • {activeChatOrder.customerName}
                       </p>
                     </div>
                   </div>
 
-                  {/* Controles de Modo para Demostración */}
-                  <div className="flex items-center gap-3">
-                    <div className="hidden sm:flex items-center bg-black/50 p-1 rounded-full border border-white/10 text-xs">
-                      <span className="text-gray-400 px-2 text-[11px]">Hablar como:</span>
+                  {/* Lado Derecho: Selector de Modo Demo y Botón Cerrar */}
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="hidden md:flex items-center bg-black/60 p-1 rounded-xl border border-white/10 text-xs">
+                      <span className="text-gray-400 px-2 text-[10px] font-bold uppercase">Hablar como:</span>
                       <button
                         onClick={() => setRole('client')}
-                        className={`px-3 py-1 rounded-full font-bold transition text-xs ${role === 'client' ? 'bg-amber-500 text-black shadow' : 'text-gray-400 hover:text-white'}`}
+                        className={`px-3 py-1 rounded-lg font-bold text-xs transition ${role === 'client' ? 'bg-amber-500 text-black shadow' : 'text-gray-400 hover:text-white'}`}
                       >
                         👤 Cliente
                       </button>
                       <button
                         onClick={() => setRole('admin')}
-                        className={`px-3 py-1 rounded-full font-bold transition text-xs ${role === 'admin' ? 'bg-amber-500 text-black shadow' : 'text-gray-400 hover:text-white'}`}
+                        className={`px-3 py-1 rounded-lg font-bold text-xs transition ${role === 'admin' ? 'bg-amber-500 text-black shadow' : 'text-gray-400 hover:text-white'}`}
                       >
                         👨‍🍳 Gerente
                       </button>
                     </div>
 
+                    {/* BOTÓN CERRAR MUY VISIBLE */}
                     <button 
                       onClick={() => setChatOpen(false)}
-                      className="text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 w-9 h-9 rounded-full flex items-center justify-center transition"
-                      title="Cerrar Panel de Chat"
+                      className="px-3.5 py-1.5 rounded-xl bg-red-600/30 hover:bg-red-600 text-red-200 hover:text-white border border-red-500/40 flex items-center gap-1.5 transition text-xs font-black shadow-lg cursor-pointer active:scale-95"
+                      title="Cerrar chat (o presiona Escape)"
+                      aria-label="Cerrar chat"
                     >
-                      ✕
+                      <span className="text-sm font-bold">✕</span>
+                      <span className="font-bold">Cerrar</span>
                     </button>
                   </div>
                 </div>
 
-                {/* 2. Barra de Resumen de la Orden */}
-                <div className="bg-[#150d09] border-b border-white/5 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs gap-3 flex-shrink-0">
-                  <div className="flex items-center gap-4 text-gray-300">
-                    <span><strong>Total:</strong> <span className="text-amber-400 font-bold">${(activeChatOrder.items.reduce((a, b) => a + (b.price * b.quantity), 0) + 1.50).toFixed(2)}</span> (Bs. {activeChatOrder.totalBs})</span>
-                    <span>•</span>
-                    <span><strong>Pago:</strong> Provincial Ref: ****{activeChatOrder.reference}</span>
-                    <span className="hidden md:inline">•</span>
-                    <span className="hidden md:inline"><strong>Dirección:</strong> {activeChatOrder.address}</span>
+                {/* 2. Barra de Resumen del Pedido (Elegante y Limpia) */}
+                <div className="bg-[#140c08] border-b border-white/5 px-4 sm:px-6 py-2 flex flex-wrap items-center justify-between text-xs gap-2 flex-shrink-0">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-gray-300 text-[11px]">
+                    <div className="flex items-center gap-1">
+                      <span className="text-gray-400">Total:</span>
+                      <span className="text-amber-400 font-black">${(activeChatOrder.items.reduce((a, b) => a + (b.price * b.quantity), 0) + 1.50).toFixed(2)}</span>
+                      <span className="text-gray-400 font-mono">(Bs. {activeChatOrder.totalBs})</span>
+                    </div>
+                    <span className="text-white/20">•</span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-gray-400">Pago:</span>
+                      <span className="text-white font-mono font-bold">Provincial ****{activeChatOrder.reference}</span>
+                    </div>
+                    <span className="hidden sm:inline text-white/20">•</span>
+                    <div className="hidden sm:flex items-center gap-1 text-gray-400 truncate max-w-xs">
+                      <span>📍</span>
+                      <span className="truncate">{activeChatOrder.address}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
-                      activeChatOrder.status === 1 ? 'bg-yellow-500/20 text-yellow-300' :
-                      activeChatOrder.status === 2 ? 'bg-emerald-500/20 text-emerald-300' :
-                      activeChatOrder.status === 3 ? 'bg-blue-500/20 text-blue-300' : 'bg-purple-500/20 text-purple-300'
+                  
+                  <div className="flex items-center">
+                    <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full border ${
+                      activeChatOrder.status === 1 ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-300' :
+                      activeChatOrder.status === 2 ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300' :
+                      activeChatOrder.status === 3 ? 'bg-blue-500/10 border-blue-500/30 text-blue-300' : 'bg-purple-500/10 border-purple-500/30 text-purple-300'
                     }`}>
-                      {activeChatOrder.status === 1 ? '🟡 Por Pagar' :
-                       activeChatOrder.status === 2 ? '🟢 Pago Verificado' :
-                       activeChatOrder.status === 3 ? '🔵 En Cocina / Delivery' : '🟣 Entregado'}
+                      {activeChatOrder.status === 1 ? '🟡 1. Por Pagar' :
+                       activeChatOrder.status === 2 ? '🟢 2. Pago Verificado ✓' :
+                       activeChatOrder.status === 3 ? '🔵 3. En Cocina / Delivery' : '🟣 4. Entregado'}
                     </span>
                   </div>
                 </div>
 
-                {/* 3. Área de Mensajes Amplia (Full Scroll) */}
-                <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-[#0e0806]">
+                {/* 3. Área de Mensajes Principal (Full Scroll con Estilo) */}
+                <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3 bg-[#0d0705] chat-scroll-area">
                   {activeChatOrder.messages.map((m, i) => {
                     const isMe = m.sender === (role === 'admin' ? 'admin' : 'customer');
                     return (
-                      <div key={i} className={`flex flex-col ${m.sender === 'system' ? 'items-center' : (isMe ? 'items-end' : 'items-start')}`}>
+                      <div key={i} className="w-full">
                         {m.sender === 'system' ? (
-                          <div className="bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs px-4 py-2 rounded-2xl max-w-lg text-center my-1 font-mono">
-                            {m.text}
+                          <div className="flex justify-center my-2">
+                            <div className="bg-[#18100b] border border-amber-500/30 text-amber-200 text-[11px] font-mono px-4 py-1.5 rounded-full shadow-sm text-center leading-relaxed max-w-md">
+                              {m.text}
+                            </div>
                           </div>
                         ) : (
-                          <div className="max-w-[85%] sm:max-w-md">
-                            <span className="text-[10px] text-gray-500 px-1 mb-1 block">
+                          <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[85%] sm:max-w-md ${isMe ? 'ml-auto' : 'mr-auto'}`}>
+                            <span className="text-[10px] text-gray-400 px-1 mb-1 block">
                               {m.sender === 'admin' ? '👨‍🍳 Gerente / Cocina' : '👤 Cliente'} • {m.time || 'Ahora'}
                             </span>
-                            <div className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed shadow-lg ${
+                            <div className={`p-3.5 sm:p-4 rounded-2xl text-xs sm:text-sm leading-relaxed shadow-lg ${
                               isMe
                                 ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black font-semibold rounded-tr-none'
-                                : 'bg-[#1e130e] text-white border border-amber-500/20 rounded-tl-none'
+                                : 'bg-[#1b120c] text-white border border-amber-500/30 rounded-tl-none'
                             }`}>
                               {m.text}
                             </div>
@@ -2103,24 +2215,26 @@
                   <div ref={chatEndRef} />
                 </div>
 
-                {/* 4. Sugerencias Rápidas de Respuesta */}
-                <div className="bg-[#150d09] border-t border-white/5 px-4 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar flex-shrink-0">
-                  <span className="text-[11px] text-gray-400 whitespace-nowrap">Respuestas rápidas:</span>
+                {/* 4. Sugerencias Rápidas de Respuesta (Sin barra de scroll fea) */}
+                <div className="bg-[#140c08] border-t border-white/5 px-4 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar flex-shrink-0">
+                  <span className="text-[10px] uppercase font-bold text-gray-400 whitespace-nowrap flex-shrink-0">
+                    Sugerencias:
+                  </span>
                   {(role === 'client' ? [
-                    '¿En cuánto tiempo llega mi pedido?',
+                    '¿En cuánto tiempo llega mi pedido? ⏱️',
                     'Ya realicé el Pago Móvil Provincial 💸',
-                    '¿Me le pueden colocar salsa tártara extra?',
-                    '¡Muchas gracias, estaré atento al delivery!'
+                    '¿Me le pueden colocar salsa tártara extra? 🥫',
+                    '¡Muchas gracias, estaré atento al delivery! 🛵'
                   ] : [
                     '¡Hola! Tu pedido ya está en cocina preparándose 👨‍🍳',
                     'Pago Provincial verificado exitosamente ✓',
                     'El repartidor va saliendo a tu dirección 🛵',
-                    '¡Buen provecho! Gracias por preferir Pepitos La Negra.'
+                    '¡Buen provecho! Gracias por preferir Pepitos La Negra. ⭐'
                   ]).map((chip, idx) => (
                     <button
                       key={idx}
                       onClick={() => sendChatMessage(chip)}
-                      className="whitespace-nowrap bg-black/40 hover:bg-amber-500/20 border border-white/10 hover:border-amber-500/40 text-gray-300 hover:text-amber-300 px-3 py-1.5 rounded-full text-xs transition"
+                      className="whitespace-nowrap bg-black/50 hover:bg-amber-500/20 border border-white/10 hover:border-amber-500/50 text-gray-300 hover:text-amber-300 px-3 py-1.5 rounded-full text-xs transition flex-shrink-0 cursor-pointer active:scale-95"
                     >
                       {chip}
                     </button>
@@ -2135,22 +2249,22 @@
                       sendChatMessage(newMessage); 
                     } 
                   }} 
-                  className="bg-[#1a0f0a] border-t border-amber-500/20 p-3 sm:p-4 flex gap-3 flex-shrink-0"
+                  className="bg-[#180f0a] border-t border-amber-500/25 p-3 sm:p-4 flex gap-2 sm:gap-3 flex-shrink-0"
                 >
                   <input
                     type="text"
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder={role === 'admin' ? "Escribe una respuesta como Gerente de Pepitos La Negra..." : "Escribe un mensaje al restaurante..."}
-                    className="flex-1 bg-[#0a0705] border border-amber-500/30 focus:border-amber-400 text-white rounded-2xl px-4 py-3 text-sm outline-none transition placeholder-gray-500"
+                    placeholder={role === 'admin' ? "Escribe como Gerente de Pepitos La Negra..." : "Escribe un mensaje al restaurante..."}
+                    className="flex-1 bg-[#090604] border border-amber-500/35 focus:border-amber-400 text-white rounded-xl px-4 py-3 text-xs sm:text-sm outline-none transition placeholder-gray-500 shadow-inner"
                     autoFocus
                   />
                   <button
                     type="submit"
-                    className="bg-amber-500 hover:bg-amber-400 text-black font-black px-6 py-3 rounded-2xl text-sm transition-all shadow-lg flex items-center gap-2 active:scale-95 flex-shrink-0"
+                    className="bg-amber-500 hover:bg-amber-400 text-black font-extrabold px-5 sm:px-6 py-3 rounded-xl text-xs sm:text-sm transition-all shadow-lg flex items-center gap-1.5 active:scale-95 flex-shrink-0 cursor-pointer"
                   >
                     <span>Enviar</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <line x1="22" y1="2" x2="11" y2="13"></line>
                       <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                     </svg>
