@@ -1142,6 +1142,49 @@
       }
     ];
 
+    // Flota Inicial de Repartidores & Motos
+    const INITIAL_DRIVERS = [
+      {
+        id: 'DRV-1',
+        name: 'Carlos Gómez',
+        phone: '0414-9988771',
+        motoModel: 'Bera SBR 150',
+        motoColor: 'Roja',
+        motoPlate: 'AC4B82X',
+        status: 'En Ruta', // 'Disponible' | 'En Ruta' | 'En Espera' | 'Fuera de Servicio'
+        locationName: 'Av. Venezuela con Bracamonte (Cerca de Sambil)',
+        lat: 10.0692,
+        lng: -69.2985,
+        lastUpdate: 'En Vivo'
+      },
+      {
+        id: 'DRV-2',
+        name: 'Manuel Rivas',
+        phone: '0424-7711223',
+        motoModel: 'Empire Arsen II',
+        motoColor: 'Azul',
+        motoPlate: 'AE9K14Z',
+        status: 'En Espera',
+        locationName: 'Sede Pepitos La Negra (Base Principal)',
+        lat: 10.0678,
+        lng: -69.3456,
+        lastUpdate: 'En Vivo'
+      },
+      {
+        id: 'DRV-3',
+        name: 'Yorman Silva',
+        phone: '0412-3344556',
+        motoModel: 'Bera New Jaguar',
+        motoColor: 'Gris Plomo',
+        motoPlate: 'AD7M05L',
+        status: 'Disponible',
+        locationName: 'Av. Lara con Los Leones',
+        lat: 10.0754,
+        lng: -69.2961,
+        lastUpdate: 'En Vivo'
+      }
+    ];
+
     function App() {
       const [role, setRole] = useState('client'); // 'client' | 'admin' | 'driver'
       const [currentView, setCurrentView] = useState('menu'); // 'menu' | 'cart' | 'checkout' | 'orders' | 'laboral'
@@ -1170,6 +1213,181 @@
       const [selectedLaboralOrderId, setSelectedLaboralOrderId] = useState('PLN-9410');
       const [laboralSearch, setLaboralSearch] = useState('');
       const [laboralMsgInput, setLaboralMsgInput] = useState('');
+
+      // =========================================================================
+      // ESTADOS Y GESTIÓN DE FLOTA DE MOTOS Y AGENTES DELIVERY
+      // =========================================================================
+      const [drivers, setDrivers] = useState(() => {
+        const saved = localStorage.getItem('pepitos_drivers_v1');
+        return saved ? JSON.parse(saved) : INITIAL_DRIVERS;
+      });
+      const [showAddDriverModal, setShowAddDriverModal] = useState(false);
+      const [newDriverName, setNewDriverName] = useState('');
+      const [newDriverPhone, setNewDriverPhone] = useState('');
+      const [newDriverMoto, setNewDriverMoto] = useState('Bera SBR 150');
+      const [newDriverColor, setNewDriverColor] = useState('Roja');
+      const [newDriverPlate, setNewDriverPlate] = useState('');
+      const [newDriverStatus, setNewDriverStatus] = useState('Disponible');
+      const [newDriverLocation, setNewDriverLocation] = useState('Av. Lara con Los Leones, Barquisimeto');
+      const [newDriverLat, setNewDriverLat] = useState(10.0678);
+      const [newDriverLng, setNewDriverLng] = useState(-69.3456);
+      const [driverGpsLoading, setDriverGpsLoading] = useState(false);
+      const [driverGpsSuccess, setDriverGpsSuccess] = useState(false);
+
+      useEffect(() => {
+        try {
+          localStorage.setItem('pepitos_drivers_v1', JSON.stringify(drivers));
+        } catch (e) {}
+      }, [drivers]);
+
+      const getMotoColorBadge = (colorStr) => {
+        const c = (colorStr || '').toLowerCase();
+        if (c.includes('roj')) return { bg: 'bg-red-500/20 text-red-300 border-red-500/40', dot: 'bg-red-500' };
+        if (c.includes('azu')) return { bg: 'bg-blue-500/20 text-blue-300 border-blue-500/40', dot: 'bg-blue-500' };
+        if (c.includes('neg')) return { bg: 'bg-neutral-800 text-neutral-200 border-neutral-600', dot: 'bg-neutral-900 border border-neutral-400' };
+        if (c.includes('bla')) return { bg: 'bg-white/20 text-white border-white/40', dot: 'bg-white' };
+        if (c.includes('gri') || c.includes('plo')) return { bg: 'bg-gray-500/20 text-gray-300 border-gray-500/40', dot: 'bg-gray-400' };
+        if (c.includes('ama')) return { bg: 'bg-amber-500/20 text-amber-300 border-amber-500/40', dot: 'bg-yellow-400' };
+        if (c.includes('ver')) return { bg: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40', dot: 'bg-emerald-500' };
+        if (c.includes('nar')) return { bg: 'bg-orange-500/20 text-orange-300 border-orange-500/40', dot: 'bg-orange-500' };
+        return { bg: 'bg-amber-500/20 text-amber-300 border-amber-500/40', dot: 'bg-amber-400' };
+      };
+
+      const handleGetDriverModalGps = () => {
+        playSound('pop');
+        setDriverGpsLoading(true);
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              const lat = Number(pos.coords.latitude.toFixed(5));
+              const lng = Number(pos.coords.longitude.toFixed(5));
+              setNewDriverLat(lat);
+              setNewDriverLng(lng);
+              setNewDriverLocation(`📍 GPS Detectado (${lat}, ${lng}) - Barquisimeto`);
+              setDriverGpsLoading(false);
+              setDriverGpsSuccess(true);
+              setTimeout(() => setDriverGpsSuccess(false), 3000);
+            },
+            () => {
+              const lat = 10.0678;
+              const lng = -69.3456;
+              setNewDriverLat(lat);
+              setNewDriverLng(lng);
+              setNewDriverLocation(`📍 GPS Base (${lat}, ${lng}) - Barquisimeto`);
+              setDriverGpsLoading(false);
+              setDriverGpsSuccess(true);
+              setTimeout(() => setDriverGpsSuccess(false), 3000);
+            },
+            { timeout: 6000 }
+          );
+        } else {
+          setNewDriverLocation(`📍 GPS Base (10.0678, -69.3456) - Barquisimeto`);
+          setDriverGpsLoading(false);
+        }
+      };
+
+      const handleAddDriver = (e) => {
+        if (e) e.preventDefault();
+        if (!newDriverName.trim()) return;
+        playSound('cash');
+        try {
+          confetti({ particleCount: 50, spread: 60, origin: { y: 0.3 } });
+        } catch (err) {}
+        const newD = {
+          id: 'DRV-' + Date.now().toString().slice(-4),
+          name: newDriverName.trim(),
+          phone: newDriverPhone.trim() || '0412-0000000',
+          motoModel: newDriverMoto.trim() || 'Moto Estándar',
+          motoColor: newDriverColor.trim() || 'Negra',
+          motoPlate: (newDriverPlate.trim() || 'S/P').toUpperCase(),
+          status: newDriverStatus,
+          locationName: newDriverLocation.trim() || 'Barquisimeto Centro',
+          lat: newDriverLat,
+          lng: newDriverLng,
+          lastUpdate: 'En Vivo'
+        };
+        setDrivers(prev => [newD, ...prev]);
+        setShowAddDriverModal(false);
+        setNewDriverName('');
+        setNewDriverPhone('');
+        setNewDriverPlate('');
+        setNewDriverLocation('Av. Lara con Los Leones, Barquisimeto');
+      };
+
+      const handleUpdateDriverGPS = (driverId) => {
+        playSound('pop');
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              const lat = Number(pos.coords.latitude.toFixed(5));
+              const lng = Number(pos.coords.longitude.toFixed(5));
+              setDrivers(prev => prev.map(d => {
+                if (d.id === driverId) {
+                  return {
+                    ...d,
+                    lat,
+                    lng,
+                    locationName: `📍 GPS Vivo (${lat}, ${lng})`,
+                    lastUpdate: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                  };
+                }
+                return d;
+              }));
+            },
+            () => {
+              const jitterLat = Number((10.0678 + (Math.random() - 0.5) * 0.02).toFixed(5));
+              const jitterLng = Number((-69.3456 + (Math.random() - 0.5) * 0.02).toFixed(5));
+              setDrivers(prev => prev.map(d => {
+                if (d.id === driverId) {
+                  return {
+                    ...d,
+                    lat: jitterLat,
+                    lng: jitterLng,
+                    locationName: `📍 GPS Vivo (${jitterLat}, ${jitterLng}) - Barquisimeto`,
+                    lastUpdate: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                  };
+                }
+                return d;
+              }));
+            }
+          );
+        }
+      };
+
+      const handleUpdateDriverStatus = (driverId, newStatus) => {
+        playSound('pop');
+        setDrivers(prev => prev.map(d => d.id === driverId ? { ...d, status: newStatus } : d));
+      };
+
+      const handleDeleteDriver = (driverId, driverName) => {
+        if (window.confirm(`¿Deseas dar de baja al motorizado ${driverName} de la flota activa?`)) {
+          playSound('pop');
+          setDrivers(prev => prev.filter(d => d.id !== driverId));
+        }
+      };
+
+      const handleAssignDriverToOrder = (orderId, driver) => {
+        playSound('pop');
+        const driverDesc = `${driver.name} (Moto ${driver.motoModel} ${driver.motoColor})`;
+        setOrders(prev => prev.map(o => {
+          if (o.id === orderId) {
+            return {
+              ...o,
+              assignedDriver: driverDesc,
+              driverPhone: driver.phone,
+              messages: [
+                ...(o.messages || []),
+                {
+                  sender: 'system',
+                  text: `🛵 Motorizado Asignado: ${driverDesc} • Tel: ${driver.phone}.`,
+                  time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                }
+              ]
+            };
+          }
+          return o;
+        }));
+      };
       
       // Estados para Dirección de Entrega y Geolocalización (Cliente)
       const [checkoutAddress, setCheckoutAddress] = useState('Av. Lara con Calle 8, Edif. Samanes, Apto 4-B');
@@ -1458,8 +1676,14 @@
           status: 1,
           date: 'Hoy, ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          assignedDriver: 'Carlos Gómez (Moto Bera SBR)',
-          driverPhone: '0414-9988771',
+          assignedDriver: (() => {
+            const d = drivers.find(drv => drv.status === 'Disponible') || drivers[0];
+            return d ? `${d.name} (${d.motoModel} ${d.motoColor})` : 'Carlos Gómez (Moto Bera SBR Roja)';
+          })(),
+          driverPhone: (() => {
+            const d = drivers.find(drv => drv.status === 'Disponible') || drivers[0];
+            return d ? d.phone : '0414-9988771';
+          })(),
           messages: [
             {
               sender: 'system',
@@ -2383,27 +2607,48 @@
                             </>
                           )}
                           {order.status === 3 && (
-                            <>
-                              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                              <span>En camino con repartidor: <strong className="text-white">{order.assignedDriver}</strong></span>
-                            </>
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <span className="w-2.5 h-2.5 rounded-full bg-blue-400 animate-pulse"></span>
+                                <span className="text-white font-bold">¡Tu pedido va en camino en moto!</span>
+                              </div>
+                              <div className="text-xs text-gray-300">
+                                🛵 Motorizado: <strong className="text-amber-300">{order.assignedDriver}</strong>
+                                {order.driverPhone && order.driverPhone !== '-' && (
+                                  <span className="ml-2 font-mono text-gray-400">• Telf: <a href={`tel:${order.driverPhone}`} className="text-amber-400 underline">{order.driverPhone}</a></span>
+                                )}
+                              </div>
+                            </div>
                           )}
                         </span>
                       </div>
 
-                      {/* BOTÓN EXCLUSIVO DEL CLIENTE: ABRIR CHAT DEL PEDIDO */}
-                      <button 
-                        onClick={() => { setActiveChatOrder(order); setChatOpen(true); }}
-                        className="bg-amber-500 hover:bg-amber-400 text-black font-extrabold px-5 py-2.5 rounded-xl text-xs sm:text-sm flex items-center gap-2 shadow-lg transition transform hover:-translate-y-0.5 active:scale-95 cursor-pointer"
-                      >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                        </svg>
-                        <span>Chatear con el Restaurante</span>
-                        <span className="bg-black/25 text-black px-2 py-0.5 rounded-full text-xs font-black">
-                          {order.messages ? order.messages.length : 0}
-                        </span>
-                      </button>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {order.status === 3 && order.driverPhone && order.driverPhone !== '-' && (
+                          <a
+                            href={`https://wa.me/58${order.driverPhone.replace(/[^0-9]/g, '').replace(/^0/, '')}?text=${encodeURIComponent(`Hola, soy el cliente del pedido #${order.id} de Pepitos La Negra. ¿Cómo estás? Quedo atento a tu llegada.`)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/30 text-xs font-bold px-3.5 py-2.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <span>💬 WhatsApp Repartidor</span>
+                          </a>
+                        )}
+
+                        {/* BOTÓN EXCLUSIVO DEL CLIENTE: ABRIR CHAT DEL PEDIDO */}
+                        <button 
+                          onClick={() => { setActiveChatOrder(order); setChatOpen(true); }}
+                          className="bg-amber-500 hover:bg-amber-400 text-black font-extrabold px-5 py-2.5 rounded-xl text-xs sm:text-sm flex items-center gap-2 shadow-lg transition transform hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+                        >
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                          </svg>
+                          <span>Chatear con el Restaurante</span>
+                          <span className="bg-black/25 text-black px-2 py-0.5 rounded-full text-xs font-black">
+                            {order.messages ? order.messages.length : 0}
+                          </span>
+                        </button>
+                      </div>
                     </div>
 
                   </div>
@@ -3135,110 +3380,350 @@
                      ===================================================================== */}
                 {laboralTab === 'delivery' && (
                   <div className="max-w-6xl w-full mx-auto p-4 sm:p-8 pt-6 sm:pt-8 space-y-6">
+                    {/* Header y Control de Flota */}
                     <div className="bg-[#140d0a] border border-[#2e1b12] rounded-3xl p-6 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div>
-                        <h2 className="text-xl sm:text-2xl font-black font-display text-white">
-                          🛵 Módulo de Delivery & Repartidores
-                        </h2>
-                        <p className="text-xs text-gray-400 mt-1">
-                          Asignación de rutas en Barquisimeto y Cabudare, reporte de posición y confirmación de entrega en sitio.
+                        <div className="flex items-center gap-2.5">
+                          <h2 className="text-xl sm:text-2xl font-black font-display text-white">
+                            🛵 Módulo de Delivery & Flota de Motos
+                          </h2>
+                          <span className="bg-amber-500/15 text-amber-400 border border-amber-500/30 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                            En Vivo
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-400 mt-1 max-w-2xl">
+                          Gestión de repartidores activos, características de la moto (marca/modelo, color, placa), ubicación GPS en tiempo real y asignación de despachos en Barquisimeto & Cabudare.
                         </p>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-gray-400">Flota Activa:</span>
-                        <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-black px-3 py-1 rounded-full">
-                          3 Motos en Servicio
-                        </span>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-gray-400">Flota Activa:</span>
+                          <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-black px-3 py-1 rounded-full">
+                            {drivers.filter(d => d.status !== 'Fuera de Servicio').length} Motos en Servicio
+                          </span>
+                        </div>
+
+                        <button
+                          onClick={() => { playSound('pop'); setShowAddDriverModal(true); }}
+                          className="bg-amber-500 hover:bg-amber-400 text-black font-black text-xs px-4 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 transform hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+                        >
+                          <span className="text-base leading-none">➕</span>
+                          <span>Agregar Agente Delivery</span>
+                        </button>
                       </div>
                     </div>
 
-                    {/* Flota de Repartidores */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {[
-                        { name: 'Carlos Gómez', vehicle: 'Moto Bera SBR Roja', phone: '0414-9988771', status: 'En Ruta (2 órdenes)' },
-                        { name: 'Manuel Rivas', vehicle: 'Moto Arsen Azul', phone: '0424-7711223', status: 'En Espera (Listo)' },
-                        { name: 'Yorman Silva', vehicle: 'Moto Bera Gris', phone: '0412-3344556', status: 'Disponible' }
-                      ].map((driver, idx) => (
-                        <div key={idx} className="bg-[#140d0a] border border-[#2e1b12] p-4 rounded-2xl space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="font-bold text-white text-sm">{driver.name}</span>
-                            <span className="text-[10px] bg-emerald-500/10 text-emerald-300 px-2 py-0.5 rounded font-bold">
-                              {driver.status}
-                            </span>
-                          </div>
-                          <div className="text-xs text-gray-400 font-mono">{driver.vehicle}</div>
-                          <div className="text-xs text-gray-300">Telf: {driver.phone}</div>
-                        </div>
-                      ))}
+                    {/* Flota de Repartidores Registrados (Tarjetas Interactivas) */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-black text-white text-sm uppercase tracking-wider text-gray-300 flex items-center gap-2">
+                          <span>🏍️ Repartidores & Vehículos Registrados ({drivers.length})</span>
+                        </h3>
+                        <span className="text-[11px] text-gray-400">Haz clic en <strong>Actualizar GPS</strong> para sincronizar coordenadas</span>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {drivers.map((driver) => {
+                          const colorBadge = getMotoColorBadge(driver.motoColor);
+                          const assignedCount = orders.filter(o => (o.status === 2 || o.status === 3) && o.assignedDriver && o.assignedDriver.includes(driver.name)).length;
+                          return (
+                            <div key={driver.id} className="bg-[#140d0a] border border-[#2e1b12] hover:border-amber-500/40 p-5 rounded-2xl space-y-3 shadow-xl transition flex flex-col justify-between">
+                              {/* Encabezado: Nombre y Estado */}
+                              <div className="space-y-1">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-2">
+                                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    <span className="font-black text-white text-base font-display">{driver.name}</span>
+                                  </div>
+                                  <button
+                                    onClick={() => handleDeleteDriver(driver.id, driver.name)}
+                                    className="text-gray-500 hover:text-red-400 text-xs p-1 transition"
+                                    title="Dar de baja de la flota"
+                                  >
+                                    ✕
+                                  </button>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[10px] font-mono text-gray-400">ID: {driver.id}</span>
+                                  {assignedCount > 0 ? (
+                                    <span className="text-[10px] bg-blue-500/20 text-blue-300 font-bold px-2 py-0.5 rounded-full">
+                                      🛵 {assignedCount} {assignedCount === 1 ? 'pedido en curso' : 'pedidos en curso'}
+                                    </span>
+                                  ) : (
+                                    <span className="text-[10px] bg-emerald-500/10 text-emerald-400 font-bold px-2 py-0.5 rounded-full">
+                                      Sin pedidos asignados
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Especificaciones de la Moto: Modelo, Color y Placa */}
+                              <div className="bg-black/50 border border-white/5 rounded-xl p-3 space-y-2">
+                                <div className="flex items-center justify-between text-xs">
+                                  <span className="text-gray-400 font-medium">Vehículo:</span>
+                                  <strong className="text-white font-mono">{driver.motoModel}</strong>
+                                </div>
+                                <div className="flex items-center justify-between text-xs">
+                                  <span className="text-gray-400 font-medium">Color de Moto:</span>
+                                  <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold border ${colorBadge.bg}`}>
+                                    <span className={`w-2 h-2 rounded-full ${colorBadge.dot}`}></span>
+                                    <span>{driver.motoColor}</span>
+                                  </span>
+                                </div>
+                                <div className="flex items-center justify-between text-xs">
+                                  <span className="text-gray-400 font-medium">Placa:</span>
+                                  <span className="bg-neutral-800 text-amber-300 font-mono font-bold text-[11px] px-2 py-0.5 rounded border border-white/10">
+                                    {driver.motoPlate || 'S/P'}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Contacto directo */}
+                              <div className="flex items-center justify-between text-xs pt-1">
+                                <span className="text-gray-300 font-mono">📞 {driver.phone}</span>
+                                <div className="flex items-center gap-1.5">
+                                  <a
+                                    href={`https://wa.me/58${driver.phone.replace(/[^0-9]/g, '').replace(/^0/, '')}?text=${encodeURIComponent(`Hola ${driver.name}, te contacto desde el panel de despacho de Pepitos La Negra.`)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-1 rounded-lg transition"
+                                    title="Escribir al WhatsApp del motorizado"
+                                  >
+                                    WhatsApp
+                                  </a>
+                                  <a
+                                    href={`tel:${driver.phone}`}
+                                    className="bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 border border-blue-500/30 text-[10px] font-bold px-2.5 py-1 rounded-lg transition"
+                                    title="Llamar al motorizado"
+                                  >
+                                    Llamar
+                                  </a>
+                                </div>
+                              </div>
+
+                              {/* Ubicación en Tiempo Real & GPS */}
+                              <div className="bg-[#190f0a] border border-amber-500/20 rounded-xl p-3 space-y-2">
+                                <div className="flex items-center justify-between text-[11px]">
+                                  <span className="text-amber-400 font-bold flex items-center gap-1">
+                                    <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                                    <span>Ubicación en Tiempo Real:</span>
+                                  </span>
+                                  <span className="text-[10px] text-gray-400 font-mono">{driver.lastUpdate || 'En Vivo'}</span>
+                                </div>
+                                <p className="text-xs text-white font-sans leading-snug">
+                                  {driver.locationName || 'Zona Barquisimeto'}
+                                </p>
+                                <div className="flex items-center gap-2 pt-1">
+                                  <a
+                                    href={`https://www.google.com/maps?q=${driver.lat || 10.0678},${driver.lng || -69.3456}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex-1 text-center bg-blue-500/15 hover:bg-blue-500/30 text-blue-300 border border-blue-500/30 text-[10px] font-bold py-1 px-2 rounded-lg transition flex items-center justify-center gap-1"
+                                  >
+                                    <span>🗺️ Ver Mapa</span>
+                                  </a>
+                                  <button
+                                    onClick={() => handleUpdateDriverGPS(driver.id)}
+                                    className="flex-1 text-center bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 text-[10px] font-bold py-1 px-2 rounded-lg transition flex items-center justify-center gap-1 cursor-pointer"
+                                    title="Actualizar ubicación GPS del conductor"
+                                  >
+                                    <span>🔄 Actualizar GPS</span>
+                                  </button>
+                                </div>
+                              </div>
+
+                              {/* Selector de Estado Operativo */}
+                              <div className="pt-2 border-t border-white/5 flex items-center justify-between gap-2">
+                                <span className="text-[11px] text-gray-400 font-bold">Estado:</span>
+                                <select
+                                  value={driver.status}
+                                  onChange={(e) => handleUpdateDriverStatus(driver.id, e.target.value)}
+                                  className={`text-xs font-bold rounded-lg px-2.5 py-1 border focus:outline-none transition ${
+                                    driver.status === 'Disponible'
+                                      ? 'bg-emerald-950/60 text-emerald-300 border-emerald-500/40'
+                                      : driver.status === 'En Ruta'
+                                      ? 'bg-blue-950/60 text-blue-300 border-blue-500/40'
+                                      : driver.status === 'En Espera'
+                                      ? 'bg-yellow-950/60 text-yellow-300 border-yellow-500/40'
+                                      : 'bg-neutral-900 text-gray-400 border-neutral-700'
+                                  }`}
+                                >
+                                  <option value="Disponible">Disponible (Listo)</option>
+                                  <option value="En Ruta">En Ruta (Despachando)</option>
+                                  <option value="En Espera">En Espera (En Base)</option>
+                                  <option value="Fuera de Servicio">Fuera de Servicio</option>
+                                </select>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
 
                     {/* Órdenes Asignadas y En Camino */}
                     <div className="bg-[#140d0a] border border-[#2e1b12] rounded-3xl p-6 shadow-2xl space-y-4">
-                      <h3 className="font-black text-white text-base">Órdenes en Despacho / Delivery</h3>
-                      <div className="space-y-3">
-                        {orders.filter(o => o.status === 3 || o.status === 2).map(order => (
-                          <div key={order.id} className="bg-black/45 border border-white/10 hover:border-amber-500/30 p-4 sm:p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition shadow-lg">
-                            <div className="space-y-2 flex-1">
-                              <div className="flex items-center gap-2">
-                                <span className="font-black text-amber-400 font-display text-base">#{order.id}</span>
-                                <span className="text-white font-bold">{order.customerName}</span>
-                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${order.status === 2 ? 'bg-yellow-500/20 text-yellow-300' : 'bg-blue-500/20 text-blue-300'}`}>
-                                  {order.status === 2 ? 'En Preparación' : 'En Moto'}
-                                </span>
-                              </div>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                          <h3 className="font-black text-white text-base flex items-center gap-2">
+                            <span>📦 Órdenes en Despacho & Entrega en Sitio</span>
+                          </h3>
+                          <p className="text-xs text-gray-400">
+                            Asigna el motorizado de la flota que llevará cada paquete y confirma la entrega.
+                          </p>
+                        </div>
+                        <span className="text-xs bg-amber-500/20 text-amber-300 border border-amber-500/30 px-3 py-1 rounded-full font-bold self-start sm:self-auto">
+                          {orders.filter(o => o.status === 3 || o.status === 2).length} Pedidos en Curso
+                        </span>
+                      </div>
 
-                              {/* Comanda en Despacho */}
-                              <div className="bg-[#180e09] border border-amber-500/30 rounded-xl p-2.5 space-y-1">
-                                <div className="text-[10px] text-amber-400 font-black uppercase tracking-wider flex items-center gap-1">
-                                  <span>📦 Paquete a Entregar ({order.items.reduce((a, b) => a + b.quantity, 0)} Items):</span>
-                                </div>
-                                <div className="space-y-1">
-                                  {order.items.map((it, itIdx) => (
-                                    <div key={itIdx} className="text-xs text-white flex items-center gap-2">
-                                      <span className="bg-amber-500 text-black font-black text-[10px] px-1.5 py-0.2 rounded font-mono">{it.quantity}x</span>
-                                      <span className="font-bold">{it.name}</span>
-                                      {it.sauces && it.sauces.length > 0 && (
-                                        <span className="text-[10px] text-gray-400 hidden sm:inline">• Salsas: {it.sauces.join(', ')}</span>
-                                      )}
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-
-                              <div className="flex flex-wrap items-center gap-3 text-xs text-gray-300">
-                                <div className="flex items-center gap-1.5">
-                                  <span>📍 {order.address}</span>
-                                  <a
-                                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(order.address)}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-[10px] bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 border border-blue-500/40 px-2 py-0.5 rounded font-bold transition flex items-center gap-1"
-                                  >
-                                    <span>🗺️ Abrir GPS</span>
-                                  </a>
-                                </div>
-                                <span>•</span>
-                                <div>Repartidor: <strong className="text-white">{order.assignedDriver}</strong></div>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => setOrders(orders.map(o => o.id === order.id ? { ...o, status: 4 } : o))}
-                                className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-4 py-2 rounded-xl shadow transition"
-                              >
-                                ✓ Confirmar Entrega en Sitio
-                              </button>
-                              <button
-                                onClick={() => { setSelectedLaboralOrderId(order.id); setLaboralTab('chat'); }}
-                                className="bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold px-3 py-2 rounded-xl transition"
-                              >
-                                💬 Chat
-                              </button>
-                            </div>
+                      <div className="space-y-4">
+                        {orders.filter(o => o.status === 3 || o.status === 2).length === 0 ? (
+                          <div className="text-center py-10 bg-black/30 rounded-2xl border border-white/5 space-y-2">
+                            <span className="text-3xl">🛵</span>
+                            <p className="text-gray-400 text-sm font-medium">No hay órdenes pendientes por despachar en este momento.</p>
                           </div>
-                        ))}
+                        ) : (
+                          orders.filter(o => o.status === 3 || o.status === 2).map(order => (
+                            <div key={order.id} className="bg-black/45 border border-white/10 hover:border-amber-500/30 p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-5 transition shadow-lg">
+                              <div className="space-y-3 flex-1">
+                                <div className="flex flex-wrap items-center gap-2.5">
+                                  <span className="font-black text-amber-400 font-display text-base">#{order.id}</span>
+                                  <span className="text-white font-bold">{order.customerName}</span>
+                                  <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
+                                    order.status === 2 ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                                  }`}>
+                                    {order.status === 2 ? '🟡 En Preparación (Cocina)' : '🛵 En Moto (En Camino)'}
+                                  </span>
+                                  <span className="text-xs text-gray-400">• Hora: {order.createdAt}</span>
+                                </div>
+
+                                {/* Comanda en Despacho */}
+                                <div className="bg-[#180e09] border border-amber-500/30 rounded-xl p-3 space-y-1.5">
+                                  <div className="text-[10px] text-amber-400 font-black uppercase tracking-wider flex items-center gap-1">
+                                    <span>📦 Comanda a Entregar ({order.items.reduce((a, b) => a + b.quantity, 0)} Items):</span>
+                                  </div>
+                                  <div className="space-y-1">
+                                    {order.items.map((it, itIdx) => (
+                                      <div key={itIdx} className="text-xs text-white flex items-center gap-2">
+                                        <span className="bg-amber-500 text-black font-black text-[10px] px-1.5 py-0.2 rounded font-mono">{it.quantity}x</span>
+                                        <span className="font-bold">{it.name}</span>
+                                        {it.sauces && it.sauces.length > 0 && (
+                                          <span className="text-[10px] text-gray-400 hidden sm:inline">• Salsas: {it.sauces.join(', ')}</span>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                {/* Dirección y Enlace GPS del Cliente */}
+                                <div className="flex flex-wrap items-center gap-3 text-xs text-gray-300">
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="font-semibold text-white">📍 Entrega: {order.address}</span>
+                                    <a
+                                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(order.address)}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-[10px] bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 border border-blue-500/40 px-2 py-0.5 rounded font-bold transition flex items-center gap-1"
+                                    >
+                                      <span>🗺️ GPS Cliente</span>
+                                    </a>
+                                  </div>
+                                </div>
+
+                                {/* Selección Dinámica de Motorizado para la comanda */}
+                                <div className="bg-black/40 border border-white/5 rounded-xl p-3 flex flex-wrap items-center gap-3">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xs font-bold text-gray-300">Motorizado Asignado:</span>
+                                    <select
+                                      value={drivers.find(d => order.assignedDriver && order.assignedDriver.includes(d.name))?.id || ''}
+                                      onChange={(e) => {
+                                        const selectedD = drivers.find(d => d.id === e.target.value);
+                                        if (selectedD) handleAssignDriverToOrder(order.id, selectedD);
+                                      }}
+                                      className="bg-[#140d0a] border border-amber-500/50 text-amber-300 text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-amber-400"
+                                    >
+                                      <option value="" disabled>Seleccionar de la flota...</option>
+                                      {drivers.map(d => (
+                                        <option key={d.id} value={d.id}>
+                                          {d.name} — {d.motoModel} ({d.motoColor}) [{d.status}]
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </div>
+
+                                  {order.driverPhone && order.driverPhone !== '-' && (
+                                    <a
+                                      href={`https://wa.me/58${order.driverPhone.replace(/[^0-9]/g, '').replace(/^0/, '')}?text=${encodeURIComponent(`Hola, te escribo de Pepitos La Negra. Se te asignó el pedido #${order.id} de ${order.customerName}. Dirección: ${order.address}. Total: $${order.total} (Bs. ${order.totalBs})`)}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-[10px] bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 border border-emerald-500/40 px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1"
+                                    >
+                                      <span>💬 Escribir al Motorizado</span>
+                                    </a>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Acciones de Estado del Pedido */}
+                              <div className="flex flex-col sm:flex-row md:flex-col items-stretch sm:items-center md:items-end gap-2 w-full md:w-auto">
+                                {order.status === 2 && (
+                                  <button
+                                    onClick={() => {
+                                      playSound('pop');
+                                      setOrders(orders.map(o => o.id === order.id ? {
+                                        ...o,
+                                        status: 3,
+                                        messages: [
+                                          ...(o.messages || []),
+                                          {
+                                            sender: 'system',
+                                            text: `🛵 ¡Pedido despachado! El motorizado va en camino hacia tu dirección.`,
+                                            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                          }
+                                        ]
+                                      } : o));
+                                    }}
+                                    className="bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl shadow-lg transition flex items-center justify-center gap-1.5 cursor-pointer"
+                                  >
+                                    <span>🛵 Despachar en Moto</span>
+                                  </button>
+                                )}
+
+                                <button
+                                  onClick={() => {
+                                    playSound('cash');
+                                    try {
+                                      confetti({ particleCount: 50, spread: 60, origin: { y: 0.3 } });
+                                    } catch(e) {}
+                                    setOrders(orders.map(o => o.id === order.id ? {
+                                      ...o,
+                                      status: 4,
+                                      messages: [
+                                        ...(o.messages || []),
+                                        {
+                                          sender: 'system',
+                                          text: `🎉 Pedido entregado con éxito por el motorizado. ¡Gracias por preferir Pepitos La Negra!`,
+                                          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                        }
+                                      ]
+                                    } : o));
+                                  }}
+                                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl shadow-lg transition flex items-center justify-center gap-1.5 cursor-pointer"
+                                >
+                                  <span>✓ Confirmar Entrega en Sitio</span>
+                                </button>
+
+                                <button
+                                  onClick={() => { setSelectedLaboralOrderId(order.id); setLaboralTab('chat'); }}
+                                  className="bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold px-3 py-2 rounded-xl transition flex items-center justify-center gap-1 cursor-pointer"
+                                >
+                                  <span>💬 Chat con Cliente</span>
+                                </button>
+                              </div>
+                            </div>
+                          ))
+                        )}
                       </div>
                     </div>
                   </div>
@@ -3288,6 +3773,229 @@
               </svg>
             </a>
           </div>
+
+          {/* =========================================================================
+               MODAL: AGREGAR AGENTE DELIVERY (MOTORIZADO & VEHÍCULO)
+               ========================================================================= */}
+          {showAddDriverModal && (
+            <div 
+              className="fixed inset-0 z-[999999] bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) {
+                  setShowAddDriverModal(false);
+                }
+              }}
+            >
+              <div 
+                className="bg-[#140d0a] border-2 border-amber-500/70 rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl relative space-y-5 animate-scaleUp max-h-[92vh] overflow-y-auto chat-scroll-area"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Botón de cierre superior */}
+                <button 
+                  onClick={() => setShowAddDriverModal(false)}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-white bg-black/40 hover:bg-black/80 rounded-full w-8 h-8 flex items-center justify-center transition cursor-pointer text-sm font-bold"
+                  aria-label="Cerrar modal"
+                >
+                  ✕
+                </button>
+
+                {/* Encabezado */}
+                <div className="flex items-center gap-3 border-b border-white/10 pb-4">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black text-2xl shadow-lg">
+                    🛵
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-black text-white font-display">
+                      Registrar Agente Delivery
+                    </h3>
+                    <p className="text-xs text-gray-400">
+                      Alta de motorizado, datos del vehículo y geolocalización en vivo.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Formulario */}
+                <form onSubmit={handleAddDriver} className="space-y-4">
+                  {/* Nombre y Apellido */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-gray-300 block">
+                      Nombre y Apellido del Repartidor <span className="text-amber-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={newDriverName}
+                      onChange={(e) => setNewDriverName(e.target.value)}
+                      placeholder="Ej: Rafael Colmenares"
+                      className="w-full bg-black/50 border border-white/15 focus:border-amber-400 text-white rounded-xl px-3.5 py-2.5 text-xs font-semibold focus:outline-none transition"
+                    />
+                  </div>
+
+                  {/* Teléfono / WhatsApp */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-gray-300 block">
+                      Teléfono Móvil (WhatsApp de contacto) <span className="text-amber-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={newDriverPhone}
+                      onChange={(e) => setNewDriverPhone(e.target.value)}
+                      placeholder="Ej: 0412-5556677"
+                      className="w-full bg-black/50 border border-white/15 focus:border-amber-400 text-white rounded-xl px-3.5 py-2.5 text-xs font-mono font-semibold focus:outline-none transition"
+                    />
+                  </div>
+
+                  {/* Fila: Modelo de Moto y Color */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-gray-300 block">
+                        Modelo de Moto <span className="text-amber-400">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={newDriverMoto}
+                        onChange={(e) => setNewDriverMoto(e.target.value)}
+                        placeholder="Ej: Bera SBR 150"
+                        list="motos-list"
+                        className="w-full bg-black/50 border border-white/15 focus:border-amber-400 text-white rounded-xl px-3.5 py-2.5 text-xs font-semibold focus:outline-none transition"
+                      />
+                      <datalist id="motos-list">
+                        <option value="Bera SBR 150" />
+                        <option value="Empire Arsen II" />
+                        <option value="Bera New Jaguar" />
+                        <option value="Empire Horse 150" />
+                        <option value="Skygo SG-150" />
+                        <option value="Keeway RK200" />
+                        <option value="Bera Kavak 150" />
+                        <option value="Mishozuki 150" />
+                      </datalist>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-gray-300 block">
+                        Color de la Moto <span className="text-amber-400">*</span>
+                      </label>
+                      <select
+                        value={newDriverColor}
+                        onChange={(e) => setNewDriverColor(e.target.value)}
+                        className="w-full bg-black/50 border border-white/15 focus:border-amber-400 text-white rounded-xl px-3.5 py-2.5 text-xs font-semibold focus:outline-none transition"
+                      >
+                        <option value="Roja">Roja 🔴</option>
+                        <option value="Negra">Negra ⚫</option>
+                        <option value="Azul">Azul 🔵</option>
+                        <option value="Blanca">Blanca ⚪</option>
+                        <option value="Gris Plomo">Gris Plomo 🔘</option>
+                        <option value="Amarilla">Amarilla 🟡</option>
+                        <option value="Verde">Verde 🟢</option>
+                        <option value="Naranja">Naranja 🟠</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Fila: Placa y Estado Inicial */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-gray-300 block">
+                        Placa / Identificador
+                      </label>
+                      <input
+                        type="text"
+                        value={newDriverPlate}
+                        onChange={(e) => setNewDriverPlate(e.target.value.toUpperCase())}
+                        placeholder="Ej: AC4B82X"
+                        className="w-full bg-black/50 border border-white/15 focus:border-amber-400 text-amber-300 rounded-xl px-3.5 py-2.5 text-xs font-mono font-bold uppercase focus:outline-none transition"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-gray-300 block">
+                        Estado Inicial
+                      </label>
+                      <select
+                        value={newDriverStatus}
+                        onChange={(e) => setNewDriverStatus(e.target.value)}
+                        className="w-full bg-black/50 border border-white/15 focus:border-amber-400 text-white rounded-xl px-3.5 py-2.5 text-xs font-semibold focus:outline-none transition"
+                      >
+                        <option value="Disponible">Disponible (Listo para despachos)</option>
+                        <option value="En Espera">En Espera (En Base Principal)</option>
+                        <option value="En Ruta">En Ruta</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Ubicación en Tiempo Real / GPS */}
+                  <div className="bg-black/60 border border-amber-500/30 rounded-2xl p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                        <span>Ubicación GPS en Tiempo Real</span>
+                      </span>
+                      {driverGpsSuccess && (
+                        <span className="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded font-bold animate-fadeIn">
+                          ✓ Coordenadas Capturadas
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] text-gray-400 block">
+                        Zona o Punto de Referencia Actual:
+                      </label>
+                      <input
+                        type="text"
+                        value={newDriverLocation}
+                        onChange={(e) => setNewDriverLocation(e.target.value)}
+                        placeholder="Ej: Av. Lara con Los Leones, o Sede Pepitos"
+                        className="w-full bg-black/70 border border-white/15 focus:border-amber-400 text-white rounded-xl px-3.5 py-2 text-xs focus:outline-none transition"
+                      />
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleGetDriverModalGps}
+                      disabled={driverGpsLoading}
+                      className="w-full bg-blue-600/20 hover:bg-blue-600/35 border border-blue-500/40 text-blue-300 text-xs font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      {driverGpsLoading ? (
+                        <>
+                          <svg className="animate-spin h-4 w-4 text-blue-300" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                          </svg>
+                          <span>Detectando Satélite GPS del Dispositivo...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>📍</span>
+                          <span>Capturar Coordenadas GPS de mi Celular Ahora</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Botones de Acción */}
+                  <div className="flex items-center gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowAddDriverModal(false)}
+                      className="flex-1 bg-black/40 hover:bg-black/60 text-gray-400 hover:text-white border border-white/10 text-xs font-bold py-3 rounded-xl transition cursor-pointer"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="submit"
+                      className="flex-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-black text-xs py-3 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+                    >
+                      <span>🛵</span>
+                      <span>Guardar y Activar Motorizado</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
 
           {/* =========================================================================
                VENTANA EMERGENTE: PAGO CONFIRMADO CON ÉXITO (COMPROBANTE DIGITAL)
