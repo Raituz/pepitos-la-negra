@@ -2547,7 +2547,8 @@
       // Solo hace scroll interno dentro de la caja de mensajes cuando se añade un mensaje nuevo.
       // NO utiliza scrollIntoView(), garantizando que la ventana del navegador permanezca arriba y estable.
       useEffect(() => {
-        const msgCount = currentSelectedOrder?.messages?.length || 0;
+        const currentLaboralOrder = orders.find(o => o.id === selectedLaboralOrderId) || orders[0];
+        const msgCount = currentLaboralOrder?.messages?.length || 0;
         if (msgCount > prevLaboralMsgCount.current && laboralChatContainerRef.current) {
           setTimeout(() => {
             if (laboralChatContainerRef.current) {
@@ -2556,7 +2557,7 @@
           }, 30);
         }
         prevLaboralMsgCount.current = msgCount;
-      }, [currentSelectedOrder?.messages?.length]);
+      }, [selectedLaboralOrderId, orders]);
 
       // Enviar mensaje desde la perspectiva del Cliente (Modal de Mis Pedidos)
       const sendClientChatMessage = (textToSend) => {
