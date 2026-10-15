@@ -4098,48 +4098,62 @@
                 </div>
 
                 {/* 2. Pestañas de Navegación de Área Laboral */}
-                <div className="bg-[#100a07]/95 border-b border-amber-500/20 px-4 sm:px-8 py-2.5 flex items-center gap-3 overflow-x-auto no-scrollbar sticky top-[68px] z-30 shadow-lg backdrop-blur-md">
-                  <button
-                    onClick={() => setLaboralTab('chat')}
-                    className={`px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-2 ${
-                      laboralTab === 'chat'
-                        ? 'bg-amber-500 text-black shadow-lg'
-                        : 'bg-black/40 text-gray-300 hover:text-white border border-white/5'
-                    }`}
-                  >
-                    <span>💬 Centro de Mensajería (Multi Chat)</span>
-                    <span className="bg-black/20 text-current text-[10px] px-1.5 py-0.5 rounded-full font-mono">
-                      {orders.length}
-                    </span>
-                  </button>
+                <div className="bg-[#120a07]/95 border-b border-amber-500/20 px-2 sm:px-6 py-2 sticky top-[68px] z-30 shadow-lg backdrop-blur-md">
+                  <div className="max-w-4xl mx-auto flex items-center gap-1.5 sm:gap-3 bg-black/50 p-1 sm:p-1.5 rounded-2xl border border-white/5">
+                    <button
+                      onClick={() => setLaboralTab('chat')}
+                      className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-black transition whitespace-nowrap cursor-pointer ${
+                        laboralTab === 'chat'
+                          ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20'
+                          : 'text-gray-300 hover:text-white hover:bg-white/5'
+                      }`}
+                    >
+                      <span className="text-sm">💬</span>
+                      <span className="sm:hidden">Chat</span>
+                      <span className="hidden sm:inline">Centro de Mensajería</span>
+                      <span className={`text-[10px] sm:text-xs px-1.5 py-0.2 rounded-full font-mono font-bold ${
+                        laboralTab === 'chat' ? 'bg-black/20 text-black' : 'bg-white/10 text-amber-300'
+                      }`}>
+                        {orders.length}
+                      </span>
+                    </button>
 
-                  <button
-                    onClick={() => setLaboralTab('orders')}
-                    className={`px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-2 ${
-                      laboralTab === 'orders'
-                        ? 'bg-amber-500 text-black shadow-lg'
-                        : 'bg-black/40 text-gray-300 hover:text-white border border-white/5'
-                    }`}
-                  >
-                    <span>📋 Control de Pedidos & Cocina</span>
-                    <span className="bg-black/20 text-current text-[10px] px-1.5 py-0.5 rounded-full font-mono">
-                      {activeKitchenOrders.length}
-                    </span>
-                  </button>
+                    <button
+                      onClick={() => setLaboralTab('orders')}
+                      className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-black transition whitespace-nowrap cursor-pointer ${
+                        laboralTab === 'orders'
+                          ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20'
+                          : 'text-gray-300 hover:text-white hover:bg-white/5'
+                      }`}
+                    >
+                      <span className="text-sm">📋</span>
+                      <span className="sm:hidden">Cocina</span>
+                      <span className="hidden sm:inline">Control de Pedidos & Cocina</span>
+                      <span className={`text-[10px] sm:text-xs px-1.5 py-0.2 rounded-full font-mono font-bold ${
+                        laboralTab === 'orders' ? 'bg-black/20 text-black' : 'bg-white/10 text-amber-300'
+                      }`}>
+                        {activeKitchenOrders.length}
+                      </span>
+                    </button>
 
-                  <button
-                    onClick={() => setLaboralTab('delivery')}
-                    className={`px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-2 ${
-                      laboralTab === 'delivery'
-                        ? 'bg-amber-500 text-black shadow-lg'
-                        : 'bg-black/40 text-gray-300 hover:text-white border border-white/5'
-                    }`}
-                  >
-                    <span>🛵 Despacho & Delivery</span>
-                    <span className="bg-black/20 text-current text-[10px] px-1.5 py-0.5 rounded-full font-mono">
-                      {orders.filter(o => o.status === 3).length}
-                    </span>
-                  </button>
+                    <button
+                      onClick={() => setLaboralTab('delivery')}
+                      className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-black transition whitespace-nowrap cursor-pointer ${
+                        laboralTab === 'delivery'
+                          ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20'
+                          : 'text-gray-300 hover:text-white hover:bg-white/5'
+                      }`}
+                    >
+                      <span className="text-sm">🛵</span>
+                      <span className="sm:hidden">Delivery</span>
+                      <span className="hidden sm:inline">Despacho & Delivery</span>
+                      <span className={`text-[10px] sm:text-xs px-1.5 py-0.2 rounded-full font-mono font-bold ${
+                        laboralTab === 'delivery' ? 'bg-black/20 text-black' : 'bg-white/10 text-amber-300'
+                      }`}>
+                        {orders.filter(o => o.status === 2 || o.status === 3).length}
+                      </span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* =====================================================================
@@ -5095,40 +5109,84 @@
                           </div>
                         ) : (
                           orders.filter(o => o.status === 3 || o.status === 2).map(order => (
-                            <div key={order.id} className="bg-black/45 border border-white/10 hover:border-amber-500/30 p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-5 transition shadow-lg">
-                              <div className="space-y-3 flex-1">
-                                <div className="flex flex-wrap items-center gap-2.5">
-                                  <span className="font-black text-amber-400 font-display text-base">#{order.id}</span>
-                                  <span className="text-white font-bold">{order.customerName}</span>
-                                  <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
-                                    order.status === 2 ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
-                                  }`}>
-                                    {order.status === 2 ? '🟡 En Preparación (Cocina)' : '🛵 En Moto (En Camino)'}
-                                  </span>
-                                  <span className="text-xs text-gray-400">• Hora: {order.createdAt}</span>
+                            <div key={order.id} className="bg-[#120a07] border border-amber-500/20 hover:border-amber-500/40 p-4 sm:p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition shadow-xl">
+                              <div className="space-y-3 flex-1 w-full">
+                                {/* Encabezado del Ticket de Despacho */}
+                                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 pb-2.5">
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-black text-amber-400 font-display text-base sm:text-lg">#{order.id}</span>
+                                    <span className="text-white font-bold text-sm sm:text-base">{order.customerName}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <span className={`text-[10px] sm:text-xs font-black px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1 ${
+                                      order.status === 2 
+                                        ? 'bg-yellow-500/15 text-yellow-300 border border-yellow-500/30' 
+                                        : 'bg-blue-500/15 text-blue-300 border border-blue-500/30'
+                                    }`}>
+                                      <span>{order.status === 2 ? '🟡 En Cocina' : '🛵 En Camino'}</span>
+                                    </span>
+                                  </div>
                                 </div>
 
-                                {/* Comanda en Despacho */}
-                                <div className="bg-[#180e09] border border-amber-500/30 rounded-xl p-3 space-y-1.5">
-                                  <div className="text-[10px] text-amber-400 font-black uppercase tracking-wider flex items-center gap-1">
-                                    <span>📦 Comanda a Entregar ({order.items.reduce((a, b) => a + b.quantity, 0)} Items):</span>
+                                <div className="flex items-center justify-between text-xs text-gray-400">
+                                  <span>🕒 Hora: <strong className="text-gray-200">{order.createdAt}</strong></span>
+                                  <span>Total: <strong className="text-amber-400 font-mono font-bold">${order.total.toFixed(2)}</strong> (Bs. {order.totalBs})</span>
+                                </div>
+
+                                {/* Resumen Visual de la Comanda */}
+                                <div className="bg-black/40 border border-white/5 rounded-xl p-3 space-y-2">
+                                  <div className="text-[11px] text-amber-400 font-black uppercase tracking-wider flex items-center justify-between">
+                                    <span>📦 Comanda ({order.items.reduce((a, b) => a + b.quantity, 0)} Items)</span>
                                   </div>
-                                  <div className="space-y-1">
+                                  <div className="space-y-2">
                                     {order.items.map((it, itIdx) => (
-                                      <div key={itIdx} className="text-xs text-white flex flex-wrap items-center gap-1.5">
-                                        <span className="bg-amber-500 text-black font-black text-[10px] px-1.5 py-0.2 rounded font-mono">{it.quantity}x</span>
-                                        <span className="font-bold">{it.name}</span>
+                                      <div key={itIdx} className="bg-[#180e09] border border-amber-500/15 rounded-lg p-2.5 space-y-1.5 text-xs">
+                                        <div className="flex items-center gap-2">
+                                          <span className="bg-amber-500 text-black font-black text-[10px] px-1.5 py-0.5 rounded font-mono shadow">{it.quantity}x</span>
+                                          <span className="font-bold text-white text-xs sm:text-sm">{it.name}</span>
+                                        </div>
+
+                                        {/* Salsas en chips limpios */}
                                         {it.sauces && it.sauces.length > 0 && (
-                                          <span className="text-[10px] text-gray-400">• Salsas: {it.sauces.join(', ')}</span>
+                                          <div className="flex flex-wrap items-center gap-1 text-[10px] pt-0.5">
+                                            <span className="text-gray-400 font-semibold">Salsas:</span>
+                                            {it.sauces.map((s, sIdx) => (
+                                              <span key={sIdx} className="bg-amber-500/15 text-amber-300 border border-amber-500/25 px-1.5 py-0.5 rounded font-medium">
+                                                {s.replace('Salsa de ', '').replace('Salsa ', '')}
+                                              </span>
+                                            ))}
+                                          </div>
                                         )}
+
+                                        {/* Omitidos */}
                                         {it.excludedIngredients && it.excludedIngredients.length > 0 && (
-                                          <span className="text-[10px] text-red-400 font-bold">• ❌ Sin: {it.excludedIngredients.join(', ')}</span>
+                                          <div className="flex flex-wrap items-center gap-1 text-[10px]">
+                                            <span className="text-red-400 font-semibold">Sin:</span>
+                                            {it.excludedIngredients.map((ing, ingIdx) => (
+                                              <span key={ingIdx} className="bg-red-500/15 text-red-300 border border-red-500/30 px-1.5 py-0.5 rounded font-semibold">
+                                                ✕ {ing}
+                                              </span>
+                                            ))}
+                                          </div>
                                         )}
+
+                                        {/* Extras */}
                                         {it.extras && it.extras.length > 0 && (
-                                          <span className="text-[10px] text-emerald-400 font-bold">• +Extras: {it.extras.map(e => typeof e === 'string' ? e : e.name).join(', ')}</span>
+                                          <div className="flex flex-wrap items-center gap-1 text-[10px]">
+                                            <span className="text-emerald-400 font-semibold">+Extras:</span>
+                                            {it.extras.map((e, eIdx) => (
+                                              <span key={eIdx} className="bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.5 rounded font-semibold">
+                                                + {typeof e === 'string' ? e : e.name}
+                                              </span>
+                                            ))}
+                                          </div>
                                         )}
+
+                                        {/* Nota especial */}
                                         {it.notes && (
-                                          <span className="text-[10px] text-amber-300 italic">• 📝 "{it.notes}"</span>
+                                          <div className="text-[11px] text-amber-200/90 italic bg-amber-950/25 px-2 py-1 rounded border border-amber-500/20">
+                                            📝 Nota: "{it.notes}"
+                                          </div>
                                         )}
                                       </div>
                                     ))}
@@ -5136,56 +5194,60 @@
                                 </div>
 
                                 {/* Dirección y Enlace GPS del Cliente */}
-                                <div className="flex flex-wrap items-center gap-3 text-xs text-gray-300">
-                                  <div className="flex items-center gap-1.5">
-                                    <span className="font-semibold text-white">📍 Entrega: {order.address}</span>
-                                    <a
-                                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(order.address)}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-[10px] bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 border border-blue-500/40 px-2 py-0.5 rounded font-bold transition flex items-center gap-1"
-                                    >
-                                      <span>🗺️ GPS Cliente</span>
-                                    </a>
+                                <div className="flex items-center justify-between gap-2 text-xs bg-black/30 p-2.5 rounded-xl border border-white/5">
+                                  <div className="flex items-center gap-1.5 min-w-0 pr-2">
+                                    <span className="text-sm flex-shrink-0">📍</span>
+                                    <span className="font-semibold text-gray-200 truncate">{order.address}</span>
                                   </div>
+                                  <a
+                                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(order.address)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-[11px] bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 border border-blue-500/40 px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1 flex-shrink-0"
+                                  >
+                                    <span>🗺️ GPS Cliente</span>
+                                  </a>
                                 </div>
 
-                                {/* Selección Dinámica de Motorizado para la comanda */}
-                                <div className="bg-black/40 border border-white/5 rounded-xl p-3 flex flex-wrap items-center gap-3">
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-xs font-bold text-gray-300">Motorizado Asignado:</span>
-                                    <select
-                                      value={drivers.find(d => order.assignedDriver && order.assignedDriver.includes(d.name))?.id || ''}
-                                      onChange={(e) => {
-                                        const selectedD = drivers.find(d => d.id === e.target.value);
-                                        if (selectedD) handleAssignDriverToOrder(order.id, selectedD);
-                                      }}
-                                      className="bg-[#140d0a] border border-amber-500/50 text-amber-300 text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-amber-400"
-                                    >
-                                      <option value="" disabled>Seleccionar de la flota...</option>
-                                      {drivers.map(d => (
-                                        <option key={d.id} value={d.id}>
-                                          {d.name} — {d.motoModel} ({d.motoColor}) [{d.status}]
-                                        </option>
-                                      ))}
-                                    </select>
+                                {/* Selección de Motorizado */}
+                                <div className="bg-black/35 border border-white/5 rounded-xl p-3 space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs font-bold text-gray-300 flex items-center gap-1.5">
+                                      <span>🛵</span>
+                                      <span>Motorizado Asignado:</span>
+                                    </span>
+                                    {order.driverPhone && order.driverPhone !== '-' && (
+                                      <a
+                                        href={`https://wa.me/58${order.driverPhone.replace(/[^0-9]/g, '').replace(/^0/, '')}?text=${encodeURIComponent(`Hola, te escribo de Pepitos La Negra. Se te asignó el pedido #${order.id} de ${order.customerName}. Dirección: ${order.address}. Total: $${order.total} (Bs. ${order.totalBs})`)}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-[10px] bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 border border-emerald-500/40 px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1"
+                                      >
+                                        <span>💬 WhatsApp</span>
+                                      </a>
+                                    )}
                                   </div>
 
-                                  {order.driverPhone && order.driverPhone !== '-' && (
-                                    <a
-                                      href={`https://wa.me/58${order.driverPhone.replace(/[^0-9]/g, '').replace(/^0/, '')}?text=${encodeURIComponent(`Hola, te escribo de Pepitos La Negra. Se te asignó el pedido #${order.id} de ${order.customerName}. Dirección: ${order.address}. Total: $${order.total} (Bs. ${order.totalBs})`)}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-[10px] bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 border border-emerald-500/40 px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1"
-                                    >
-                                      <span>💬 Escribir al Motorizado</span>
-                                    </a>
-                                  )}
+                                  <select
+                                    value={drivers.find(d => order.assignedDriver && order.assignedDriver.includes(d.name))?.id || ''}
+                                    onChange={(e) => {
+                                      const selectedD = drivers.find(d => d.id === e.target.value);
+                                      if (selectedD) handleAssignDriverToOrder(order.id, selectedD);
+                                    }}
+                                    className="w-full bg-[#140d0a] border border-amber-500/50 text-amber-300 text-xs font-bold rounded-xl px-3 py-2.5 focus:outline-none focus:border-amber-400"
+                                  >
+                                    <option value="" disabled>Seleccionar de la flota...</option>
+                                    {drivers.map(d => (
+                                      <option key={d.id} value={d.id}>
+                                        {d.name} — {d.motoModel} ({d.motoColor}) [{d.status}]
+                                      </option>
+                                    ))}
+                                  </select>
                                 </div>
                               </div>
 
-                              {/* Acciones de Estado del Pedido */}
-                              <div className="flex flex-col sm:flex-row md:flex-col items-stretch sm:items-center md:items-end gap-2 w-full md:w-auto">
+                              {/* Acciones de Estado del Pedido (Limpias y no saturadas) */}
+                              <div className="flex flex-col gap-2 w-full md:w-56 flex-shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-white/5">
                                 {order.status === 2 && (
                                   <button
                                     onClick={() => {
@@ -5203,42 +5265,73 @@
                                         ]
                                       } : o));
                                     }}
-                                    className="bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl shadow-lg transition flex items-center justify-center gap-1.5 cursor-pointer"
+                                    className="w-full bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-extrabold text-xs py-3 px-4 rounded-xl shadow-lg shadow-blue-900/30 transition flex items-center justify-center gap-1.5 cursor-pointer"
                                   >
                                     <span>🛵 Despachar en Moto</span>
                                   </button>
                                 )}
 
-                                <button
-                                  onClick={() => {
-                                    playSound('cash');
-                                    try {
-                                      confetti({ particleCount: 50, spread: 60, origin: { y: 0.3 } });
-                                    } catch(e) {}
-                                    setOrders(orders.map(o => o.id === order.id ? {
-                                      ...o,
-                                      status: 4,
-                                      messages: [
-                                        ...(o.messages || []),
-                                        {
-                                          sender: 'system',
-                                          text: `🎉 Pedido entregado con éxito por el motorizado. ¡Gracias por preferir Pepitos La Negra!`,
-                                          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                                        }
-                                      ]
-                                    } : o));
-                                  }}
-                                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl shadow-lg transition flex items-center justify-center gap-1.5 cursor-pointer"
-                                >
-                                  <span>✓ Confirmar Entrega en Sitio</span>
-                                </button>
+                                {order.status === 3 && (
+                                  <button
+                                    onClick={() => {
+                                      playSound('cash');
+                                      try {
+                                        confetti({ particleCount: 50, spread: 60, origin: { y: 0.3 } });
+                                      } catch(e) {}
+                                      setOrders(orders.map(o => o.id === order.id ? {
+                                        ...o,
+                                        status: 4,
+                                        messages: [
+                                          ...(o.messages || []),
+                                          {
+                                            sender: 'system',
+                                            text: `🎉 Pedido entregado con éxito por el motorizado. ¡Gracias por preferir Pepitos La Negra!`,
+                                            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                          }
+                                        ]
+                                      } : o));
+                                    }}
+                                    className="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-extrabold text-xs py-3 px-4 rounded-xl shadow-lg shadow-emerald-900/30 transition flex items-center justify-center gap-1.5 cursor-pointer"
+                                  >
+                                    <span>✓ Confirmar Entrega en Sitio</span>
+                                  </button>
+                                )}
 
-                                <button
-                                  onClick={() => { setSelectedLaboralOrderId(order.id); setLaboralTab('chat'); }}
-                                  className="bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold px-3 py-2 rounded-xl transition flex items-center justify-center gap-1 cursor-pointer"
-                                >
-                                  <span>💬 Chat con Cliente</span>
-                                </button>
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={() => { setSelectedLaboralOrderId(order.id); setLaboralTab('chat'); }}
+                                    className="flex-1 bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1 cursor-pointer active:scale-95"
+                                  >
+                                    <span>💬 Chat Cliente</span>
+                                  </button>
+
+                                  {order.status === 2 && (
+                                    <button
+                                      onClick={() => {
+                                        playSound('cash');
+                                        try {
+                                          confetti({ particleCount: 50, spread: 60, origin: { y: 0.3 } });
+                                        } catch(e) {}
+                                        setOrders(orders.map(o => o.id === order.id ? {
+                                          ...o,
+                                          status: 4,
+                                          messages: [
+                                            ...(o.messages || []),
+                                            {
+                                              sender: 'system',
+                                              text: `🎉 Pedido entregado en sitio. ¡Gracias por preferir Pepitos La Negra!`,
+                                              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                            }
+                                          ]
+                                        } : o));
+                                      }}
+                                      className="bg-white/5 hover:bg-emerald-500/20 text-gray-400 hover:text-emerald-300 border border-white/10 hover:border-emerald-500/30 text-[11px] font-bold py-2 px-2.5 rounded-xl transition flex items-center justify-center gap-1 cursor-pointer"
+                                      title="Entregar directamente en el local sin motorizado"
+                                    >
+                                      <span>✓ Entrega Directa</span>
+                                    </button>
+                                  )}
+                                </div>
                               </div>
                             </div>
                           ))
