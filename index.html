@@ -1665,6 +1665,17 @@
 
       // Notas especiales para la cocina
       const [notes, setNotes] = useState('');
+      const customizeBodyRef = useRef(null);
+
+      useEffect(() => {
+        document.body.style.overflow = 'hidden';
+        if (customizeBodyRef.current) {
+          customizeBodyRef.current.scrollTop = 0;
+        }
+        return () => {
+          document.body.style.overflow = '';
+        };
+      }, []);
 
       const setAllSauces = (val) => {
         playSound('pop');
@@ -1786,7 +1797,7 @@
             </div>
 
             {/* Contenido Scrollable */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 custom-scrollbar">
+            <div ref={customizeBodyRef} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 custom-scrollbar">
 
               {/* 1. SALSAS Y ADEREZOS (CHECKS SÍ / NO) */}
               {product.sauceOptions && product.sauceOptions.length > 0 && (
@@ -2499,8 +2510,10 @@
         setEditAddressInput('');
       };
       
-      const chatEndRef = useRef(null);
-      const laboralChatEndRef = useRef(null);
+      const customerChatContainerRef = useRef(null);
+      const laboralChatContainerRef = useRef(null);
+      const laboralTicketContainerRef = useRef(null);
+      const prevLaboralMsgCount = useRef(0);
 
       // Sincronizar localStorage
       useEffect(() => {
@@ -2512,8 +2525,10 @@
       useEffect(() => {
         if (chatOpen) {
           setTimeout(() => {
-            chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-          }, 80);
+            if (customerChatContainerRef.current) {
+              customerChatContainerRef.current.scrollTop = customerChatContainerRef.current.scrollHeight;
+            }
+          }, 50);
           const handleKeyDown = (e) => {
             if (e.key === 'Escape') setChatOpen(false);
           };
@@ -2526,16 +2541,22 @@
         } else {
           document.body.style.overflow = '';
         }
-      }, [chatOpen, activeChatOrder?.messages]);
+      }, [chatOpen, activeChatOrder?.messages?.length]);
 
-      // Auto-scroll en Área Laboral Multi Chat
+      // Auto-scroll INTERNO para mensajes en Área Laboral (Multi Chat)
+      // Solo hace scroll interno dentro de la caja de mensajes cuando se añade un mensaje nuevo.
+      // NO utiliza scrollIntoView(), garantizando que la ventana del navegador permanezca arriba y estable.
       useEffect(() => {
-        if (currentView === 'laboral' && laboralTab === 'chat') {
+        const msgCount = currentSelectedOrder?.messages?.length || 0;
+        if (msgCount > prevLaboralMsgCount.current && laboralChatContainerRef.current) {
           setTimeout(() => {
-            laboralChatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-          }, 60);
+            if (laboralChatContainerRef.current) {
+              laboralChatContainerRef.current.scrollTop = laboralChatContainerRef.current.scrollHeight;
+            }
+          }, 30);
         }
-      }, [currentView, laboralTab, selectedLaboralOrderId, orders]);
+        prevLaboralMsgCount.current = msgCount;
+      }, [currentSelectedOrder?.messages?.length]);
 
       // Enviar mensaje desde la perspectiva del Cliente (Modal de Mis Pedidos)
       const sendClientChatMessage = (textToSend) => {
@@ -4101,7 +4122,7 @@
                 <div className="bg-[#120a07]/95 border-b border-amber-500/20 px-2 sm:px-6 py-2 sticky top-[68px] z-30 shadow-lg backdrop-blur-md">
                   <div className="max-w-4xl mx-auto flex items-center gap-1.5 sm:gap-3 bg-black/50 p-1 sm:p-1.5 rounded-2xl border border-white/5">
                     <button
-                      onClick={() => setLaboralTab('chat')}
+                      onClick={() => { setLaboralTab('chat'); window.scrollTo({ top: 0, behavior: 'instant' }); }}
                       className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-black transition whitespace-nowrap cursor-pointer ${
                         laboralTab === 'chat'
                           ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20'
@@ -4119,7 +4140,7 @@
                     </button>
 
                     <button
-                      onClick={() => setLaboralTab('orders')}
+                      onClick={() => { setLaboralTab('orders'); window.scrollTo({ top: 0, behavior: 'instant' }); }}
                       className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-black transition whitespace-nowrap cursor-pointer ${
                         laboralTab === 'orders'
                           ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20'
@@ -4137,7 +4158,7 @@
                     </button>
 
                     <button
-                      onClick={() => setLaboralTab('delivery')}
+                      onClick={() => { setLaboralTab('delivery'); window.scrollTo({ top: 0, behavior: 'instant' }); }}
                       className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-black transition whitespace-nowrap cursor-pointer ${
                         laboralTab === 'delivery'
                           ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20'
@@ -4175,7 +4196,10 @@
                     {/* Selector de Vistas para Móvil y Tablet (<1024px) */}
                     <div className="lg:hidden flex items-center bg-[#150d09] border border-amber-500/30 rounded-2xl p-1 mb-3.5 shadow-md">
                       <button
-                        onClick={() => setMobileLaboralChatTab('list')}
+                        onClick={() => {
+                          setMobileLaboralChatTab('list');
+                          window.scrollTo({ top: 0, behavior: 'instant' });
+                        }}
                         className={`flex-1 py-2 px-2 text-xs font-black rounded-xl transition flex items-center justify-center gap-1.5 ${
                           mobileLaboralChatTab === 'list' 
                             ? 'bg-amber-500 text-black shadow-lg' 
@@ -4189,7 +4213,10 @@
                       </button>
 
                       <button
-                        onClick={() => setMobileLaboralChatTab('chat')}
+                        onClick={() => {
+                          setMobileLaboralChatTab('chat');
+                          window.scrollTo({ top: 0, behavior: 'instant' });
+                        }}
                         className={`flex-1 py-2 px-2 text-xs font-black rounded-xl transition flex items-center justify-center gap-1.5 ${
                           mobileLaboralChatTab === 'chat' 
                             ? 'bg-amber-500 text-black shadow-lg' 
@@ -4200,7 +4227,13 @@
                       </button>
 
                       <button
-                        onClick={() => setMobileLaboralChatTab('ticket')}
+                        onClick={() => {
+                          setMobileLaboralChatTab('ticket');
+                          window.scrollTo({ top: 0, behavior: 'instant' });
+                          if (laboralTicketContainerRef.current) {
+                            laboralTicketContainerRef.current.scrollTop = 0;
+                          }
+                        }}
                         className={`flex-1 py-2 px-2 text-xs font-black rounded-xl transition flex items-center justify-center gap-1.5 ${
                           mobileLaboralChatTab === 'ticket' 
                             ? 'bg-amber-500 text-black shadow-lg' 
@@ -4270,6 +4303,10 @@
                                 onClick={() => {
                                   setSelectedLaboralOrderId(order.id);
                                   setMobileLaboralChatTab('chat');
+                                  window.scrollTo({ top: 0, behavior: 'instant' });
+                                  if (laboralChatContainerRef.current) {
+                                    laboralChatContainerRef.current.scrollTop = 0;
+                                  }
                                 }}
                                 className={`p-3 rounded-xl border transition cursor-pointer text-left ${
                                   isSelected
@@ -4324,7 +4361,10 @@
                         <div className="bg-[#180f0a] border-b border-amber-500/20 p-3 sm:px-5 flex items-center justify-between gap-3 flex-shrink-0">
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() => setMobileLaboralChatTab('list')}
+                              onClick={() => {
+                                setMobileLaboralChatTab('list');
+                                window.scrollTo({ top: 0, behavior: 'instant' });
+                              }}
                               className="lg:hidden p-1.5 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-gray-200 text-xs font-bold transition flex items-center gap-1 flex-shrink-0 border border-white/10"
                               title="Volver a lista de chats"
                             >
@@ -4348,7 +4388,13 @@
                           {/* Botón de Acción Rápida de la Orden y botón Comanda en móvil */}
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() => setMobileLaboralChatTab('ticket')}
+                              onClick={() => {
+                                setMobileLaboralChatTab('ticket');
+                                window.scrollTo({ top: 0, behavior: 'instant' });
+                                if (laboralTicketContainerRef.current) {
+                                  laboralTicketContainerRef.current.scrollTop = 0;
+                                }
+                              }}
                               className="lg:hidden p-1.5 px-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold transition"
                               title="Ver comanda del pedido"
                             >
@@ -4390,7 +4436,7 @@
                         </div>
 
                         {/* Área de Mensajes del Multi Chat */}
-                        <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3 bg-[#0d0705] chat-scroll-area">
+                        <div ref={laboralChatContainerRef} className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3 bg-[#0d0705] chat-scroll-area">
                           {currentSelectedOrder.messages && currentSelectedOrder.messages.map((m, i) => {
                             const isMe = m.sender === 'admin';
                             return (
@@ -4416,7 +4462,6 @@
                               </div>
                             );
                           })}
-                          <div ref={laboralChatEndRef} />
                         </div>
 
                         {/* Respuestas Rápidas del Gerente */}
@@ -4473,13 +4518,19 @@
                       {/* ==============================================================
                            COLUMNA 3: DETALLES DE LA ORDEN (Lado Derecho - Exacto a la Imagen)
                            ============================================================== */}
-                      <div className={`lg:col-span-3 bg-[#120b08] border border-amber-500/25 rounded-2xl p-4 flex flex-col space-y-4 h-[78vh] overflow-y-auto chat-scroll-area shadow-xl text-xs ${
-                        mobileLaboralChatTab === 'ticket' ? 'flex' : 'hidden lg:flex'
-                      }`}>
+                      <div 
+                        ref={laboralTicketContainerRef}
+                        className={`lg:col-span-3 bg-[#120b08] border border-amber-500/25 rounded-2xl p-4 flex flex-col space-y-4 h-[78vh] overflow-y-auto chat-scroll-area shadow-xl text-xs ${
+                          mobileLaboralChatTab === 'ticket' ? 'flex' : 'hidden lg:flex'
+                        }`}
+                      >
                         
                         {/* Botón Volver a Conversación (Móvil) */}
                         <button
-                          onClick={() => setMobileLaboralChatTab('chat')}
+                          onClick={() => {
+                            setMobileLaboralChatTab('chat');
+                            window.scrollTo({ top: 0, behavior: 'instant' });
+                          }}
                           className="lg:hidden mb-1 text-xs bg-white/10 hover:bg-white/20 text-white font-bold px-3 py-1.5 rounded-xl self-start flex items-center gap-1.5 border border-white/10 transition"
                         >
                           <span>← Volver al Chat</span>
@@ -4809,7 +4860,12 @@
                               </div>
 
                               <button
-                                onClick={() => { setSelectedLaboralOrderId(order.id); setLaboralTab('chat'); }}
+                                onClick={() => {
+                                  setSelectedLaboralOrderId(order.id);
+                                  setLaboralTab('chat');
+                                  setMobileLaboralChatTab('chat');
+                                  window.scrollTo({ top: 0, behavior: 'instant' });
+                                }}
                                 className="bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold px-3 py-1.5 rounded-lg transition cursor-pointer"
                               >
                                 💬 Abrir en Multi Chat
@@ -4863,7 +4919,12 @@
                                       Entregado ✓
                                     </span>
                                     <button
-                                      onClick={() => { setSelectedLaboralOrderId(order.id); setLaboralTab('chat'); }}
+                                      onClick={() => {
+                                        setSelectedLaboralOrderId(order.id);
+                                        setLaboralTab('chat');
+                                        setMobileLaboralChatTab('chat');
+                                        window.scrollTo({ top: 0, behavior: 'instant' });
+                                      }}
                                       className="bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 text-[10px] font-bold px-2.5 py-0.5 rounded-lg transition cursor-pointer"
                                     >
                                       💬 Abrir en Multi Chat
@@ -5299,7 +5360,12 @@
 
                                 <div className="flex items-center gap-2">
                                   <button
-                                    onClick={() => { setSelectedLaboralOrderId(order.id); setLaboralTab('chat'); }}
+                                    onClick={() => {
+                                      setSelectedLaboralOrderId(order.id);
+                                      setLaboralTab('chat');
+                                      setMobileLaboralChatTab('chat');
+                                      window.scrollTo({ top: 0, behavior: 'instant' });
+                                    }}
                                     className="flex-1 bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1 cursor-pointer active:scale-95"
                                   >
                                     <span>💬 Chat Cliente</span>
@@ -6013,7 +6079,7 @@
                 </div>
 
                 {/* 3. Área de Mensajes Principal (Full Scroll con Estilo) */}
-                <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3 bg-[#0d0705] chat-scroll-area">
+                <div ref={customerChatContainerRef} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3 bg-[#0d0705] chat-scroll-area">
                   {activeChatOrder.messages.map((m, i) => {
                     const isMe = m.sender === 'customer';
                     return (
@@ -6041,7 +6107,6 @@
                       </div>
                     );
                   })}
-                  <div ref={chatEndRef} />
                 </div>
 
                 {/* 4. Sugerencias Rápidas de Respuesta Exclusivas del Cliente */}
