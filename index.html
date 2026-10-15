@@ -1220,6 +1220,34 @@
       const completedKitchenOrders = orders.filter(o => o.status === 4);
 
       // =========================================================================
+      // TASA OFICIAL BCV INTERACTIVA Y EDITABLE
+      // =========================================================================
+      const [bcvRate, setBcvRate] = useState(() => {
+        const saved = localStorage.getItem('pepitos_bcv_rate_v1');
+        return saved ? parseFloat(saved) : 50.50;
+      });
+      const [showRateModal, setShowRateModal] = useState(false);
+      const [tempRateInput, setTempRateInput] = useState('50.50');
+
+      useEffect(() => {
+        try {
+          localStorage.setItem('pepitos_bcv_rate_v1', bcvRate.toString());
+        } catch (e) {}
+      }, [bcvRate]);
+
+      const handleSaveRate = (e) => {
+        if (e) e.preventDefault();
+        const parsed = parseFloat(tempRateInput);
+        if (isNaN(parsed) || parsed <= 0) return;
+        playSound('cash');
+        try {
+          confetti({ particleCount: 50, spread: 60, origin: { y: 0.25 } });
+        } catch (err) {}
+        setBcvRate(parsed);
+        setShowRateModal(false);
+      };
+
+      // =========================================================================
       // ESTADOS Y GESTIÓN DE FLOTA DE MOTOS Y AGENTES DELIVERY
       // =========================================================================
       const [drivers, setDrivers] = useState(() => {
@@ -1649,7 +1677,7 @@
       const cartSubtotal = cart.reduce((acc, i) => acc + i.itemTotal, 0);
       const deliveryFee = cartSubtotal > 20 || cartSubtotal === 0 ? 0 : 1.50;
       const cartTotal = cartSubtotal + deliveryFee;
-      const cartTotalBs = (cartTotal * BCV_RATE).toFixed(2);
+      const cartTotalBs = (cartTotal * bcvRate).toFixed(2);
 
       const createOrder = (orderData) => {
         playSound('cash');
@@ -2040,7 +2068,7 @@
                               ${product.price.toFixed(2)}
                             </div>
                             <div className="text-xs font-bold text-amber-400">
-                              Bs. {(product.price * BCV_RATE).toFixed(2)}
+                              Bs. {(product.price * bcvRate).toFixed(2)}
                             </div>
                           </div>
 
@@ -2752,10 +2780,29 @@
                       </span>
                     </div>
 
-                    <div className="bg-black/50 px-3 py-1.5 rounded-xl border border-white/5 hidden md:block">
-                      <span className="text-gray-400 block text-[10px] uppercase font-bold">Tasa Oficial BCV:</span>
-                      <span className="font-black text-white font-mono">Bs. {BCV_RATE.toFixed(2)}</span>
-                    </div>
+                    {/* Tasa Oficial BCV editable */}
+                    <button
+                      onClick={() => {
+                        playSound('pop');
+                        setTempRateInput(bcvRate.toString());
+                        setShowRateModal(true);
+                      }}
+                      className="bg-black/60 hover:bg-black/85 px-3 py-1.5 rounded-xl border border-amber-500/40 hover:border-amber-400 transition cursor-pointer text-left group flex items-center gap-2.5 shadow-md active:scale-95"
+                      title="Haz clic aquí para cambiar la tasa oficial BCV del día"
+                    >
+                      <div>
+                        <span className="text-gray-400 block text-[10px] uppercase font-bold group-hover:text-amber-300 transition flex items-center gap-1">
+                          <span>Tasa Oficial BCV:</span>
+                          <span className="text-[10px] text-amber-400 opacity-80 group-hover:opacity-100">✎</span>
+                        </span>
+                        <span className="font-black text-amber-300 font-mono text-xs sm:text-sm leading-tight block">
+                          Bs. {Number(bcvRate).toFixed(2)}
+                        </span>
+                      </div>
+                      <span className="text-[9px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider hidden sm:inline">
+                        Editar
+                      </span>
+                    </button>
 
                     {/* Botón para volver a la tienda de cliente */}
                     <button
@@ -3853,6 +3900,112 @@
               </svg>
             </a>
           </div>
+
+          {/* =========================================================================
+               MODAL: EDITAR TASA OFICIAL DEL DÍA (BCV)
+               ========================================================================= */}
+          {showRateModal && (
+            <div 
+              className="fixed inset-0 z-[999999] bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) {
+                  setShowRateModal(false);
+                }
+              }}
+            >
+              <div 
+                className="bg-[#140d0a] border-2 border-amber-500/70 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl relative space-y-5 animate-scaleUp text-left"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Botón de cierre */}
+                <button 
+                  onClick={() => setShowRateModal(false)}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-white bg-black/40 hover:bg-black/80 rounded-full w-8 h-8 flex items-center justify-center transition cursor-pointer text-sm font-bold"
+                  aria-label="Cerrar modal"
+                >
+                  ✕
+                </button>
+
+                {/* Encabezado */}
+                <div className="flex items-center gap-3 border-b border-white/10 pb-4">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black text-2xl shadow-lg">
+                    💵
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-black text-white font-display">
+                      Modificar Tasa Oficial BCV
+                    </h3>
+                    <p className="text-xs text-gray-400">
+                      Actualiza el valor del dólar en Bolívares (Bs.) para toda la tienda.
+                    </p>
+                  </div>
+                </div>
+
+                <form onSubmit={handleSaveRate} className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-gray-300 block">
+                      Tasa en Bolívares por Dólar (Bs. / USD):
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-bold text-amber-400 text-sm font-mono">
+                        Bs.
+                      </span>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="1"
+                        required
+                        value={tempRateInput}
+                        onChange={(e) => setTempRateInput(e.target.value)}
+                        placeholder="Ej: 52.40"
+                        className="w-full bg-black/60 border-2 border-amber-500/50 focus:border-amber-400 text-white rounded-xl pl-12 pr-4 py-3 text-base font-mono font-bold focus:outline-none transition shadow-inner"
+                        autoFocus
+                      />
+                    </div>
+                    <p className="text-[11px] text-gray-400 leading-relaxed">
+                      💡 Todos los precios de los pepitos, combos, salsas y el cálculo de Pago Móvil Provincial se actualizarán inmediatamente al nuevo valor.
+                    </p>
+                  </div>
+
+                  {/* Botones de incremento rápido */}
+                  <div className="flex items-center gap-2 pt-1">
+                    <span className="text-[10px] text-gray-400 font-bold uppercase">Ajuste rápido:</span>
+                    {[0.10, 0.50, 1.00].map((inc) => (
+                      <button
+                        key={inc}
+                        type="button"
+                        onClick={() => {
+                          const current = parseFloat(tempRateInput) || bcvRate;
+                          setTempRateInput((current + inc).toFixed(2));
+                        }}
+                        className="bg-black/50 hover:bg-amber-500/20 text-amber-300 hover:text-amber-200 border border-amber-500/30 text-[10px] font-bold px-2 py-1 rounded-lg transition cursor-pointer"
+                      >
+                        +{inc.toFixed(2)}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Acciones */}
+                  <div className="flex items-center gap-3 pt-3 border-t border-white/10">
+                    <button
+                      type="button"
+                      onClick={() => setShowRateModal(false)}
+                      className="flex-1 bg-black/40 hover:bg-black/60 text-gray-400 hover:text-white border border-white/10 text-xs font-bold py-3 rounded-xl transition cursor-pointer"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="submit"
+                      className="flex-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-black text-xs py-3 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+                    >
+                      <span>💾</span>
+                      <span>Guardar Nueva Tasa</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
 
           {/* =========================================================================
                MODAL: AGREGAR AGENTE DELIVERY (MOTORIZADO & VEHÍCULO)
