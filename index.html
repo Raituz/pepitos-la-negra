@@ -754,13 +754,203 @@
       50% { transform: translateY(-4px); }
     }
 
-    /* Responsive */
+    /* =========================================================================
+       BOTÓN HAMBURGUESA Y DRAWER MÓVIL RESPONSIVE
+       ========================================================================= */
+    .btn-mobile-menu {
+      display: none;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: var(--primary-gold);
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .btn-mobile-menu:hover, .btn-mobile-menu.active {
+      background: var(--primary-gold);
+      color: #000000;
+      border-color: var(--primary-gold);
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+    }
+
+    .mobile-nav-drawer {
+      position: fixed;
+      top: 68px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(10, 7, 5, 0.98);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 998;
+      padding: 20px 16px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+      overflow-y: auto;
+      animation: slideDownMenu 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideDownMenu {
+      from { opacity: 0; transform: translateY(-12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .mobile-nav-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      color: #ffffff;
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+      transition: all 0.2s ease;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .mobile-nav-link:hover, .mobile-nav-link.active {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: var(--primary-gold);
+      color: var(--primary-gold);
+      transform: translateX(4px);
+    }
+
+    /* =========================================================================
+       MEDIA QUERIES GLOBALES (TABLET & MÓVIL)
+       ========================================================================= */
     @media (max-width: 1024px) {
       .nav-menu-wrapper { display: none; }
-      .hero-container { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+      .btn-mobile-menu { display: inline-flex; }
+      .hero-container { 
+        grid-template-columns: 1fr; 
+        gap: 36px; 
+        text-align: center; 
+      }
       .hero-content { align-items: center; }
-      .hero-subtitle { margin: 0 auto; }
+      .hero-subtitle { margin: 0 auto; max-width: 620px; }
       .hero-cta-group { justify-content: center; }
+      .card-stack { width: 300px; height: 430px; }
+    }
+
+    @media (max-width: 640px) {
+      .site-header { padding: 8px 0; }
+      .header-container { padding: 0 12px; gap: 8px; }
+      .brand-badge { width: 38px; height: 38px; }
+      .brand-title { font-size: 1.05rem; letter-spacing: 0.8px; }
+      .brand-subtitle { font-size: 0.55rem; letter-spacing: 1px; }
+      .btn-cart-header { padding: 7px 12px; font-size: 0.72rem; gap: 5px; }
+      .btn-cart-header span.cart-text-label { display: none; }
+      
+      .hero-section {
+        min-height: auto;
+        padding: 24px 12px 40px;
+      }
+      .hero-badge-pill {
+        font-size: 0.68rem;
+        padding: 5px 10px;
+        letter-spacing: 0.8px;
+      }
+      .hero-title-main {
+        font-size: clamp(1.85rem, 8.5vw, 2.8rem);
+        letter-spacing: -0.5px;
+      }
+      .hero-subtitle {
+        font-size: 0.88rem;
+        line-height: 1.5;
+        padding: 0 4px;
+      }
+      .hero-cta-group {
+        width: 100%;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .btn-primary-hero, .btn-secondary-hero {
+        width: 100%;
+        justify-content: center;
+        padding: 13px 20px;
+        font-size: 0.88rem;
+      }
+      
+      .hero-visual-stack-wrapper {
+        min-height: 380px;
+        width: 100%;
+        padding: 10px 0;
+        overflow: hidden;
+      }
+      .card-stack {
+        width: 255px;
+        height: 375px;
+      }
+      .stack-card.card-back-left {
+        transform: rotate(-5deg) translate(-14px, -8px) scale(0.96);
+      }
+      .stack-card.card-back-right {
+        transform: rotate(5deg) translate(14px, -6px) scale(0.96);
+      }
+      .card-img-box {
+        height: 170px;
+      }
+      .card-flavor-name {
+        font-size: 1rem;
+      }
+      .hero-card-price {
+        font-size: 1.2rem;
+      }
+      .rotating-stamp {
+        width: 76px;
+        height: 76px;
+        bottom: -10px;
+        right: -10px;
+      }
+
+      .marquee-ribbon {
+        padding: 10px 0;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+      }
+      
+      .floating-whatsapp-wrap {
+        bottom: 16px;
+        right: 16px;
+      }
+      .whatsapp-tooltip {
+        display: none;
+      }
+      .whatsapp-btn-circle {
+        width: 48px;
+        height: 48px;
+      }
+      .whatsapp-btn-circle svg {
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .header-container { padding: 0 8px; }
+      .brand-title { font-size: 0.95rem; }
+      .brand-subtitle { font-size: 0.5rem; }
+      .card-stack {
+        width: 235px;
+        height: 360px;
+      }
+      .card-img-box {
+        height: 155px;
+      }
     }
 
     /* =========================================================================
@@ -1214,6 +1404,8 @@
       const [laboralSearch, setLaboralSearch] = useState('');
       const [laboralMsgInput, setLaboralMsgInput] = useState('');
       const [showLaboralCompletedHistory, setShowLaboralCompletedHistory] = useState(true);
+      const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+      const [mobileLaboralChatTab, setMobileLaboralChatTab] = useState('list'); // 'list' | 'chat' | 'ticket'
 
       // Órdenes para Tablero de Cocina (Área Laboral)
       const activeKitchenOrders = orders.filter(o => o.status !== 4);
@@ -1736,14 +1928,14 @@
         <div className="min-h-screen flex flex-col bg-[#0b0d11]">
 
           {/* =========================================================================
-               1. HEADER FIJO (ESTRUCTURA IDÉNTICA A DIP LF)
+               1. HEADER FIJO (RESPONSIVE PARA TELÉFONO, TABLET Y COMPUTADORA)
                ========================================================================= */}
           <header className="site-header">
             <div className="header-container">
               
               {/* Logo Marca a la izquierda */}
               <div 
-                onClick={() => { setRole('client'); setCurrentView('menu'); }}
+                onClick={() => { setRole('client'); setCurrentView('menu'); setMobileMenuOpen(false); }}
                 className="brand-logo-wrap"
               >
                 <div className="brand-badge">
@@ -1755,7 +1947,7 @@
                 </div>
               </div>
 
-              {/* Menú de Navegación Centrado */}
+              {/* Menú de Navegación Centrado (Visible en Pantallas Grandes >1024px) */}
               <nav className="nav-menu-wrapper">
                 <ul className="nav-menu">
                   <li>
@@ -1809,13 +2001,13 @@
                 </ul>
               </nav>
 
-              {/* Acciones a la derecha: WhatsApp, Área Laboral Móvil y Carrito */}
+              {/* Acciones a la derecha: WhatsApp, Área Laboral y Carrito */}
               <div className="header-actions">
                 
-                {/* Botón Acceso Rápido Área Laboral (Visible en móviles/tablets) */}
+                {/* Botón Acceso Rápido Área Laboral (Visible en Desktop y Tablet) */}
                 <button
                   onClick={() => { setRole('admin'); setCurrentView(currentView === 'laboral' ? 'menu' : 'laboral'); }}
-                  className={`flex items-center gap-1 text-[11px] font-bold px-2.5 py-1.5 rounded-full border transition active:scale-95 ${
+                  className={`hidden sm:flex items-center gap-1 text-[11px] font-bold px-2.5 py-1.5 rounded-full border transition active:scale-95 ${
                     currentView === 'laboral' 
                       ? 'bg-amber-500 text-black border-amber-400 shadow-md' 
                       : 'bg-black/60 text-amber-400 border-amber-500/40 hover:bg-amber-500/20'
@@ -1825,12 +2017,12 @@
                   <span>{currentView === 'laboral' ? '← Tienda' : 'Área Laboral 🔐'}</span>
                 </button>
 
-                {/* Botón WhatsApp Verde */}
+                {/* Botón WhatsApp Verde (Visible en Desktop) */}
                 <a 
                   href="https://wa.me/584262629507?text=Hola%20Pepitos%20La%20Negra,%20quisiera%20hacer%20un%20pedido." 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="btn-whatsapp-header"
+                  className="btn-whatsapp-header hidden md:inline-flex"
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
@@ -1840,7 +2032,7 @@
 
                 {/* Botón Carrito */}
                 <button 
-                  onClick={() => { setRole('client'); setCurrentView('cart'); }}
+                  onClick={() => { setRole('client'); setCurrentView('cart'); setMobileMenuOpen(false); }}
                   className={`btn-cart-header ${currentView === 'cart' && role === 'client' ? 'active' : ''}`}
                   title="Ver Carrito de Compras"
                   aria-label="Ver carrito"
@@ -1850,7 +2042,7 @@
                     <line x1="3" y1="6" x2="21" y2="6"></line>
                     <path d="M16 10a4 4 0 0 1-8 0"></path>
                   </svg>
-                  <span>Carrito</span>
+                  <span className="cart-text-label">Carrito</span>
                   {cart.reduce((a, b) => a + b.quantity, 0) > 0 && (
                     <span className="cart-count-badge">
                       {cart.reduce((a, b) => a + b.quantity, 0)}
@@ -1858,10 +2050,121 @@
                   )}
                 </button>
 
+                {/* Botón Hamburguesa Responsive (Visible en Móviles y Tablets <1024px) */}
+                <button
+                  onClick={() => setMobileMenuOpen(prev => !prev)}
+                  className={`btn-mobile-menu ${mobileMenuOpen ? 'active' : ''}`}
+                  title={mobileMenuOpen ? "Cerrar menú" : "Abrir menú de navegación"}
+                  aria-label={mobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
+                >
+                  {mobileMenuOpen ? '✕' : '☰'}
+                </button>
+
               </div>
 
             </div>
           </header>
+
+          {/* =========================================================================
+               DRAWER DE NAVEGACIÓN MÓVIL (TABLET & CELULAR)
+               ========================================================================= */}
+          {mobileMenuOpen && (
+            <div className="mobile-nav-drawer lg:hidden">
+              <button
+                onClick={() => { setRole('client'); setCurrentView('menu'); setMobileMenuOpen(false); }}
+                className={`mobile-nav-link ${role === 'client' && currentView === 'menu' ? 'active' : ''}`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">🏠</span>
+                  <span>Inicio / Menú</span>
+                </div>
+                <span className="text-amber-400 font-bold">→</span>
+              </button>
+
+              <button
+                onClick={() => { setRole('client'); setCurrentView('orders'); setMobileMenuOpen(false); }}
+                className={`mobile-nav-link ${role === 'client' && currentView === 'orders' ? 'active' : ''}`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">🛵</span>
+                  <span>Mis Pedidos</span>
+                </div>
+                {clientActiveOrders.length > 0 ? (
+                  <span className="bg-amber-500 text-black text-xs font-black px-2.5 py-0.5 rounded-full shadow">
+                    {clientActiveOrders.length} {clientActiveOrders.length === 1 ? 'activo' : 'activos'}
+                  </span>
+                ) : (
+                  <span className="text-gray-500 text-xs font-bold">0 activos</span>
+                )}
+              </button>
+
+              <button
+                onClick={() => {
+                  setRole('client');
+                  setMobileMenuOpen(false);
+                  if (currentView !== 'menu') {
+                    setCurrentView('menu');
+                    setTimeout(() => { document.getElementById('comocomprar')?.scrollIntoView({ behavior: 'smooth' }); }, 150);
+                  } else {
+                    document.getElementById('comocomprar')?.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+                className="mobile-nav-link"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">📋</span>
+                  <span>Cómo Comprar</span>
+                </div>
+                <span className="text-amber-400 font-bold">→</span>
+              </button>
+
+              <button
+                onClick={() => { setRole('client'); setCurrentView('cart'); setMobileMenuOpen(false); }}
+                className={`mobile-nav-link ${role === 'client' && currentView === 'cart' ? 'active' : ''}`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">🛒</span>
+                  <span>Mi Carrito</span>
+                </div>
+                <span className="text-amber-400 font-black text-xs font-mono">
+                  {cart.reduce((a, b) => a + b.quantity, 0)} items (${cartTotal.toFixed(2)})
+                </span>
+              </button>
+
+              <div className="pt-3 border-t border-white/10 space-y-2.5 mt-1">
+                <button
+                  onClick={() => { setRole('admin'); setCurrentView('laboral'); setMobileMenuOpen(false); }}
+                  className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-[#1f140f] border border-amber-500/50 text-amber-300 font-bold text-sm shadow-md"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-lg">🔐</span>
+                    <span>Área Laboral (Gerente & Cocina)</span>
+                  </div>
+                  <span className="text-[11px] bg-amber-500 text-black px-2 py-0.5 rounded-md font-black">
+                    Acceder
+                  </span>
+                </button>
+
+                <a
+                  href="https://wa.me/584262629507?text=Hola%20Pepitos%20La%20Negra,%20quisiera%20hacer%20un%20pedido."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full flex items-center justify-center gap-2.5 p-3.5 rounded-2xl bg-[#25d366] hover:bg-[#1eb956] text-white font-extrabold text-sm shadow-lg transition active:scale-95"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                  </svg>
+                  <span>WhatsApp: 0426-2629507</span>
+                </a>
+
+                <div className="flex items-center justify-between px-2 pt-2 text-xs text-gray-400 font-mono">
+                  <span>Tasa Oficial BCV:</span>
+                  <strong className="text-amber-400 font-bold">Bs. {Number(bcvRate).toFixed(2)}</strong>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* SMS Notification Banner (Live simulation) */}
           {smsNotification && (
@@ -2765,7 +3068,7 @@
                   </div>
 
                   {/* Indicadores rápidos de negocio */}
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs">
+                  <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 sm:gap-4 text-xs w-full lg:w-auto">
                     <div className="bg-black/50 px-3 py-1.5 rounded-xl border border-white/5">
                       <span className="text-gray-400 block text-[10px] uppercase font-bold">Caja Hoy:</span>
                       <span className="font-black text-amber-400 font-mono">
@@ -2787,12 +3090,12 @@
                         setTempRateInput(bcvRate.toString());
                         setShowRateModal(true);
                       }}
-                      className="bg-black/60 hover:bg-black/85 px-3 py-1.5 rounded-xl border border-amber-500/40 hover:border-amber-400 transition cursor-pointer text-left group flex items-center gap-2.5 shadow-md active:scale-95"
+                      className="bg-black/60 hover:bg-black/85 px-3 py-1.5 rounded-xl border border-amber-500/40 hover:border-amber-400 transition cursor-pointer text-left group flex items-center gap-2.5 shadow-md active:scale-95 col-span-1"
                       title="Haz clic aquí para cambiar la tasa oficial BCV del día"
                     >
                       <div>
                         <span className="text-gray-400 block text-[10px] uppercase font-bold group-hover:text-amber-300 transition flex items-center gap-1">
-                          <span>Tasa Oficial BCV:</span>
+                          <span>Tasa BCV:</span>
                           <span className="text-[10px] text-amber-400 opacity-80 group-hover:opacity-100">✎</span>
                         </span>
                         <span className="font-black text-amber-300 font-mono text-xs sm:text-sm leading-tight block">
@@ -2807,9 +3110,9 @@
                     {/* Botón para volver a la tienda de cliente */}
                     <button
                       onClick={() => { setRole('client'); setCurrentView('menu'); }}
-                      className="bg-white/10 hover:bg-white/20 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 border border-white/15 transition active:scale-95 shadow"
+                      className="bg-white/10 hover:bg-white/20 text-white font-bold px-3 sm:px-4 py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 border border-white/15 transition active:scale-95 shadow col-span-1 sm:col-span-1"
                     >
-                      <span>← Ir a la Tienda (Cliente)</span>
+                      <span>← Tienda</span>
                     </button>
                   </div>
                 </div>
@@ -2875,13 +3178,54 @@
                       </p>
                     </div>
 
+                    {/* Selector de Vistas para Móvil y Tablet (<1024px) */}
+                    <div className="lg:hidden flex items-center bg-[#150d09] border border-amber-500/30 rounded-2xl p-1 mb-3.5 shadow-md">
+                      <button
+                        onClick={() => setMobileLaboralChatTab('list')}
+                        className={`flex-1 py-2 px-2 text-xs font-black rounded-xl transition flex items-center justify-center gap-1.5 ${
+                          mobileLaboralChatTab === 'list' 
+                            ? 'bg-amber-500 text-black shadow-lg' 
+                            : 'text-gray-300 hover:text-white'
+                        }`}
+                      >
+                        <span>💬 Chats</span>
+                        <span className="text-[10px] bg-black/20 px-1.5 py-0.2 rounded-full font-mono font-bold">
+                          {filteredLaboralOrders.length}
+                        </span>
+                      </button>
+
+                      <button
+                        onClick={() => setMobileLaboralChatTab('chat')}
+                        className={`flex-1 py-2 px-2 text-xs font-black rounded-xl transition flex items-center justify-center gap-1.5 ${
+                          mobileLaboralChatTab === 'chat' 
+                            ? 'bg-amber-500 text-black shadow-lg' 
+                            : 'text-gray-300 hover:text-white'
+                        }`}
+                      >
+                        <span>📨 Chat Activo</span>
+                      </button>
+
+                      <button
+                        onClick={() => setMobileLaboralChatTab('ticket')}
+                        className={`flex-1 py-2 px-2 text-xs font-black rounded-xl transition flex items-center justify-center gap-1.5 ${
+                          mobileLaboralChatTab === 'ticket' 
+                            ? 'bg-amber-500 text-black shadow-lg' 
+                            : 'text-gray-300 hover:text-white'
+                        }`}
+                      >
+                        <span>🧾 Comanda</span>
+                      </button>
+                    </div>
+
                     {/* Contenedor Principal de 3 Columnas (Exacto a Mythic Progression) */}
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 items-start">
                       
                       {/* ==============================================================
                            COLUMNA 1: LISTA DE CHATS ACTIVOS (Lado Izquierdo)
                            ============================================================== */}
-                      <div className="lg:col-span-3 bg-[#120b08] border border-amber-500/25 rounded-2xl p-3 flex flex-col space-y-3 h-[78vh] overflow-hidden shadow-xl">
+                      <div className={`lg:col-span-3 bg-[#120b08] border border-amber-500/25 rounded-2xl p-3 flex flex-col space-y-3 h-[78vh] overflow-hidden shadow-xl ${
+                        mobileLaboralChatTab === 'list' ? 'flex' : 'hidden lg:flex'
+                      }`}>
                         
                         {/* Cabecera de la columna */}
                         <div className="flex items-center justify-between pb-2 border-b border-white/5">
@@ -2929,7 +3273,10 @@
                             return (
                               <div
                                 key={order.id}
-                                onClick={() => setSelectedLaboralOrderId(order.id)}
+                                onClick={() => {
+                                  setSelectedLaboralOrderId(order.id);
+                                  setMobileLaboralChatTab('chat');
+                                }}
                                 className={`p-3 rounded-xl border transition cursor-pointer text-left ${
                                   isSelected
                                     ? 'bg-[#22140d] border-amber-500 shadow-md ring-1 ring-amber-500/40'
@@ -2975,48 +3322,66 @@
                       {/* ==============================================================
                            COLUMNA 2: ÁREA DE CHAT ACTIVO (Centro - Exacto a la Imagen)
                            ============================================================== */}
-                      <div className="lg:col-span-6 bg-[#120b08] border border-amber-500/25 rounded-2xl flex flex-col h-[78vh] overflow-hidden shadow-xl">
+                      <div className={`lg:col-span-6 bg-[#120b08] border border-amber-500/25 rounded-2xl flex flex-col h-[78vh] overflow-hidden shadow-xl ${
+                        mobileLaboralChatTab === 'chat' ? 'flex' : 'hidden lg:flex'
+                      }`}>
                         
                         {/* Cabecera de la Conversación */}
                         <div className="bg-[#180f0a] border-b border-amber-500/20 p-3 sm:px-5 flex items-center justify-between gap-3 flex-shrink-0">
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <h3 className="font-black text-white text-sm sm:text-base font-display">
-                                {currentSelectedOrder.customerName} (Cliente)
-                              </h3>
-                              <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded-full">
-                                ● En línea
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => setMobileLaboralChatTab('list')}
+                              className="lg:hidden p-1.5 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-gray-200 text-xs font-bold transition flex items-center gap-1 flex-shrink-0 border border-white/10"
+                              title="Volver a lista de chats"
+                            >
+                              <span>←</span>
+                            </button>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <h3 className="font-black text-white text-sm sm:text-base font-display">
+                                  {currentSelectedOrder.customerName} (Cliente)
+                                </h3>
+                                <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded-full">
+                                  ● En línea
+                                </span>
+                              </div>
+                              <span className="text-[11px] text-amber-400 font-mono">
+                                #{currentSelectedOrder.id} • Telf: {currentSelectedOrder.phone}
                               </span>
                             </div>
-                            <span className="text-[11px] text-amber-400 font-mono">
-                              Atendiendo orden #{currentSelectedOrder.id} • Telf: {currentSelectedOrder.phone}
-                            </span>
                           </div>
 
-                          {/* Botón de Acción Rápida de la Orden */}
+                          {/* Botón de Acción Rápida de la Orden y botón Comanda en móvil */}
                           <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => setMobileLaboralChatTab('ticket')}
+                              className="lg:hidden p-1.5 px-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold transition"
+                              title="Ver comanda del pedido"
+                            >
+                              🧾 Comanda
+                            </button>
                             {currentSelectedOrder.status === 1 && (
                               <button
                                 onClick={() => triggerProvincialSMS(currentSelectedOrder.id, currentSelectedOrder.reference, currentSelectedOrder.totalBs)}
-                                className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-3 py-1.5 rounded-xl shadow transition"
+                                className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-2.5 sm:px-3 py-1.5 rounded-xl shadow transition"
                               >
-                                📲 Aprobar SMS Provincial
+                                📲 Aprobar
                               </button>
                             )}
                             {currentSelectedOrder.status === 2 && (
                               <button
                                 onClick={() => setOrders(orders.map(o => o.id === currentSelectedOrder.id ? { ...o, status: 3 } : o))}
-                                className="bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs px-3 py-1.5 rounded-xl shadow transition"
+                                className="bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs px-2.5 sm:px-3 py-1.5 rounded-xl shadow transition"
                               >
-                                🛵 Despachar a Delivery
+                                🛵 A Delivery
                               </button>
                             )}
                             {currentSelectedOrder.status === 3 && (
                               <button
                                 onClick={() => setOrders(orders.map(o => o.id === currentSelectedOrder.id ? { ...o, status: 4 } : o))}
-                                className="bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs px-3 py-1.5 rounded-xl shadow transition"
+                                className="bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs px-2.5 sm:px-3 py-1.5 rounded-xl shadow transition"
                               >
-                                ✓ Marcar Entregado
+                                ✓ Entregado
                               </button>
                             )}
                           </div>
@@ -3114,8 +3479,18 @@
                       {/* ==============================================================
                            COLUMNA 3: DETALLES DE LA ORDEN (Lado Derecho - Exacto a la Imagen)
                            ============================================================== */}
-                      <div className="lg:col-span-3 bg-[#120b08] border border-amber-500/25 rounded-2xl p-4 flex flex-col space-y-4 h-[78vh] overflow-y-auto chat-scroll-area shadow-xl text-xs">
+                      <div className={`lg:col-span-3 bg-[#120b08] border border-amber-500/25 rounded-2xl p-4 flex flex-col space-y-4 h-[78vh] overflow-y-auto chat-scroll-area shadow-xl text-xs ${
+                        mobileLaboralChatTab === 'ticket' ? 'flex' : 'hidden lg:flex'
+                      }`}>
                         
+                        {/* Botón Volver a Conversación (Móvil) */}
+                        <button
+                          onClick={() => setMobileLaboralChatTab('chat')}
+                          className="lg:hidden mb-1 text-xs bg-white/10 hover:bg-white/20 text-white font-bold px-3 py-1.5 rounded-xl self-start flex items-center gap-1.5 border border-white/10 transition"
+                        >
+                          <span>← Volver al Chat</span>
+                        </button>
+
                         {/* Cabecera */}
                         <div className="pb-3 border-b border-white/5">
                           <span className="text-xs font-black text-amber-400 uppercase tracking-wider font-display block">
