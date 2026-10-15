@@ -1746,7 +1746,7 @@
           onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
         >
           <div 
-            className="bg-[#140d0a] border border-amber-500/40 rounded-3xl max-w-2xl w-full my-auto max-h-[92vh] flex flex-col shadow-2xl relative overflow-hidden animate-scale-in"
+            className="bg-[#140d0a] border border-amber-500/40 rounded-3xl max-w-3xl w-full my-auto max-h-[92vh] flex flex-col shadow-2xl relative overflow-hidden animate-scale-in"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header del Modal */}
@@ -1828,30 +1828,30 @@
                       return (
                         <div 
                           key={sauce.id}
-                          className={`flex items-center justify-between p-2.5 rounded-2xl border transition-all ${
+                          className={`flex items-center justify-between p-2.5 sm:p-3 rounded-2xl border transition-all ${
                             isYes 
                               ? 'bg-amber-950/20 border-amber-500/30' 
                               : 'bg-black/30 border-white/5 opacity-80'
                           }`}
                         >
-                          <div className="flex items-center gap-2.5 pr-2 min-w-0">
+                          <div className="flex items-center gap-2.5 pr-2 min-w-0 flex-1">
                             <span className="text-xl flex-shrink-0">{sauce.icon || '🥫'}</span>
-                            <div className="min-w-0">
-                              <span className="text-xs font-bold text-white block truncate">
+                            <div className="min-w-0 flex-1">
+                              <span className="text-xs font-bold text-white block leading-snug break-words">
                                 {sauce.name}
                               </span>
-                              <span className={`text-[10px] font-semibold block ${isYes ? 'text-emerald-400' : 'text-red-400'}`}>
+                              <span className={`text-[10px] font-semibold block mt-0.5 ${isYes ? 'text-emerald-400' : 'text-red-400'}`}>
                                 {isYes ? '✓ Con salsa' : '✕ Sin salsa'}
                               </span>
                             </div>
                           </div>
 
                           {/* Botones segmented SÍ / NO */}
-                          <div className="flex items-center bg-black/60 rounded-xl p-1 border border-white/10 flex-shrink-0">
+                          <div className="flex items-center bg-black/70 rounded-xl p-0.5 border border-white/10 flex-shrink-0 shadow-inner">
                             <button
                               type="button"
                               onClick={() => toggleSauce(sauce.id, true)}
-                              className={`px-3 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                              className={`px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
                                 isYes
                                   ? 'bg-emerald-500 text-black shadow-md shadow-emerald-500/20 scale-105'
                                   : 'text-gray-400 hover:text-white'
@@ -1862,7 +1862,7 @@
                             <button
                               type="button"
                               onClick={() => toggleSauce(sauce.id, false)}
-                              className={`px-3 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                              className={`px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
                                 !isYes
                                   ? 'bg-red-500 text-white shadow-md shadow-red-500/20 scale-105'
                                   : 'text-gray-400 hover:text-white'
@@ -1909,30 +1909,30 @@
                       return (
                         <div 
                           key={ing.id}
-                          className={`flex items-center justify-between p-2.5 rounded-2xl border transition-all ${
+                          className={`flex items-center justify-between p-2.5 sm:p-3 rounded-2xl border transition-all ${
                             isYes 
                               ? 'bg-[#1b120c] border-amber-500/30' 
                               : 'bg-red-950/15 border-red-500/30'
                           }`}
                         >
-                          <div className="flex items-center gap-2.5 pr-2 min-w-0">
+                          <div className="flex items-center gap-2.5 pr-2 min-w-0 flex-1">
                             <span className="text-xl flex-shrink-0">{ing.icon || '🥪'}</span>
-                            <div className="min-w-0">
-                              <span className="text-xs font-bold text-white block truncate">
+                            <div className="min-w-0 flex-1">
+                              <span className="text-xs font-bold text-white block leading-snug break-words">
                                 {ing.name}
                               </span>
-                              <span className={`text-[10px] font-semibold block ${isYes ? 'text-emerald-400' : 'text-red-400 font-bold'}`}>
+                              <span className={`text-[10px] font-semibold block mt-0.5 ${isYes ? 'text-emerald-400' : 'text-red-400 font-bold'}`}>
                                 {isYes ? `✓ Con ${ing.name.split(' ')[0]}` : `✕ Sin ${ing.name.split(' ')[0]}`}
                               </span>
                             </div>
                           </div>
 
                           {/* Botones segmented SÍ / NO */}
-                          <div className="flex items-center bg-black/60 rounded-xl p-1 border border-white/10 flex-shrink-0">
+                          <div className="flex items-center bg-black/70 rounded-xl p-0.5 border border-white/10 flex-shrink-0 shadow-inner">
                             <button
                               type="button"
                               onClick={() => toggleIngredient(ing.id, true)}
-                              className={`px-3 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                              className={`px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
                                 isYes
                                   ? 'bg-emerald-500 text-black shadow-md shadow-emerald-500/20 scale-105'
                                   : 'text-gray-400 hover:text-white'
@@ -1943,7 +1943,7 @@
                             <button
                               type="button"
                               onClick={() => toggleIngredient(ing.id, false)}
-                              className={`px-3 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                              className={`px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
                                 !isYes
                                   ? 'bg-red-500 text-white shadow-md shadow-red-500/20 scale-105'
                                   : 'text-gray-400 hover:text-white'
@@ -1987,19 +1987,19 @@
                               : 'bg-black/30 border-white/5 hover:border-white/20'
                           }`}
                         >
-                          <div className="flex items-center gap-2.5 min-w-0 pr-2">
-                            <div className={`w-5 h-5 rounded-lg border flex items-center justify-center text-xs font-black transition ${
+                          <div className="flex items-center gap-2.5 min-w-0 pr-2 flex-1">
+                            <div className={`w-5 h-5 rounded-lg border flex items-center justify-center text-xs font-black transition flex-shrink-0 ${
                               isSelected
                                 ? 'bg-emerald-500 border-emerald-400 text-black'
                                 : 'border-white/20 text-transparent'
                             }`}>
                               ✓
                             </div>
-                            <div className="min-w-0">
-                              <span className="text-xs font-bold text-white block truncate">
+                            <div className="min-w-0 flex-1">
+                              <span className="text-xs font-bold text-white block leading-snug break-words">
                                 {extra.name}
                               </span>
-                              <span className="text-[10px] text-gray-400 block font-mono">
+                              <span className="text-[10px] text-gray-400 block font-mono mt-0.5">
                                 +Bs. {(extra.price * bcvRate).toFixed(2)}
                               </span>
                             </div>
