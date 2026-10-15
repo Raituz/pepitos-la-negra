@@ -484,7 +484,7 @@
     .card-stack {
       position: relative;
       width: 320px;
-      height: 450px;
+      height: 460px;
     }
 
     .stack-card {
@@ -493,44 +493,108 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: #ffffff;
-      border-radius: 18px;
-      box-shadow: 0 16px 38px rgba(0, 0, 0, 0.45);
-      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: #140d0a;
+      border-radius: 20px;
+      box-shadow: 0 16px 38px rgba(0, 0, 0, 0.65);
+      border: 1px solid rgba(245, 158, 11, 0.25);
       padding: 14px;
       display: flex;
       flex-direction: column;
-      transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
+      transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.45s ease, opacity 0.45s ease, border-color 0.45s ease, filter 0.45s ease;
       user-select: none;
     }
 
     .stack-card.card-back-left {
-      transform: rotate(-7deg) translate(-28px, -12px) scale(0.95);
+      transform: rotate(-8deg) translate(-36px, -12px) scale(0.92);
       z-index: 1;
+      opacity: 0.6;
+      filter: brightness(0.7);
+      cursor: pointer;
     }
 
     .stack-card.card-back-right {
-      transform: rotate(6deg) translate(28px, -8px) scale(0.96);
+      transform: rotate(8deg) translate(36px, -8px) scale(0.93);
       z-index: 2;
+      opacity: 0.6;
+      filter: brightness(0.7);
+      cursor: pointer;
     }
 
     .stack-card.card-front {
-      transform: rotate(-1.5deg) translate(0, 0) scale(1);
-      z-index: 5;
-      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(245, 158, 11, 0.2);
+      transform: rotate(-1deg) translate(0, 0) scale(1);
+      z-index: 10;
+      opacity: 1;
+      filter: brightness(1);
+      border-color: rgba(245, 158, 11, 0.55);
+      box-shadow: 0 24px 55px rgba(0, 0, 0, 0.8), 0 0 35px rgba(245, 158, 11, 0.25);
     }
 
-    .card-stack:hover .card-back-left {
-      transform: rotate(-10deg) translate(-38px, -15px) scale(0.95);
+    .stack-card.card-back-left:hover {
+      transform: rotate(-11deg) translate(-48px, -16px) scale(0.95);
+      opacity: 0.85;
+      filter: brightness(0.85);
     }
 
-    .card-stack:hover .card-back-right {
-      transform: rotate(9deg) translate(38px, -10px) scale(0.96);
+    .stack-card.card-back-right:hover {
+      transform: rotate(11deg) translate(48px, -12px) scale(0.96);
+      opacity: 0.85;
+      filter: brightness(0.85);
     }
 
-    .card-stack:hover .card-front {
-      transform: rotate(0deg) translateY(-6px) scale(1.02);
-      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.7), 0 0 32px rgba(245, 158, 11, 0.3);
+    .stack-card.card-front:hover {
+      transform: rotate(0deg) translateY(-5px) scale(1.02);
+      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(245, 158, 11, 0.35);
+    }
+
+    /* Flechas para girar las cartas */
+    .hero-arrow-btn {
+      position: absolute;
+      top: 48%;
+      transform: translateY(-50%);
+      z-index: 30;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #f59e0b;
+      color: #0b0d11;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7), 0 0 18px rgba(245, 158, 11, 0.4);
+      border: 2px solid #140d0a;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .hero-arrow-btn:hover {
+      background: #fbbf24;
+      transform: translateY(-50%) scale(1.15);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.9), 0 0 26px rgba(245, 158, 11, 0.6);
+    }
+
+    .hero-arrow-btn:active {
+      transform: translateY(-50%) scale(0.95);
+    }
+
+    .hero-arrow-left {
+      left: -22px;
+    }
+
+    .hero-arrow-right {
+      right: -22px;
+    }
+
+    @media (max-width: 640px) {
+      .hero-arrow-btn {
+        width: 38px;
+        height: 38px;
+      }
+      .hero-arrow-left {
+        left: -10px;
+      }
+      .hero-arrow-right {
+        right: -10px;
+      }
     }
 
     .card-img-box {
@@ -571,7 +635,7 @@
       padding: 12px 6px 4px;
       display: flex;
       flex-direction: column;
-      color: #111827;
+      color: #ffffff;
       flex: 1;
     }
 
@@ -580,13 +644,13 @@
       font-size: 1.15rem;
       font-weight: 900;
       text-transform: uppercase;
-      color: #0f172a;
+      color: #ffffff;
       line-height: 1.2;
     }
 
     .card-desc-short {
       font-size: 0.78rem;
-      color: #64748b;
+      color: #9ca3af;
       margin-bottom: 8px;
       line-height: 1.35;
     }
@@ -595,15 +659,15 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: #0f172a;
+      background: #0b0d11;
       color: #f59e0b;
-      padding: 6px 12px;
+      padding: 5px 10px;
       border-radius: 8px;
       font-size: 0.75rem;
       font-weight: 800;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       width: fit-content;
-      border: 1px solid rgba(245, 158, 11, 0.3);
+      border: 1px solid rgba(245, 158, 11, 0.35);
     }
 
     .card-footer-row {
@@ -617,7 +681,7 @@
       font-family: var(--font-heading);
       font-size: 1.35rem;
       font-weight: 900;
-      color: #0f172a;
+      color: #f59e0b;
     }
 
     .hero-quick-add {
@@ -1875,6 +1939,17 @@
       });
       const [cart, setCart] = useState([]);
       const [heroSize, setHeroSize] = useState('30cm');
+      const [heroCardIndex, setHeroCardIndex] = useState(0);
+
+      const handleNextHeroCard = () => {
+        playSound('pop');
+        setHeroCardIndex(prev => (prev + 1) % PRODUCTS.length);
+      };
+
+      const handlePrevHeroCard = () => {
+        playSound('pop');
+        setHeroCardIndex(prev => (prev - 1 + PRODUCTS.length) % PRODUCTS.length);
+      };
       const [selectedProduct, setSelectedProduct] = useState(null);
       const [chatOpen, setChatOpen] = useState(false);
       const [activeChatOrder, setActiveChatOrder] = useState(null);
@@ -2321,16 +2396,15 @@
 
       const heroPrice = 8.50;
 
-      const addHeroToCart = () => {
+      const addActiveHeroProductToCart = (product = PRODUCTS[heroCardIndex] || PRODUCTS[0]) => {
         playSound('pop');
-        const heroProduct = PRODUCTS[0];
-        const defaultSauces = (heroProduct.sauceOptions || []).filter(s => s.default).map(s => s.name);
-        const defaultIngs = (heroProduct.baseIngredients || []).filter(i => i.default).map(i => i.name);
+        const defaultSauces = (product.sauceOptions || []).filter(s => s.default).map(s => s.name);
+        const defaultIngs = (product.baseIngredients || []).filter(i => i.default).map(i => i.name);
         const newItem = {
-          cartId: Date.now(),
-          id: heroProduct.id,
-          name: `${heroProduct.name}`,
-          unitPrice: 8.50,
+          cartId: Date.now() + Math.random(),
+          id: product.id,
+          name: `${product.name}`,
+          unitPrice: product.price,
           quantity: 1,
           sauces: defaultSauces,
           excludedSauces: [],
@@ -2338,11 +2412,13 @@
           excludedIngredients: [],
           extras: [],
           notes: '',
-          itemTotal: 8.50
+          itemTotal: product.price
         };
         setCart(prev => [...prev, newItem]);
         setCurrentView('cart');
       };
+
+      const addHeroToCart = () => addActiveHeroProductToCart(PRODUCTS[0]);
 
       const addToCart = (product, options) => {
         playSound('pop');
@@ -2727,64 +2803,140 @@
                     </div>
                   </div>
 
-                  {/* Columna Derecha: Stack de Tarjetas de Productos (Exacto como DIP LF) */}
-                  <div className="hero-visual-stack-wrapper">
+                  {/* Columna Derecha: Stack de Tarjetas Giratorio con Flechitas de Navegación */}
+                  <div 
+                    className="hero-visual-stack-wrapper"
+                    onTouchStart={(e) => {
+                      window._touchStartX = e.changedTouches[0].screenX;
+                    }}
+                    onTouchEnd={(e) => {
+                      const diffX = e.changedTouches[0].screenX - (window._touchStartX || 0);
+                      if (diffX > 40) handlePrevHeroCard();
+                      else if (diffX < -40) handleNextHeroCard();
+                    }}
+                  >
+                    
+                    {/* Flecha Izquierda para Girar */}
+                    <button
+                      type="button"
+                      onClick={handlePrevHeroCard}
+                      className="hero-arrow-btn hero-arrow-left"
+                      aria-label="Girar carta anterior"
+                      title="Ver especialidad anterior (←)"
+                    >
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                      </svg>
+                    </button>
+
+                    {/* Flecha Derecha para Girar */}
+                    <button
+                      type="button"
+                      onClick={handleNextHeroCard}
+                      className="hero-arrow-btn hero-arrow-right"
+                      aria-label="Girar carta siguiente"
+                      title="Ver especialidad siguiente (→)"
+                    >
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </button>
+
                     <div className="card-stack">
-                      
-                      {/* Tarjeta trasera 1: Marquesa */}
-                      <div className="stack-card card-back-left">
-                        <div className="card-img-box">
-                          <span className="card-tag">TRADICIONAL</span>
-                          <img src="./assets/marquesa-opt.jpg" alt="Marquesa Tentación" />
-                        </div>
-                        <div className="card-details">
-                          <h4 className="card-flavor-name">MARQUESA CHOCOLATE</h4>
-                          <p className="card-desc-short">Pudín cremoso belga con Oreo y Pirulín</p>
-                        </div>
-                      </div>
+                      {PRODUCTS.map((prod, pIdx) => {
+                        const relPos = (pIdx - heroCardIndex + PRODUCTS.length) % PRODUCTS.length;
+                        let cardClass = 'card-front';
+                        if (relPos === 1) cardClass = 'card-back-right';
+                        else if (relPos === 2) cardClass = 'card-back-left';
 
-                      {/* Tarjeta trasera 2: Hamburguesa Mixta */}
-                      <div className="stack-card card-back-right">
-                        <div className="card-img-box">
-                          <span className="card-tag">MIXTA</span>
-                          <img src="./assets/hamburguesa-opt.jpg" alt="Hamburguesa Mixta" />
-                        </div>
-                        <div className="card-details">
-                          <h4 className="card-flavor-name">HAMBURGUESA MIXTA</h4>
-                          <p className="card-desc-short">Carne y pollo a la plancha con queso fundido</p>
-                        </div>
-                      </div>
+                        const isFront = relPos === 0;
 
-                      {/* Tarjeta Frontal Destacada Interactiva: Pepito */}
-                      <div className="stack-card card-front">
-                        <div className="card-img-box">
-                          <span className="card-tag">★ DESTACADA</span>
-                          <img src="./assets/pepito-opt.jpg" alt="Pepito La Negra" />
-                        </div>
+                        return (
+                          <div
+                            key={prod.id}
+                            className={`stack-card ${cardClass}`}
+                            onClick={() => {
+                              if (!isFront) {
+                                playSound('pop');
+                                setHeroCardIndex(pIdx);
+                              }
+                            }}
+                            title={!isFront ? `Haz clic para traer ${prod.name} al frente` : undefined}
+                          >
+                            <div className="card-img-box">
+                              <span className="card-tag">
+                                {pIdx === 0 ? '★ ESPECIALIDAD 30CM' : pIdx === 1 ? '★ HAMBURGUESA MIXTA' : '★ POSTRE TENTACIÓN'}
+                              </span>
+                              <img src={prod.image} alt={prod.name} />
+                            </div>
 
-                        <div className="card-details">
-                          <h4 className="card-flavor-name">PEPITO LA NEGRA</h4>
-                          <p className="card-desc-short">Pan baguette con carne, pollo y queso fundido</p>
+                            <div className="card-details">
+                              <h4 className="card-flavor-name">{prod.name}</h4>
+                              <p className="card-desc-short line-clamp-2">{prod.description}</p>
 
-                          {/* Tamaño único de 30 cm */}
-                          <div className="hero-size-single-badge">
-                            <span>🥖 Tamaño Único: 30 cm</span>
-                          </div>
+                              {/* Badges de Especialidad */}
+                              <div className="hero-size-single-badge">
+                                <span>
+                                  {pIdx === 0 ? '🥖 Tamaño Único: 30 cm' : pIdx === 1 ? '🍔 Doble Carne & Pollo' : '🍫 Chocolate Belga & Oreo'}
+                                </span>
+                              </div>
 
-                          <div className="card-footer-row">
-                            <span className="hero-card-price">$8.50</span>
-                            <div className="flex items-center gap-1.5">
-                              <button className="hero-quick-add" onClick={() => setSelectedProduct(PRODUCTS[0])} title="Personalizar ingredientes y salsas">
-                                <span>Personalizar</span>
-                              </button>
-                              <button className="hero-quick-add !bg-white/10 !text-white hover:!bg-white/20" onClick={addHeroToCart} title="Añadir directo con todo">
-                                <span>+ Rápido</span>
-                              </button>
+                              <div className="card-footer-row">
+                                <div>
+                                  <span className="hero-card-price">${prod.price.toFixed(2)}</span>
+                                  <div className="text-[10px] text-amber-400 font-bold font-mono">
+                                    Bs. {(prod.price * bcvRate).toFixed(2)}
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                  <button
+                                    className="hero-quick-add"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedProduct(prod);
+                                    }}
+                                    title="Personalizar ingredientes y salsas"
+                                  >
+                                    <span>Personalizar</span>
+                                  </button>
+                                  <button
+                                    className="hero-quick-add !bg-white/10 !text-white hover:!bg-white/20"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      addActiveHeroProductToCart(prod);
+                                    }}
+                                    title="Añadir directo con todo"
+                                  >
+                                    <span>+ Añadir</span>
+                                  </button>
+                                </div>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
+                        );
+                      })}
+                    </div>
 
+                    {/* Controles Indicadores (Dots + Contador) */}
+                    <div className="flex flex-col items-center gap-1.5 mt-5 z-20">
+                      <div className="flex items-center gap-2">
+                        {PRODUCTS.map((prod, pIdx) => (
+                          <button
+                            key={prod.id}
+                            type="button"
+                            onClick={() => { playSound('pop'); setHeroCardIndex(pIdx); }}
+                            className={`h-2.5 rounded-full transition-all cursor-pointer ${
+                              pIdx === heroCardIndex
+                                ? 'w-8 bg-amber-500 shadow-md shadow-amber-500/50'
+                                : 'w-2.5 bg-white/25 hover:bg-white/45'
+                            }`}
+                            title={`Girar a ${prod.name}`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-[10px] text-gray-400 font-semibold tracking-wider uppercase">
+                        Gira las cartas ({heroCardIndex + 1} de {PRODUCTS.length}) ↻
+                      </span>
                     </div>
 
                     {/* Sello Circular Giratorio */}
