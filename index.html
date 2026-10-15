@@ -26,6 +26,7 @@
   <!-- EXACT CSS STYLES INSPIRED BY THE REFERENCE -->
   <style>
     :root {
+      /* Paleta Original de Tonos Oscuros (Por defecto) */
       --bg-dark: #0a0705;
       --bg-darker: #060403;
       --bg-card: #140d0a;
@@ -43,10 +44,162 @@
       --border-light: rgba(255, 255, 255, 0.08);
       --border-gold: rgba(245, 158, 11, 0.4);
       --border-flame: rgba(234, 88, 12, 0.35);
+
+      /* Nuevos Colores Principales y Secundarios de Marca */
+      --naranja-texto: #ea8116; /* Color del texto "La Negra" y "Pepitos" */
+      --marron-oscuro: #4a2107; /* Borde oscuro exterior y corona */
+      --amarillo-fondo: #f3c222; /* Fondo circular con patrón */
+      --pan-tostado: #e29541; /* Color de los panes de hamburguesa y perro caliente */
+      --rojo-salsa: #d3251e; /* Detalles de ketchup */
+      --verde-lechuga: #5a9e32; /* Detalles de lechuga */
+      --amarillo-queso: #fdda37; /* Detalles de queso y mostaza */
+      --carne-hamburguesa: #723b20; /* Color de la carne */
+      --blanco-puro: #ffffff; /* Borde interior y relleno de letras */
+
       --font-heading: 'Montserrat', sans-serif;
       --font-body: 'Poppins', sans-serif;
       --radius-full: 9999px;
       --transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* =========================================================================
+       NUEVO TEMA DE MARCA VIBRANTE (#ea8116 / #4a2107 / #f3c222)
+       ========================================================================= */
+    html.theme-vibrante, body.theme-vibrante {
+      --bg-dark: #271206;
+      --bg-darker: #170802;
+      --bg-card: #4a2107;
+      --bg-card-hover: #5d2b09;
+      --primary-gold: #f3c222;
+      --primary-gold-hover: #fdda37;
+      --primary-accent: #ea8116;
+      --primary-accent-hover: #d3251e;
+      --flame-red: #d3251e;
+      --border-light: rgba(243, 194, 34, 0.2);
+      --border-gold: rgba(243, 194, 34, 0.5);
+      --border-flame: rgba(234, 129, 22, 0.45);
+      --text-cream: #fff8eb;
+      --text-muted: #e0c2a2;
+    }
+
+    html.theme-vibrante body {
+      background-color: #200d04 !important;
+      background-image: radial-gradient(circle at 50% 15%, rgba(234, 129, 22, 0.14) 0%, transparent 65%) !important;
+    }
+
+    html.theme-vibrante .min-h-screen.bg-\[\#0b0d11\] {
+      background-color: #1a0a03 !important;
+    }
+
+    html.theme-vibrante .site-header {
+      background: rgba(42, 18, 6, 0.96) !important;
+      border-bottom: 2px solid #ea8116 !important;
+    }
+
+    html.theme-vibrante .brand-title {
+      color: #ea8116 !important;
+      text-shadow: 0 0 16px rgba(234, 129, 22, 0.45) !important;
+    }
+
+    html.theme-vibrante .hero-badge-pill {
+      background: rgba(243, 194, 34, 0.18) !important;
+      border-color: #f3c222 !important;
+      color: #fdda37 !important;
+    }
+
+    html.theme-vibrante .title-highlight {
+      color: #f3c222 !important;
+      text-shadow: 0 0 25px rgba(243, 194, 34, 0.45) !important;
+    }
+
+    html.theme-vibrante .btn-primary-hero {
+      background: linear-gradient(135deg, #f3c222 0%, #ea8116 100%) !important;
+      color: #000000 !important;
+      box-shadow: 0 8px 24px rgba(234, 129, 22, 0.5) !important;
+    }
+
+    html.theme-vibrante .marquee-ribbon {
+      background: #f3c222 !important;
+      color: #4a2107 !important;
+      border-top-color: #ea8116 !important;
+      border-bottom-color: #ea8116 !important;
+    }
+
+    html.theme-vibrante .marquee-item {
+      color: #4a2107 !important;
+    }
+
+    html.theme-vibrante .marquee-item .star-icon {
+      color: #d3251e !important;
+    }
+
+    html.theme-vibrante .bg-\[\#140d0a\] {
+      background-color: #4a2107 !important;
+      border-color: rgba(243, 194, 34, 0.35) !important;
+    }
+
+    html.theme-vibrante .bg-\[\#0e0806\],
+    html.theme-vibrante .bg-\[\#0a0705\],
+    html.theme-vibrante .bg-\[\#050302\] {
+      background-color: #271206 !important;
+    }
+
+    html.theme-vibrante .text-amber-400,
+    html.theme-vibrante .text-amber-300 {
+      color: #fdda37 !important;
+    }
+
+    html.theme-vibrante .bg-amber-500 {
+      background-color: #ea8116 !important;
+      color: #ffffff !important;
+    }
+
+    html.theme-vibrante .hover\:bg-amber-400:hover {
+      background-color: #f3c222 !important;
+      color: #000000 !important;
+    }
+
+    html.theme-vibrante .border-amber-500\/40,
+    html.theme-vibrante .border-amber-500\/50,
+    html.theme-vibrante .border-amber-500\/30 {
+      border-color: rgba(234, 129, 22, 0.45) !important;
+    }
+
+    html.theme-vibrante .stack-card {
+      background: #4a2107 !important;
+      border-color: rgba(243, 194, 34, 0.35) !important;
+    }
+
+    html.theme-vibrante .stack-card.card-front {
+      border-color: #f3c222 !important;
+      box-shadow: 0 24px 55px rgba(0, 0, 0, 0.85), 0 0 35px rgba(243, 194, 34, 0.35) !important;
+    }
+
+    html.theme-vibrante .hero-arrow-btn {
+      background: #f3c222 !important;
+      color: #4a2107 !important;
+    }
+
+    html.theme-vibrante .hero-arrow-btn:hover {
+      background: #fdda37 !important;
+    }
+
+    html.theme-vibrante .hero-card-price {
+      color: #fdda37 !important;
+    }
+
+    html.theme-vibrante .hero-size-single-badge {
+      background: #271206 !important;
+      color: #fdda37 !important;
+      border-color: #ea8116 !important;
+    }
+
+    html.theme-vibrante .rotating-stamp circle {
+      fill: #ea8116 !important;
+    }
+
+    html.theme-vibrante .rotating-stamp text {
+      fill: #f3c222 !important;
     }
 
     * {
@@ -1950,6 +2103,31 @@
         playSound('pop');
         setHeroCardIndex(prev => (prev - 1 + PRODUCTS.length) % PRODUCTS.length);
       };
+
+      // Tema de colores para modo Demo: 'dark' (original) | 'brand-vibrant' (nuevos colores)
+      const [colorTheme, setColorTheme] = useState(() => {
+        return localStorage.getItem('pepitos_demo_theme') || 'dark';
+      });
+
+      const toggleColorTheme = () => {
+        playSound('pop');
+        setColorTheme(prev => {
+          const next = prev === 'dark' ? 'brand-vibrant' : 'dark';
+          localStorage.setItem('pepitos_demo_theme', next);
+          return next;
+        });
+      };
+
+      useEffect(() => {
+        if (colorTheme === 'brand-vibrant') {
+          document.documentElement.classList.add('theme-vibrante');
+          document.body.classList.add('theme-vibrante');
+        } else {
+          document.documentElement.classList.remove('theme-vibrante');
+          document.body.classList.remove('theme-vibrante');
+        }
+      }, [colorTheme]);
+
       const [selectedProduct, setSelectedProduct] = useState(null);
       const [chatOpen, setChatOpen] = useState(false);
       const [activeChatOrder, setActiveChatOrder] = useState(null);
@@ -5017,15 +5195,88 @@
           {/* =========================================================================
                FOOTER
                ========================================================================= */}
-          <footer className="bg-[#050302] border-t border-white/5 py-10 text-center text-xs text-gray-500">
-            <div className="max-w-4xl mx-auto px-4 space-y-2">
-              <div className="font-display font-black text-amber-400 text-sm">PEPITO LA NEGRA</div>
-              <p>El auténtico sabor venezolano • Barquisimeto, Estado Lara • Tel / WhatsApp: +58 426-2629507</p>
-              <p>© 2026 Pepito La Negra. Todos los derechos reservados.</p>
-              <div className="pt-2">
+          <footer className="bg-[#050302] border-t border-white/5 py-12 text-center text-xs text-gray-400">
+            <div className="max-w-4xl mx-auto px-4 space-y-6">
+              
+              {/* BOTÓN Y PANEL DEMO PARA CAMBIAR COLOR (CLIENTE) */}
+              <div className="bg-black/50 border border-white/10 p-5 sm:p-6 rounded-3xl max-w-xl mx-auto shadow-2xl space-y-3.5">
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-xl">🎨</span>
+                  <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-white font-display">
+                    Demo: Alternador de Paleta de Colores
+                  </span>
+                </div>
+                
+                <p className="text-[11px] sm:text-xs text-gray-300 max-w-md mx-auto leading-relaxed">
+                  {colorTheme === 'dark' 
+                    ? 'Paleta Activa: "Tonos Oscuros Callejero Gourmet". Presiona el botón para previsualizar los nuevos colores cálidos de marca (#ea8116, #4a2107, #f3c222).'
+                    : 'Paleta Activa: "La Negra Vibrante (Nuevos Colores de Marca)". Presiona el botón para volver a la configuración de tonos oscuros original.'}
+                </p>
+
+                <div className="pt-1">
+                  <button
+                    type="button"
+                    onClick={toggleColorTheme}
+                    className={`px-6 py-3.5 rounded-2xl font-black text-xs sm:text-sm uppercase tracking-wider transition-all transform hover:-translate-y-0.5 active:scale-95 shadow-xl inline-flex items-center justify-center gap-2.5 cursor-pointer font-display border ${
+                      colorTheme === 'dark'
+                        ? 'bg-gradient-to-r from-[#ea8116] via-[#f3c222] to-[#ea8116] text-black border-transparent shadow-[#ea8116]/30 hover:shadow-[#ea8116]/50'
+                        : 'bg-zinc-800 hover:bg-zinc-700 text-white border-white/20 shadow-black/50'
+                    }`}
+                  >
+                    {colorTheme === 'dark' ? (
+                      <>
+                        <span>🎨 Probar Nuevos Colores de Marca</span>
+                        <span className="text-base">✨</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>🌙 Volver a Tonos Oscuros Originales</span>
+                        <span className="text-base">↺</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Muestrario de Nuevos Colores */}
+                <div className="pt-2 flex flex-wrap items-center justify-center gap-1.5 text-[10px]">
+                  <span className="text-gray-400 font-semibold pr-1">Muestrario:</span>
+                  <span className="inline-flex items-center gap-1 bg-[#ea8116]/20 text-[#ea8116] px-2 py-0.5 rounded-md border border-[#ea8116]/40 font-mono font-bold" title="Color de texto La Negra y Pepitos">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#ea8116] inline-block"></span> #ea8116
+                  </span>
+                  <span className="inline-flex items-center gap-1 bg-[#4a2107]/50 text-[#fdda37] px-2 py-0.5 rounded-md border border-[#4a2107] font-mono font-bold" title="Borde oscuro exterior y corona">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#4a2107] border border-white/20 inline-block"></span> #4a2107
+                  </span>
+                  <span className="inline-flex items-center gap-1 bg-[#f3c222]/20 text-[#f3c222] px-2 py-0.5 rounded-md border border-[#f3c222]/40 font-mono font-bold" title="Fondo circular con patrón">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#f3c222] inline-block"></span> #f3c222
+                  </span>
+                  <span className="inline-flex items-center gap-1 bg-[#e29541]/20 text-[#e29541] px-2 py-0.5 rounded-md border border-[#e29541]/40 font-mono font-bold" title="Pan tostado hamburguesa y perro caliente">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#e29541] inline-block"></span> #e29541
+                  </span>
+                  <span className="inline-flex items-center gap-1 bg-[#d3251e]/20 text-[#d3251e] px-2 py-0.5 rounded-md border border-[#d3251e]/40 font-mono font-bold" title="Rojo salsa ketchup">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#d3251e] inline-block"></span> #d3251e
+                  </span>
+                  <span className="inline-flex items-center gap-1 bg-[#5a9e32]/20 text-[#5a9e32] px-2 py-0.5 rounded-md border border-[#5a9e32]/40 font-mono font-bold" title="Verde lechuga">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#5a9e32] inline-block"></span> #5a9e32
+                  </span>
+                  <span className="inline-flex items-center gap-1 bg-[#fdda37]/20 text-[#fdda37] px-2 py-0.5 rounded-md border border-[#fdda37]/40 font-mono font-bold" title="Amarillo queso y mostaza">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#fdda37] inline-block"></span> #fdda37
+                  </span>
+                  <span className="inline-flex items-center gap-1 bg-[#723b20]/30 text-[#e29541] px-2 py-0.5 rounded-md border border-[#723b20] font-mono font-bold" title="Carne de hamburguesa">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#723b20] inline-block"></span> #723b20
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <div className="font-display font-black text-amber-400 text-sm">PEPITO LA NEGRA</div>
+                <p>El auténtico sabor venezolano • Barquisimeto, Estado Lara • Tel / WhatsApp: +58 426-2629507</p>
+                <p>© 2026 Pepito La Negra. Todos los derechos reservados.</p>
+              </div>
+
+              <div className="pt-1">
                 <button 
                   onClick={() => { setRole('admin'); setCurrentView(currentView === 'laboral' ? 'menu' : 'laboral'); }} 
-                  className="text-[11px] text-amber-500/80 hover:text-amber-400 transition underline font-bold"
+                  className="text-[11px] text-amber-500/80 hover:text-amber-400 transition underline font-bold cursor-pointer"
                   title="Acceso exclusivo para Gerente, Cocina y Repartidores"
                 >
                   {currentView === 'laboral' ? '← Salir de Área Laboral a la Tienda' : 'Acceso a Área Laboral (Gerente & Trabajadores) 🔐'}
@@ -5033,6 +5284,23 @@
               </div>
             </div>
           </footer>
+
+          {/* BOTÓN FLOTANTE RÁPIDO PARA CAMBIAR COLOR (DEMO) */}
+          <div className="fixed bottom-5 left-5 z-[9999] hidden sm:block">
+            <button
+              type="button"
+              onClick={toggleColorTheme}
+              className={`px-3.5 py-2 rounded-full font-black text-[11px] uppercase tracking-wider transition-all transform hover:-translate-y-0.5 active:scale-95 shadow-2xl flex items-center gap-2 cursor-pointer border ${
+                colorTheme === 'dark'
+                  ? 'bg-black/85 text-amber-300 border-amber-500/40 hover:bg-black'
+                  : 'bg-[#ea8116] text-black border-white/40 hover:bg-[#f3c222]'
+              }`}
+              title="Cambiar color del tema (Modo Demo)"
+            >
+              <span>🎨</span>
+              <span>Tema: {colorTheme === 'dark' ? 'Oscuro' : 'Vibrante'}</span>
+            </button>
+          </div>
 
           {/* =========================================================================
                WHATSAPP FLOTANTE CON TOOLTIP (IDÉNTICO A LA CAPTURA)
