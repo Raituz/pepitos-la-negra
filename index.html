@@ -959,7 +959,8 @@
     const INITIAL_ORDERS = [
       {
         id: 'PLN-9410',
-        customerName: 'Andrés Mendoza',
+        isClientOrder: true,
+        customerName: 'Cliente Demo (Tú)',
         phone: '0424-5551234',
         address: 'Av. Lara con Calle 8, Edif. Los Samanes, Apto 4-B',
         locationGeo: { lat: 10.067, lng: -69.317 },
@@ -992,6 +993,7 @@
       },
       {
         id: 'PLN-9411',
+        isClientOrder: false,
         customerName: 'Sonia González',
         phone: '0412-8877112',
         address: 'Urb. El Parral, Manzana E, Casa #14-B',
@@ -1033,6 +1035,7 @@
       },
       {
         id: 'PLN-9412',
+        isClientOrder: false,
         customerName: 'Kael Rodríguez',
         phone: '0414-3322119',
         address: 'Calle 25 entre Carreras 18 y 19, Edf. Bolívar, Piso 2',
@@ -1064,6 +1067,7 @@
       },
       {
         id: 'PLN-9413',
+        isClientOrder: false,
         customerName: 'Eduardo Gómez',
         phone: '0416-9900123',
         address: 'Cabudare, Urb. Valle Hondo, Calle 4, Quinta Los Pinos',
@@ -1104,6 +1108,7 @@
       },
       {
         id: 'PLN-9414',
+        isClientOrder: false,
         customerName: 'Javier Silva',
         phone: '0424-6655443',
         address: 'Av. Los Leones, Torre Milenium, Piso 6, Ofic. 602',
@@ -1141,7 +1146,7 @@
       const [role, setRole] = useState('client'); // 'client' | 'admin' | 'driver'
       const [currentView, setCurrentView] = useState('menu'); // 'menu' | 'cart' | 'checkout' | 'orders' | 'laboral'
       const [orders, setOrders] = useState(() => {
-        const saved = localStorage.getItem('pepitos_orders_v3');
+        const saved = localStorage.getItem('pepitos_orders_v4');
         return saved ? JSON.parse(saved) : INITIAL_ORDERS;
       });
       const [cart, setCart] = useState([]);
@@ -1151,7 +1156,14 @@
       const [activeChatOrder, setActiveChatOrder] = useState(null);
       const [newMessage, setNewMessage] = useState('');
       const [smsNotification, setSmsNotification] = useState(null);
-      const [ordersFilter, setOrdersFilter] = useState('all'); // 'all' | 'active' | 'completed'
+      const [ordersFilter, setOrdersFilter] = useState('active'); // Por defecto sólo activas
+      const [paymentSuccessModal, setPaymentSuccessModal] = useState(null);
+      const [showCompletedHistory, setShowCompletedHistory] = useState(false);
+
+      // Órdenes exclusivas del cliente (sólo activas por defecto)
+      const clientOrders = orders.filter(o => o.isClientOrder !== false);
+      const clientActiveOrders = clientOrders.filter(o => o.status !== 4);
+      const clientCompletedOrders = clientOrders.filter(o => o.status === 4);
       
       // Estados para Área Laboral (Multi Chat & Gestión)
       const [laboralTab, setLaboralTab] = useState('chat'); // 'chat' | 'orders' | 'delivery'
@@ -1250,7 +1262,7 @@
       // Sincronizar localStorage
       useEffect(() => {
         try {
-          localStorage.setItem('pepitos_orders_v3', JSON.stringify(orders));
+          localStorage.setItem('pepitos_orders_v4', JSON.stringify(orders));
         } catch (e) {}
       }, [orders]);
 
@@ -1418,9 +1430,13 @@
 
       const createOrder = (orderData) => {
         playSound('cash');
+        try {
+          confetti({ particleCount: 90, spread: 80, origin: { y: 0.35 } });
+        } catch (e) {}
         const newOrderId = 'PLN-' + Math.floor(1000 + Math.random() * 9000);
         const newOrder = {
           id: newOrderId,
+          isClientOrder: true,
           customerName: orderData.customerName,
           phone: orderData.phone,
           address: orderData.address,
@@ -1440,6 +1456,7 @@
           paymentMethod: 'Pago Móvil Banco Provincial',
           reference: orderData.reference,
           status: 1,
+          date: 'Hoy, ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           assignedDriver: 'Carlos Gómez (Moto Bera SBR)',
           driverPhone: '0414-9988771',
@@ -1454,7 +1471,8 @@
 
         setOrders(prev => [newOrder, ...prev]);
         setCart([]);
-        setCurrentView('orders');
+        // Ventana emergente de pago confirmado con éxito
+        setPaymentSuccessModal(newOrder);
       };
 
       return (
@@ -1494,9 +1512,14 @@
                   <li>
                     <button 
                       onClick={() => { setRole('client'); setCurrentView('orders'); }}
-                      className={`nav-link ${role === 'client' && currentView === 'orders' ? 'active' : ''}`}
+                      className={`nav-link flex items-center gap-1.5 ${role === 'client' && currentView === 'orders' ? 'active' : ''}`}
                     >
-                      Mis Pedidos
+                      <span>Mis Pedidos</span>
+                      {clientActiveOrders.length > 0 && (
+                        <span className="bg-amber-500 text-black text-[10px] font-black px-1.5 py-0.5 rounded-full leading-none shadow">
+                          {clientActiveOrders.length}
+                        </span>
+                      )}
                     </button>
                   </li>
                   <li>
@@ -1869,12 +1892,12 @@
                     <p className="text-xs text-gray-400 mt-0.5">Revisa tus productos antes del Pago Móvil Provincial</p>
                   </div>
                   <div className="flex items-center gap-3">
-                    {orders.length > 0 && (
+                    {clientActiveOrders.length > 0 && (
                       <button 
                         onClick={() => setCurrentView('orders')} 
-                        className="text-xs bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 font-bold px-3 py-1.5 rounded-full transition"
+                        className="text-xs bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 font-bold px-3 py-1.5 rounded-full transition cursor-pointer"
                       >
-                        🛵 Ver mis órdenes ({orders.length})
+                        🛵 Ver mi pedido activo ({clientActiveOrders.length})
                       </button>
                     )}
                     <button onClick={() => setCurrentView('menu')} className="text-xs font-bold text-amber-400 hover:underline">
@@ -2093,73 +2116,38 @@
                   </div>
                 </div>
 
-                {/* Pestañas de Filtro */}
-                <div className="flex flex-wrap gap-2 pt-6 mt-6 border-t border-white/5">
-                  <button
-                    onClick={() => setOrdersFilter('all')}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
-                      ordersFilter === 'all' ? 'bg-amber-500 text-black shadow' : 'bg-black/40 text-gray-400 hover:text-white border border-white/5'
-                    }`}
-                  >
-                    Todas las Órdenes ({orders.length})
-                  </button>
-                  <button
-                    onClick={() => setOrdersFilter('active')}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
-                      ordersFilter === 'active' ? 'bg-amber-500 text-black shadow' : 'bg-black/40 text-gray-400 hover:text-white border border-white/5'
-                    }`}
-                  >
-                    En Preparación / Delivery ({orders.filter(o => o.status === 2 || o.status === 3).length})
-                  </button>
-                  <button
-                    onClick={() => setOrdersFilter('pending')}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
-                      ordersFilter === 'pending' ? 'bg-amber-500 text-black shadow' : 'bg-black/40 text-gray-400 hover:text-white border border-white/5'
-                    }`}
-                  >
-                    Por Pagar ({orders.filter(o => o.status === 1).length})
-                  </button>
-                  <button
-                    onClick={() => setOrdersFilter('completed')}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
-                      ordersFilter === 'completed' ? 'bg-amber-500 text-black shadow' : 'bg-black/40 text-gray-400 hover:text-white border border-white/5'
-                    }`}
-                  >
-                    Entregadas ({orders.filter(o => o.status === 4).length})
-                  </button>
+                <div className="pt-4 mt-6 border-t border-white/5 flex items-center justify-between">
+                  <div className="text-xs text-amber-300 font-bold flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Mostrando únicamente tus pedidos activos en preparación o delivery</span>
+                  </div>
+                  <span className="text-xs font-mono text-gray-400 bg-black/40 px-3 py-1 rounded-full border border-white/5">
+                    {clientActiveOrders.length} {clientActiveOrders.length === 1 ? 'pedido activo' : 'pedidos activos'}
+                  </span>
                 </div>
               </div>
 
-              {/* Listado de Tarjetas de Órdenes */}
+              {/* Listado de Tarjetas de Órdenes Activas del Cliente */}
               {(() => {
-                const filtered = orders.filter(o => {
-                  if (ordersFilter === 'active') return o.status === 2 || o.status === 3;
-                  if (ordersFilter === 'pending') return o.status === 1;
-                  if (ordersFilter === 'completed') return o.status === 4;
-                  return true;
-                });
-
-                if (filtered.length === 0) {
+                if (clientActiveOrders.length === 0) {
                   return (
                     <div className="bg-[#140d0a] border border-[#2e1b12] rounded-3xl p-12 text-center shadow-xl space-y-4">
                       <div className="text-4xl">🛵</div>
-                      <h3 className="text-lg font-bold text-white">No hay órdenes en esta categoría</h3>
+                      <h3 className="text-lg font-bold text-white">No tienes pedidos activos en este momento</h3>
                       <p className="text-xs text-gray-400 max-w-sm mx-auto">
-                        {orders.length === 0 
-                          ? 'Aún no has registrado ningún pedido. ¡Explora nuestro menú y ordena los mejores pepitos de Barquisimeto!' 
-                          : 'No tienes pedidos con el filtro seleccionado.'}
+                        Apenas confirmes tu Pago Móvil Provincial, tu pedido aparecerá aquí en tiempo real con seguimiento directo de cocina.
                       </p>
                       <button 
                         onClick={() => setCurrentView('menu')}
-                        className="bg-amber-500 hover:bg-amber-400 text-black font-black text-xs px-6 py-2.5 rounded-full shadow"
+                        className="bg-amber-500 hover:bg-amber-400 text-black font-black text-xs px-6 py-2.5 rounded-full shadow transition cursor-pointer active:scale-95"
                       >
-                        Explorar Menú
+                        Explorar Menú y Pedir
                       </button>
                     </div>
                   );
                 }
 
-                return filtered.map(order => (
+                return clientActiveOrders.map(order => (
                   <div 
                     key={order.id} 
                     className="bg-[#140d0a] border border-[#2e1b12] hover:border-amber-500/40 rounded-3xl p-6 sm:p-7 shadow-2xl space-y-6 transition-all"
@@ -2400,12 +2388,6 @@
                               <span>En camino con repartidor: <strong className="text-white">{order.assignedDriver}</strong></span>
                             </>
                           )}
-                          {order.status === 4 && (
-                            <>
-                              <span className="w-2 h-2 rounded-full bg-purple-400"></span>
-                              <span>Entregado con éxito • ¡Gracias por tu compra!</span>
-                            </>
-                          )}
                         </span>
                       </div>
 
@@ -2427,6 +2409,43 @@
                   </div>
                 ));
               })()}
+
+              {/* HISTORIAL DISCRETO DE PEDIDOS ENTREGADOS (NO RESALTA, ACCESIBLE SI EL CLIENTE LO CONSULTA) */}
+              {clientCompletedOrders.length > 0 && (
+                <div className="pt-6 border-t border-white/5 text-center">
+                  <button
+                    onClick={() => setShowCompletedHistory(prev => !prev)}
+                    className="text-xs text-gray-400 hover:text-amber-300 font-bold transition inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-white/5 bg-black/40 hover:bg-white/5 cursor-pointer"
+                  >
+                    <span>{showCompletedHistory ? '▲ Ocultar pedidos entregados' : '▼ Ver historial de pedidos anteriores entregados (' + clientCompletedOrders.length + ')'}</span>
+                  </button>
+
+                  {showCompletedHistory && (
+                    <div className="mt-4 space-y-3 text-left animate-fadeIn">
+                      {clientCompletedOrders.map(order => (
+                        <div key={order.id} className="bg-black/35 border border-white/5 rounded-2xl p-4 space-y-2 opacity-65 hover:opacity-95 transition">
+                          <div className="flex justify-between items-center text-xs">
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-gray-300">#{order.id}</span>
+                              <span className="text-gray-500">• {order.date}</span>
+                            </div>
+                            <span className="bg-purple-900/40 border border-purple-500/30 text-purple-300 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                              Entregado ✓
+                            </span>
+                          </div>
+                          <div className="text-xs text-gray-400">
+                            {order.items.map(it => `${it.quantity}x ${it.name}`).join(' + ')}
+                          </div>
+                          <div className="text-[11px] text-gray-500 flex justify-between pt-1 border-t border-white/5">
+                            <span>📍 {order.address}</span>
+                            <span className="text-amber-400/80 font-mono">${order.total.toFixed(2)}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
 
             </div>
           )}
@@ -3269,6 +3288,111 @@
               </svg>
             </a>
           </div>
+
+          {/* =========================================================================
+               VENTANA EMERGENTE: PAGO CONFIRMADO CON ÉXITO (COMPROBANTE DIGITAL)
+               ========================================================================= */}
+          {paymentSuccessModal && (
+            <div 
+              className="fixed inset-0 z-[999999] bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) {
+                  setPaymentSuccessModal(null);
+                  setCurrentView('orders');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }}
+            >
+              <div 
+                className="bg-[#140d0a] border-2 border-amber-500/70 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative text-center space-y-5 animate-scaleUp"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Botón de cierre superior */}
+                <button
+                  onClick={() => {
+                    setPaymentSuccessModal(null);
+                    setCurrentView('orders');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-white text-lg w-8 h-8 rounded-full bg-black/40 border border-white/10 flex items-center justify-center transition cursor-pointer"
+                  title="Cerrar y ver pedido"
+                >
+                  ✕
+                </button>
+
+                {/* Checkmark Éxito Animado */}
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-emerald-500/20 border-2 border-emerald-500 rounded-full flex items-center justify-center mx-auto text-3xl sm:text-4xl shadow-lg shadow-emerald-500/30 text-emerald-400">
+                  ✓
+                </div>
+
+                {/* Título y Mensaje */}
+                <div className="space-y-1">
+                  <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest block font-sans">
+                    TRANSACCIÓN PAGO MÓVIL REGISTRADA
+                  </span>
+                  <h3 className="text-2xl sm:text-3xl font-black font-display text-white uppercase tracking-wide">
+                    ¡Pago Confirmado con Éxito!
+                  </h3>
+                  <p className="text-xs text-gray-300 leading-relaxed max-w-md mx-auto pt-1">
+                    Hemos recibido los datos de tu Pago Móvil Provincial. Nuestro sistema ha verificado la referencia y tu pedido pasa de inmediato a la plancha.
+                  </p>
+                </div>
+
+                {/* Comprobante Digital */}
+                <div className="bg-black/65 border border-amber-500/35 rounded-2xl p-4 text-left text-xs font-mono space-y-2">
+                  <div className="flex justify-between items-center pb-2 border-b border-white/10">
+                    <span className="text-gray-400 font-sans">N° de Orden:</span>
+                    <strong className="text-amber-400 text-sm font-sans font-black font-mono">#{paymentSuccessModal.id}</strong>
+                  </div>
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="text-gray-400 font-sans">Banco Destino:</span>
+                    <span className="text-white">Banco Provincial (0108)</span>
+                  </div>
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="text-gray-400 font-sans">Referencia:</span>
+                    <span className="text-amber-300 font-bold">****{paymentSuccessModal.reference}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="text-gray-400 font-sans">Total Pagado:</span>
+                    <span className="text-amber-400 font-bold text-xs font-mono">Bs. {paymentSuccessModal.totalBs} (${paymentSuccessModal.total.toFixed(2)})</span>
+                  </div>
+                  <div className="pt-2 border-t border-white/10 text-[11px]">
+                    <span className="text-gray-400 font-sans block mb-0.5">Dirección de Entrega:</span>
+                    <span className="text-white font-sans leading-relaxed">{paymentSuccessModal.address}</span>
+                  </div>
+                  <div className="pt-2 border-t border-white/10 text-[11px]">
+                    <span className="text-gray-400 font-sans block mb-0.5">Comanda:</span>
+                    <span className="text-amber-200/90 font-sans leading-relaxed">
+                      {paymentSuccessModal.items.map(it => `${it.quantity}x ${it.name}`).join(' + ')}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Estado Inicial */}
+                <div className="inline-flex items-center gap-2 bg-yellow-500/15 border border-yellow-500/35 text-yellow-300 px-3.5 py-1.5 rounded-full text-xs font-bold font-sans">
+                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-400 animate-pulse"></span>
+                  <span>Estado: Verificando SMS Provincial en tiempo real</span>
+                </div>
+
+                {/* Botón CTA: Ver Mi Pedido */}
+                <button
+                  onClick={() => {
+                    setPaymentSuccessModal(null);
+                    setCurrentView('orders');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="w-full bg-amber-500 hover:bg-amber-400 text-black font-black py-4 px-6 rounded-2xl text-sm sm:text-base uppercase tracking-wider transition transform hover:-translate-y-0.5 active:scale-95 shadow-xl flex items-center justify-center gap-2 cursor-pointer font-display"
+                >
+                  <span>🛵 Ver Mi Pedido (Seguimiento en Vivo)</span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </button>
+
+              </div>
+            </div>
+          )}
 
           {/* MODAL PERSONALIZAR */}
           {selectedProduct && (
