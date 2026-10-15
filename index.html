@@ -2209,6 +2209,48 @@
         } catch (e) {}
       }, [drivers]);
 
+      // =========================================================================
+      // AUTO-SINCRONIZACIÓN DE ESTADO DE MOTORIZADOS CON SUS ÓRDENES ACTIVAS
+      // Cuando se asigna a un motorizado para delivery, pasa automáticamente a 'En Ruta'
+      // Cuando no tiene pedidos pendientes, vuelve automáticamente a 'Disponible'
+      // =========================================================================
+      useEffect(() => {
+        setDrivers(prevDrivers => {
+          let hasChanges = false;
+          const updated = prevDrivers.map(d => {
+            const hasActiveDeliveries = orders.some(o => 
+              (o.status === 2 || o.status === 3) && 
+              o.assignedDriver && 
+              o.assignedDriver.includes(d.name)
+            );
+
+            // Si tiene pedidos activos en curso y estaba en 'Disponible' o 'En Espera', pasa automáticamente a 'En Ruta'
+            if (hasActiveDeliveries && (d.status === 'Disponible' || d.status === 'En Espera')) {
+              hasChanges = true;
+              return { 
+                ...d, 
+                status: 'En Ruta',
+                lastUpdate: 'En Vivo (' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ')'
+              };
+            }
+
+            // Si estaba 'En Ruta' pero ya no tiene ningún pedido activo en curso, pasa automáticamente a 'Disponible'
+            if (!hasActiveDeliveries && d.status === 'En Ruta') {
+              hasChanges = true;
+              return { 
+                ...d, 
+                status: 'Disponible',
+                lastUpdate: 'En Base (' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ')'
+              };
+            }
+
+            return d;
+          });
+
+          return hasChanges ? updated : prevDrivers;
+        });
+      }, [orders]);
+
       const getMotoColorBadge = (colorStr) => {
         const c = (colorStr || '').toLowerCase();
         if (c.includes('roj')) return { bg: 'bg-red-500/20 text-red-300 border-red-500/40', dot: 'bg-red-500' };
@@ -2338,6 +2380,8 @@
       const handleAssignDriverToOrder = (orderId, driver) => {
         playSound('pop');
         const driverDesc = `${driver.name} (Moto ${driver.motoModel} ${driver.motoColor})`;
+        
+        // 1. Actualizar orden
         setOrders(prev => prev.map(o => {
           if (o.id === orderId) {
             return {
@@ -2348,13 +2392,25 @@
                 ...(o.messages || []),
                 {
                   sender: 'system',
-                  text: `🛵 Motorizado Asignado: ${driverDesc} • Tel: ${driver.phone}.`,
+                  text: `🛵 Motorizado Asignado: ${driverDesc} • Tel: ${driver.phone}. Estado actualizado automáticamente a En Ruta.`,
                   time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                 }
               ]
             };
           }
           return o;
+        }));
+
+        // 2. Cambiar inmediatamente el estado del motorizado a 'En Ruta'
+        setDrivers(prevDrivers => prevDrivers.map(d => {
+          if (d.id === driver.id) {
+            return {
+              ...d,
+              status: 'En Ruta',
+              lastUpdate: 'En Vivo (' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ')'
+            };
+          }
+          return d;
         }));
       };
       
@@ -4883,7 +4939,11 @@
                               <div className="space-y-1">
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-2">
-                                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    <span className={`w-2.5 h-2.5 rounded-full ${
+                                      driver.status === 'En Ruta' ? 'bg-blue-400 animate-ping' :
+                                      driver.status === 'Disponible' ? 'bg-emerald-400 animate-pulse' :
+                                      driver.status === 'En Espera' ? 'bg-yellow-400' : 'bg-red-500'
+                                    }`}></span>
                                     <span className="font-black text-white text-base font-display">{driver.name}</span>
                                   </div>
                                   <button
