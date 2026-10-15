@@ -1113,7 +1113,7 @@
                 </ul>
               </nav>
 
-              {/* Acciones a la derecha: WhatsApp, Almacén, Órdenes, Mi Pedido */}
+              {/* Acciones a la derecha: solo WhatsApp y Mis Pedidos */}
               <div className="header-actions">
                 
                 {/* Botón WhatsApp Verde */}
@@ -1129,52 +1129,37 @@
                   <span>WhatsApp</span>
                 </a>
 
-                {/* Botón Almacén (Panel de Administración) */}
+                {/* Botón Mis Pedidos */}
                 <button 
-                  onClick={() => setRole(role === 'admin' ? 'client' : 'admin')}
-                  className={`btn-admin-header ${role === 'admin' ? 'active' : ''}`}
-                  title="Panel de Administración y Almacén"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                  </svg>
-                  <span>Almacén</span>
-                </button>
-
-                {/* Botón Órdenes (Seguimiento de pedidos) */}
-                <button 
-                  onClick={() => { setRole('client'); setCurrentView('orders'); }}
-                  className={`btn-orders-header ${role === 'client' && currentView === 'orders' ? 'active' : ''}`}
-                  title="Consultar mis órdenes y estado de pedidos"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                  </svg>
-                  <span>Órdenes</span>
-                  {orders.length > 0 && (
-                    <span className="orders-count-badge">{orders.length}</span>
-                  )}
-                </button>
-
-                {/* Botón Mi Pedido / Carrito */}
-                <button 
-                  onClick={() => { setRole('client'); setCurrentView('cart'); }}
-                  className="btn-cart-header" 
-                  aria-label="Ver mi pedido"
+                  onClick={() => {
+                    setRole('client');
+                    if (currentView === 'orders') {
+                      setCurrentView('cart');
+                    } else if (currentView === 'cart') {
+                      setCurrentView(orders.length > 0 ? 'orders' : 'menu');
+                    } else if (orders.length > 0) {
+                      setCurrentView('orders');
+                    } else {
+                      setCurrentView('cart');
+                    }
+                  }}
+                  className={`btn-cart-header ${(currentView === 'orders' || currentView === 'cart') && role === 'client' ? 'active' : ''}`}
+                  title="Ver Mis Pedidos y Carrito"
+                  aria-label="Ver mis pedidos"
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
                     <line x1="3" y1="6" x2="21" y2="6"></line>
                     <path d="M16 10a4 4 0 0 1-8 0"></path>
                   </svg>
-                  <span>Mi Pedido</span>
-                  <span className="cart-count-badge">
-                    {cart.reduce((a, b) => a + b.quantity, 0)}
-                  </span>
+                  <span>Mis Pedidos</span>
+                  {(cart.reduce((a, b) => a + b.quantity, 0) > 0 || orders.length > 0) && (
+                    <span className="cart-count-badge">
+                      {cart.reduce((a, b) => a + b.quantity, 0) > 0 
+                        ? cart.reduce((a, b) => a + b.quantity, 0) 
+                        : orders.length}
+                    </span>
+                  )}
                 </button>
 
               </div>
@@ -1476,9 +1461,26 @@
           {role === 'client' && currentView === 'cart' && (
             <div className="max-w-2xl mx-auto px-4 py-8 w-full flex-1">
               <div className="bg-[#141821] border border-[#262f3f] rounded-3xl p-6 shadow-2xl">
+                
+                {/* Sub-tabs Carrito / Pedidos */}
+                <div className="flex gap-2 mb-4 bg-black/40 p-1 rounded-2xl border border-white/5">
+                  <button 
+                    onClick={() => setCurrentView('cart')} 
+                    className="flex-1 py-2 text-xs font-bold rounded-xl transition bg-amber-500 text-black shadow"
+                  >
+                    🛒 Carrito ({cart.reduce((a, b) => a + b.quantity, 0)})
+                  </button>
+                  <button 
+                    onClick={() => setCurrentView('orders')} 
+                    className="flex-1 py-2 text-xs font-bold rounded-xl transition text-gray-400 hover:text-white"
+                  >
+                    🛵 Seguimiento ({orders.length})
+                  </button>
+                </div>
+
                 <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
                   <h2 className="text-xl font-black font-display text-white flex items-center gap-2">
-                    🛒 Tu Pedido
+                    🛒 Tu Carrito
                   </h2>
                   <button onClick={() => setCurrentView('menu')} className="text-xs font-bold text-amber-400 hover:underline">
                     + Seguir comprando
@@ -1599,58 +1601,84 @@
           {role === 'client' && currentView === 'orders' && (
             <div className="max-w-2xl mx-auto px-4 py-8 w-full flex-1">
               <div className="bg-[#141821] border border-[#262f3f] rounded-3xl p-6 shadow-2xl space-y-6">
+                
+                {/* Sub-tabs Carrito / Pedidos */}
+                <div className="flex gap-2 mb-2 bg-black/40 p-1 rounded-2xl border border-white/5">
+                  <button 
+                    onClick={() => setCurrentView('cart')} 
+                    className="flex-1 py-2 text-xs font-bold rounded-xl transition text-gray-400 hover:text-white"
+                  >
+                    🛒 Carrito ({cart.reduce((a, b) => a + b.quantity, 0)})
+                  </button>
+                  <button 
+                    onClick={() => setCurrentView('orders')} 
+                    className="flex-1 py-2 text-xs font-bold rounded-xl transition bg-amber-500 text-black shadow"
+                  >
+                    🛵 Seguimiento ({orders.length})
+                  </button>
+                </div>
+
                 <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                  <h3 className="text-xl font-black font-display text-white">🛵 Seguimiento de Pedido</h3>
-                  <button onClick={() => setCurrentView('menu')} className="text-xs font-bold text-amber-400">
+                  <h3 className="text-xl font-black font-display text-white">🛵 Seguimiento de Pedidos</h3>
+                  <button onClick={() => setCurrentView('menu')} className="text-xs font-bold text-amber-400 hover:underline">
                     ← Menú
                   </button>
                 </div>
 
-                {orders.map(order => (
-                  <div key={order.id} className="bg-black/40 border border-white/5 rounded-2xl p-5 space-y-4">
-                    <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                      <div>
-                        <span className="text-lg font-black text-white font-display">#{order.id}</span>
-                        <span className="text-xs text-gray-400 block">{order.customerName} • Ref: {order.reference}</span>
-                      </div>
-                      <span className={`text-xs font-bold px-3 py-1 rounded-full ${
-                        order.status === 1 ? 'bg-yellow-500/20 text-yellow-300' :
-                        order.status === 2 ? 'bg-emerald-500/20 text-emerald-300' :
-                        order.status === 3 ? 'bg-blue-500/20 text-blue-300' : 'bg-purple-500/20 text-purple-300'
-                      }`}>
-                        {order.status === 1 ? '🟡 Por Pagar' :
-                         order.status === 2 ? '🟢 Pago Verificado' :
-                         order.status === 3 ? '🔵 En Preparación / Delivery' : '🟣 Entregado'}
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-4 gap-1 text-center text-[10px] font-bold">
-                      <div className={`p-1.5 rounded-lg ${order.status >= 1 ? 'bg-amber-500 text-black' : 'bg-white/5 text-gray-500'}`}>1. Por pagar</div>
-                      <div className={`p-1.5 rounded-lg ${order.status >= 2 ? 'bg-emerald-500 text-black' : 'bg-white/5 text-gray-500'}`}>2. Verificado</div>
-                      <div className={`p-1.5 rounded-lg ${order.status >= 3 ? 'bg-blue-500 text-black' : 'bg-white/5 text-gray-500'}`}>3. Cocina</div>
-                      <div className={`p-1.5 rounded-lg ${order.status >= 4 ? 'bg-purple-600 text-white' : 'bg-white/5 text-gray-500'}`}>4. Entregado</div>
-                    </div>
-
-                    <div className="text-xs text-gray-300 space-y-1">
-                      {order.items.map((it, idx) => (
-                        <div key={idx} className="flex justify-between">
-                          <span>{it.quantity}x {it.name}</span>
-                          <span className="text-amber-400 font-bold">${(it.price * it.quantity).toFixed(2)}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="pt-2 flex justify-between items-center text-xs">
-                      <span className="text-gray-400">Repartidor: <strong className="text-white">{order.assignedDriver}</strong></span>
-                      <button 
-                        onClick={() => { setActiveChatOrder(order); setChatOpen(true); }}
-                        className="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg font-bold"
-                      >
-                        💬 Chat
-                      </button>
-                    </div>
+                {orders.length === 0 ? (
+                  <div className="text-center py-12">
+                    <p className="text-gray-400 text-sm">Aún no tienes ningún pedido activo.</p>
+                    <button onClick={() => setCurrentView('menu')} className="mt-4 bg-amber-500 text-black font-bold px-6 py-2 rounded-full text-xs">
+                      Explorar Menú
+                    </button>
                   </div>
-                ))}
+                ) : (
+                  orders.map(order => (
+                    <div key={order.id} className="bg-black/40 border border-white/5 rounded-2xl p-5 space-y-4">
+                      <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                        <div>
+                          <span className="text-lg font-black text-white font-display">#{order.id}</span>
+                          <span className="text-xs text-gray-400 block">{order.customerName} • Ref: {order.reference}</span>
+                        </div>
+                        <span className={`text-xs font-bold px-3 py-1 rounded-full ${
+                          order.status === 1 ? 'bg-yellow-500/20 text-yellow-300' :
+                          order.status === 2 ? 'bg-emerald-500/20 text-emerald-300' :
+                          order.status === 3 ? 'bg-blue-500/20 text-blue-300' : 'bg-purple-500/20 text-purple-300'
+                        }`}>
+                          {order.status === 1 ? '🟡 Por Pagar' :
+                           order.status === 2 ? '🟢 Pago Verificado' :
+                           order.status === 3 ? '🔵 En Preparación / Delivery' : '🟣 Entregado'}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-4 gap-1 text-center text-[10px] font-bold">
+                        <div className={`p-1.5 rounded-lg ${order.status >= 1 ? 'bg-amber-500 text-black' : 'bg-white/5 text-gray-500'}`}>1. Por pagar</div>
+                        <div className={`p-1.5 rounded-lg ${order.status >= 2 ? 'bg-emerald-500 text-black' : 'bg-white/5 text-gray-500'}`}>2. Verificado</div>
+                        <div className={`p-1.5 rounded-lg ${order.status >= 3 ? 'bg-blue-500 text-black' : 'bg-white/5 text-gray-500'}`}>3. Cocina</div>
+                        <div className={`p-1.5 rounded-lg ${order.status >= 4 ? 'bg-purple-600 text-white' : 'bg-white/5 text-gray-500'}`}>4. Entregado</div>
+                      </div>
+
+                      <div className="text-xs text-gray-300 space-y-1">
+                        {order.items.map((it, idx) => (
+                          <div key={idx} className="flex justify-between">
+                            <span>{it.quantity}x {it.name}</span>
+                            <span className="text-amber-400 font-bold">${(it.price * it.quantity).toFixed(2)}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="pt-2 flex justify-between items-center text-xs">
+                        <span className="text-gray-400">Repartidor: <strong className="text-white">{order.assignedDriver}</strong></span>
+                        <button 
+                          onClick={() => { setActiveChatOrder(order); setChatOpen(true); }}
+                          className="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg font-bold"
+                        >
+                          💬 Chat
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           )}
@@ -1751,6 +1779,15 @@
               <div className="font-display font-black text-amber-400 text-sm">PEPITO LA NEGRA</div>
               <p>El auténtico sabor venezolano • Barquisimeto, Estado Lara • Tel: 0412-0424336</p>
               <p>© 2026 Pepito La Negra. Todos los derechos reservados.</p>
+              <div className="pt-2">
+                <button 
+                  onClick={() => setRole(role === 'admin' ? 'client' : 'admin')} 
+                  className="text-[11px] text-gray-700 hover:text-amber-500/70 transition underline"
+                  title="Acceso exclusivo para demostración de administración"
+                >
+                  {role === 'admin' ? '← Salir de Administración' : 'Acceso Administrador (Demo)'}
+                </button>
+              </div>
             </div>
           </footer>
 
