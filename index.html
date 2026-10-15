@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Pepitos La Negra | Sabor Venezolano • 100% Fresco</title>
-  <meta name="description" content="Pepitos gigantes de 30 cm, hamburguesas smash y marquesas de chocolate. El auténtico sabor callejero venezolano con delivery express.">
+  <title>Pepitos La Negra | El Auténtico Sabor Venezolano</title>
+  <meta name="description" content="Pepitos gigantes de 30 cm mixtos, hamburguesas mixtas de pollo y carne, y marquesas de chocolate. El auténtico sabor callejero venezolano con delivery express en Barquisimeto.">
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#0b0d11">
   <link rel="icon" type="image/jpeg" href="./assets/logo-opt.jpg">
@@ -591,29 +591,19 @@
       line-height: 1.35;
     }
 
-    .hero-size-selector {
-      display: flex;
+    .hero-size-single-badge {
+      display: inline-flex;
+      align-items: center;
       gap: 6px;
-      margin-bottom: 10px;
-    }
-
-    .hero-size-btn {
-      flex: 1;
-      padding: 5px 0;
-      font-size: 0.72rem;
-      font-weight: 700;
-      border-radius: 6px;
-      border: 1px solid #cbd5e1;
-      background: #f8fafc;
-      color: #334155;
-      text-align: center;
-      cursor: pointer;
-    }
-
-    .hero-size-btn.active {
       background: #0f172a;
-      color: #ffffff;
-      border-color: #0f172a;
+      color: #f59e0b;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      width: fit-content;
+      border: 1px solid rgba(245, 158, 11, 0.3);
     }
 
     .card-footer-row {
@@ -839,9 +829,9 @@
       {
         id: 'pepito-la-negra',
         category: 'pepitos',
-        name: 'PEPITO LA NEGRA (ESPECIAL MIXTO)',
-        tagline: '★ DESTACADA • 30 cm de puro sabor',
-        description: 'Pan baguette artesanal recién tostado, carne tierna a la plancha, pechuga de pollo marinada, tocineta crujiente, queso de mano derretido, lluvia de papitas al hilo y queso parmesano.',
+        name: 'PEPITO LA NEGRA (30 CM MIXTO)',
+        tagline: '★ DESTACADA • Tamaño Único 30 cm',
+        description: 'Pan baguette recién tostado, abundante carne a la plancha combinada con pechuga de pollo marinada, tocineta crujiente, queso de mano derretido, lluvia de papitas al hilo y queso parmesano.',
         price: 8.50,
         image: './assets/pepito-opt.jpg',
         hasOptions: true,
@@ -857,9 +847,9 @@
       {
         id: 'hamburguesa-la-negra',
         category: 'hamburguesas',
-        name: 'HAMBURGUESA SMASH ESPECIAL',
-        tagline: '🔥 Doble smash Angus + Pollo crispy',
-        description: 'Pan brioche tostado a la mantequilla, doble carne smash 100% Angus, pollo tierno sazonado, doble queso cheddar americano, cebolla caramelizada, lechuga fresca y salsa secreta.',
+        name: 'HAMBURGUESA MIXTA ESPECIAL',
+        tagline: '🔥 Mixta: Pollo tierno + Carne a la plancha',
+        description: 'Pan brioche tostado a la mantequilla, jugosa carne de res a la plancha y pechuga de pollo marinada, doble queso americano derretido, cebolla caramelizada, lechuga fresca y salsa secreta de la casa.',
         price: 6.00,
         image: './assets/hamburguesa-opt.jpg',
         hasOptions: true,
@@ -1016,7 +1006,7 @@
         setTimeout(() => setSmsNotification(null), 8000);
       };
 
-      const heroPrice = heroSize === '20cm' ? 6.50 : (heroSize === '30cm' ? 8.50 : 11.00);
+      const heroPrice = 8.50;
 
       const addHeroToCart = () => {
         playSound('pop');
@@ -1024,13 +1014,13 @@
         const newItem = {
           cartId: Date.now(),
           id: heroProduct.id,
-          name: `${heroProduct.name} (${heroSize})`,
-          unitPrice: heroPrice,
+          name: `${heroProduct.name}`,
+          unitPrice: 8.50,
           quantity: 1,
           sauces: heroProduct.defaultSauces,
           extras: [],
           notes: '',
-          itemTotal: heroPrice
+          itemTotal: 8.50
         };
         setCart(prev => [...prev, newItem]);
         setCurrentView('cart');
@@ -1167,7 +1157,7 @@
                 
                 {/* Botón WhatsApp Verde */}
                 <a 
-                  href="https://wa.me/584120424336?text=Hola%20Pepitos%20La%20Negra,%20quisiera%20hacer%20un%20pedido." 
+                  href="https://wa.me/584262629507?text=Hola%20Pepitos%20La%20Negra,%20quisiera%20hacer%20un%20pedido." 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="btn-whatsapp-header"
@@ -1227,7 +1217,7 @@
                 {/* Texto de agua gigante en el fondo */}
                 <div className="hero-watermark">
                   <span>PEPITO LA NEGRA</span>
-                  <span>ARTESANAL Y FRESCO</span>
+                  <span>CALLEJERO GOURMET</span>
                 </div>
 
                 <div className="hero-container">
@@ -1235,7 +1225,7 @@
                   {/* Columna Izquierda: Título Grande y Botones CTA */}
                   <div className="hero-content">
                     <div className="hero-badge-pill">
-                      <span>✨ 100% ARTESANAL Y FRESCO</span>
+                      <span>🔥 AUTÉNTICO SABOR VENEZOLANO</span>
                     </div>
 
                     <h1 className="hero-title-main">
@@ -1244,12 +1234,12 @@
                     </h1>
 
                     <p className="hero-subtitle">
-                      ...¡Pruébalos todos! Pan baguette recién horneado con ingredientes seleccionados y frescos del día. Elige tu especialidad favorita, escoge tu tamaño y coordina tu pedido directo con pago móvil sin enredos.
+                      ...¡Pruébalos todos! Pan baguette recién tostado con ingredientes seleccionados y frescos del día. Elige tu especialidad favorita, añade tus salsas caseras y coordina tu pedido directo con pago móvil sin enredos.
                     </p>
 
                     <div className="hero-cta-group">
                       <a href="#sabores" className="btn-primary-hero">
-                        <span>VER TODOS LOS SABORES</span>
+                        <span>VER EL MENÚ</span>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <line x1="5" y1="12" x2="19" y2="12"></line>
                           <polyline points="12 5 19 12 12 19"></polyline>
@@ -1278,15 +1268,15 @@
                         </div>
                       </div>
 
-                      {/* Tarjeta trasera 2: Hamburguesa */}
+                      {/* Tarjeta trasera 2: Hamburguesa Mixta */}
                       <div className="stack-card card-back-right">
                         <div className="card-img-box">
-                          <span className="card-tag">GOURMET</span>
-                          <img src="./assets/hamburguesa-opt.jpg" alt="Hamburguesa Smash" />
+                          <span className="card-tag">MIXTA</span>
+                          <img src="./assets/hamburguesa-opt.jpg" alt="Hamburguesa Mixta" />
                         </div>
                         <div className="card-details">
-                          <h4 className="card-flavor-name">HAMBURGUESA SMASH</h4>
-                          <p className="card-desc-short">Doble Angus con queso cheddar fundido</p>
+                          <h4 className="card-flavor-name">HAMBURGUESA MIXTA</h4>
+                          <p className="card-desc-short">Carne y pollo a la plancha con queso fundido</p>
                         </div>
                       </div>
 
@@ -1299,32 +1289,15 @@
 
                         <div className="card-details">
                           <h4 className="card-flavor-name">PEPITO LA NEGRA</h4>
-                          <p className="card-desc-short">Pan baguette artesanal con carne, pollo y queso fundido</p>
+                          <p className="card-desc-short">Pan baguette con carne, pollo y queso fundido</p>
 
-                          {/* Selector de tamaño interactivo dentro de la tarjeta Hero */}
-                          <div className="hero-size-selector">
-                            <button 
-                              className={`hero-size-btn ${heroSize === '20cm' ? 'active' : ''}`}
-                              onClick={() => setHeroSize('20cm')}
-                            >
-                              20 cm
-                            </button>
-                            <button 
-                              className={`hero-size-btn ${heroSize === '30cm' ? 'active' : ''}`}
-                              onClick={() => setHeroSize('30cm')}
-                            >
-                              30 cm
-                            </button>
-                            <button 
-                              className={`hero-size-btn ${heroSize === '40cm' ? 'active' : ''}`}
-                              onClick={() => setHeroSize('40cm')}
-                            >
-                              40 cm
-                            </button>
+                          {/* Tamaño único de 30 cm */}
+                          <div className="hero-size-single-badge">
+                            <span>🥖 Tamaño Único: 30 cm</span>
                           </div>
 
                           <div className="card-footer-row">
-                            <span className="hero-card-price">${heroPrice.toFixed(0)}</span>
+                            <span className="hero-card-price">$8.50</span>
                             <button className="hero-quick-add" onClick={addHeroToCart}>
                               <span>+ Añadir</span>
                             </button>
@@ -1334,13 +1307,13 @@
 
                     </div>
 
-                    {/* Sello Circular Giratorio (Exacto como la referencia) */}
+                    {/* Sello Circular Giratorio */}
                     <div className="rotating-stamp">
                       <svg viewBox="0 0 100 100">
                         <path id="circlePath" fill="none" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0"/>
                         <text fontSize="8.5" fontFamily="'Montserrat', sans-serif" fontWeight="900" fill="#f59e0b" letterSpacing="2.2px">
                           <textPath href="#circlePath">
-                            ★ 100% ARTESANAL ★ SABOR CASERO ★ HECHO CON AMOR
+                            ★ AUTÉNTICO SABOR ★ CALLEJERO GOURMET ★ PEPITO LA NEGRA
                           </textPath>
                         </text>
                         <circle cx="50" cy="50" r="16" fill="#f59e0b"/>
@@ -1362,17 +1335,17 @@
                 <div className="marquee-content">
                   <div className="marquee-item">
                     <span>ENVÍOS A DOMICILIO</span><span className="star-icon">★</span>
-                    <span>PEDIDOS DIRECTOS POR WHATSAPP: 0412-0424336</span><span className="star-icon">★</span>
-                    <span>PEPITOS 100% ARTESANALES</span><span className="star-icon">★</span>
-                    <span>20 CM EN $6.5 · 30 CM EN $8.5 · 40 CM EN $11</span><span className="star-icon">★</span>
+                    <span>PEDIDOS DIRECTOS POR WHATSAPP: 0426-2629507</span><span className="star-icon">★</span>
+                    <span>PEPITO ESPECIAL MIXTO DE 30 CM EN $8.50</span><span className="star-icon">★</span>
+                    <span>HAMBURGUESAS MIXTAS & MARQUESAS</span><span className="star-icon">★</span>
                     <span>PAGO MÓVIL BANCO PROVINCIAL</span><span className="star-icon">★</span>
                     <span>BARQUISIMETO / VENEZUELA</span><span className="star-icon">★</span>
                   </div>
                   <div className="marquee-item">
                     <span>ENVÍOS A DOMICILIO</span><span className="star-icon">★</span>
-                    <span>PEDIDOS DIRECTOS POR WHATSAPP: 0412-0424336</span><span className="star-icon">★</span>
-                    <span>PEPITOS 100% ARTESANALES</span><span className="star-icon">★</span>
-                    <span>20 CM EN $6.5 · 30 CM EN $8.5 · 40 CM EN $11</span><span className="star-icon">★</span>
+                    <span>PEDIDOS DIRECTOS POR WHATSAPP: 0426-2629507</span><span className="star-icon">★</span>
+                    <span>PEPITO ESPECIAL MIXTO DE 30 CM EN $8.50</span><span className="star-icon">★</span>
+                    <span>HAMBURGUESAS MIXTAS & MARQUESAS</span><span className="star-icon">★</span>
                     <span>PAGO MÓVIL BANCO PROVINCIAL</span><span className="star-icon">★</span>
                     <span>BARQUISIMETO / VENEZUELA</span><span className="star-icon">★</span>
                   </div>
@@ -1388,7 +1361,7 @@
                     NUESTRAS ESPECIALIDADES
                   </div>
                   <h2 className="text-3xl sm:text-4xl font-black font-display text-white uppercase">
-                    ELIGE TU SABOR FAVORITO
+                    MENÚ PEPITOS LA NEGRA
                   </h2>
                 </div>
 
@@ -1461,7 +1434,7 @@
                       </div>
                       <h4 className="text-white font-black text-base uppercase mb-2">Arma tu Carrito</h4>
                       <p className="text-xs text-gray-400 leading-relaxed">
-                        Elige tu pepito de 20cm, 30cm o 40cm, escoge tus salsas caseras favoritas y agrega tocineta o queso extra.
+                        Pide tu auténtico Pepito La Negra mixto de 30 cm o tu hamburguesa mixta, escoge tus salsas caseras favoritas y agrégalo al carrito.
                       </p>
                     </div>
 
@@ -1609,7 +1582,7 @@
                   </div>
                   <div>
                     <label className="block text-gray-400 mb-1">Teléfono / WhatsApp:</label>
-                    <input name="cphone" required defaultValue="0412-0424336" className="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-white" />
+                    <input name="cphone" required defaultValue="0426-2629507" className="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-white" />
                   </div>
                   <div>
                     <label className="block text-gray-400 mb-1">Dirección de Entrega:</label>
@@ -1962,7 +1935,7 @@
           <footer className="bg-[#050302] border-t border-white/5 py-10 text-center text-xs text-gray-500">
             <div className="max-w-4xl mx-auto px-4 space-y-2">
               <div className="font-display font-black text-amber-400 text-sm">PEPITO LA NEGRA</div>
-              <p>El auténtico sabor venezolano • Barquisimeto, Estado Lara • Tel: 0412-0424336</p>
+              <p>El auténtico sabor venezolano • Barquisimeto, Estado Lara • Tel / WhatsApp: +58 426-2629507</p>
               <p>© 2026 Pepito La Negra. Todos los derechos reservados.</p>
               <div className="pt-2">
                 <button 
@@ -1985,7 +1958,7 @@
               <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
             </div>
             <a 
-              href="https://wa.me/584120424336?text=Hola%20Pepitos%20La%20Negra,%20quisiera%20hacer%20un%20pedido." 
+              href="https://wa.me/584262629507?text=Hola%20Pepitos%20La%20Negra,%20quisiera%20hacer%20un%20pedido." 
               target="_blank" 
               rel="noopener noreferrer" 
               className="whatsapp-btn-circle"
