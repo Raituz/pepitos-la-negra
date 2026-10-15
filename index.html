@@ -26,20 +26,23 @@
   <!-- EXACT CSS STYLES INSPIRED BY THE REFERENCE -->
   <style>
     :root {
-      --bg-dark: #0b0d11;
-      --bg-darker: #07080a;
-      --bg-card: #141821;
-      --bg-card-hover: #1b212d;
+      --bg-dark: #0a0705;
+      --bg-darker: #060403;
+      --bg-card: #140d0a;
+      --bg-card-hover: #1f140f;
       --primary-gold: #f59e0b;
       --primary-gold-hover: #d97706;
-      --primary-accent: #ffb703;
+      --primary-accent: #ea580c;
+      --primary-accent-hover: #c2410c;
+      --flame-red: #dc2626;
       --whatsapp: #25d366;
       --whatsapp-hover: #1eb956;
       --text-white: #ffffff;
-      --text-cream: #f4ece1;
-      --text-muted: #94a3b8;
+      --text-cream: #fff7ed;
+      --text-muted: #a89f91;
       --border-light: rgba(255, 255, 255, 0.08);
-      --border-gold: rgba(245, 158, 11, 0.35);
+      --border-gold: rgba(245, 158, 11, 0.4);
+      --border-flame: rgba(234, 88, 12, 0.35);
       --font-heading: 'Montserrat', sans-serif;
       --font-body: 'Poppins', sans-serif;
       --radius-full: 9999px;
@@ -92,9 +95,9 @@
       left: 0;
       right: 0;
       z-index: 1000;
-      background: rgba(11, 13, 17, 0.94);
+      background: rgba(10, 7, 5, 0.95);
       backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--border-light);
+      border-bottom: 1px solid rgba(245, 158, 11, 0.15);
       padding: 12px 0;
       transition: var(--transition);
     }
@@ -325,7 +328,7 @@
       display: flex;
       align-items: center;
       padding: 60px 24px 60px;
-      background: radial-gradient(circle at 65% 45%, #1f2735 0%, #0d1016 60%, #07080a 100%);
+      background: radial-gradient(circle at 65% 45%, #2d140a 0%, #150a06 55%, #080504 100%);
       overflow: hidden;
     }
 
@@ -780,10 +783,11 @@
         extend: {
           colors: {
             brand: {
-              card: '#141821',
-              cardHover: '#1c222e',
-              border: '#262f3f',
-              gold: '#f59e0b'
+              card: '#140d0a',
+              cardHover: '#1f140f',
+              border: '#2e1b12',
+              gold: '#f59e0b',
+              flame: '#ea580c'
             }
           }
         }
@@ -933,10 +937,42 @@
       const [activeChatOrder, setActiveChatOrder] = useState(null);
       const [newMessage, setNewMessage] = useState('');
       const [smsNotification, setSmsNotification] = useState(null);
+      const [ordersFilter, setOrdersFilter] = useState('all'); // 'all' | 'active' | 'completed'
+      const chatEndRef = useRef(null);
 
       useEffect(() => {
-        localStorage.setItem('pepitos_orders', JSON.stringify(orders));
-      }, [orders]);
+        if (chatOpen) {
+          setTimeout(() => {
+            chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+          }, 80);
+        }
+      }, [chatOpen, activeChatOrder?.messages]);
+
+      const sendChatMessage = (textToSend, customSender = null) => {
+        if (!textToSend || !textToSend.trim() || !activeChatOrder) return;
+        playSound('pop');
+        const senderType = customSender || (role === 'admin' ? 'admin' : 'customer');
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const newMsgObj = {
+          sender: senderType,
+          text: textToSend.trim(),
+          time: timeStr
+        };
+        const updatedOrders = orders.map(o => {
+          if (o.id === activeChatOrder.id) {
+            return {
+              ...o,
+              messages: [...(o.messages || []), newMsgObj]
+            };
+          }
+          return o;
+        });
+        setOrders(updatedOrders);
+        const currentUpdated = updatedOrders.find(o => o.id === activeChatOrder.id);
+        setActiveChatOrder(currentUpdated);
+        setNewMessage('');
+      };
 
       // Auto-simulate SMS for pending orders
       useEffect(() => {
@@ -1088,6 +1124,7 @@
               </div>
 
               {/* Menú de Navegación Centrado */}
+              {/* Menú de Navegación Centrado */}
               <nav className="nav-menu-wrapper">
                 <ul className="nav-menu">
                   <li>
@@ -1099,15 +1136,33 @@
                     </button>
                   </li>
                   <li>
-                    <a href="#sabores" className="nav-link">Sabores</a>
+                    <button 
+                      onClick={() => { setRole('client'); setCurrentView('orders'); }}
+                      className={`nav-link ${role === 'client' && currentView === 'orders' ? 'active' : ''}`}
+                    >
+                      Órdenes
+                    </button>
                   </li>
                   <li>
-                    <a href="#comocomprar" className="nav-link">Cómo Comprar</a>
+                    <button 
+                      onClick={() => { 
+                        setRole('client'); 
+                        if (currentView !== 'menu') {
+                          setCurrentView('menu');
+                          setTimeout(() => { document.getElementById('comocomprar')?.scrollIntoView({ behavior: 'smooth' }); }, 150);
+                        } else {
+                          document.getElementById('comocomprar')?.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
+                      className="nav-link"
+                    >
+                      Cómo Comprar
+                    </button>
                   </li>
                 </ul>
               </nav>
 
-              {/* Acciones a la derecha: solo WhatsApp y Mis Pedidos */}
+              {/* Acciones a la derecha: WhatsApp y Carrito */}
               <div className="header-actions">
                 
                 {/* Botón WhatsApp Verde */}
@@ -1123,35 +1178,22 @@
                   <span>WhatsApp</span>
                 </a>
 
-                {/* Botón Mis Pedidos */}
+                {/* Botón Carrito */}
                 <button 
-                  onClick={() => {
-                    setRole('client');
-                    if (currentView === 'orders') {
-                      setCurrentView('cart');
-                    } else if (currentView === 'cart') {
-                      setCurrentView(orders.length > 0 ? 'orders' : 'menu');
-                    } else if (orders.length > 0) {
-                      setCurrentView('orders');
-                    } else {
-                      setCurrentView('cart');
-                    }
-                  }}
-                  className={`btn-cart-header ${(currentView === 'orders' || currentView === 'cart') && role === 'client' ? 'active' : ''}`}
-                  title="Ver Mis Pedidos y Carrito"
-                  aria-label="Ver mis pedidos"
+                  onClick={() => { setRole('client'); setCurrentView('cart'); }}
+                  className={`btn-cart-header ${currentView === 'cart' && role === 'client' ? 'active' : ''}`}
+                  title="Ver Carrito de Compras"
+                  aria-label="Ver carrito"
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
                     <line x1="3" y1="6" x2="21" y2="6"></line>
                     <path d="M16 10a4 4 0 0 1-8 0"></path>
                   </svg>
-                  <span>Mis Pedidos</span>
-                  {(cart.reduce((a, b) => a + b.quantity, 0) > 0 || orders.length > 0) && (
+                  <span>Carrito</span>
+                  {cart.reduce((a, b) => a + b.quantity, 0) > 0 && (
                     <span className="cart-count-badge">
-                      {cart.reduce((a, b) => a + b.quantity, 0) > 0 
-                        ? cart.reduce((a, b) => a + b.quantity, 0) 
-                        : orders.length}
+                      {cart.reduce((a, b) => a + b.quantity, 0)}
                     </span>
                   )}
                 </button>
@@ -1354,7 +1396,7 @@
                   {PRODUCTS.map(product => (
                     <div 
                       key={product.id}
-                      className="bg-[#141821] border border-[#262f3f] hover:border-amber-500/50 rounded-2xl overflow-hidden shadow-xl flex flex-col justify-between group transition-all"
+                      className="bg-[#140d0a] border border-[#2e1b12] hover:border-amber-500/50 rounded-2xl overflow-hidden shadow-xl flex flex-col justify-between group transition-all"
                     >
                       <div className="relative h-60 w-full overflow-hidden bg-black/60">
                         <img 
@@ -1403,7 +1445,7 @@
               {/* =========================================================================
                    5. SECCIÓN CÓMO COMPRAR & NOSOTROS
                    ========================================================================= */}
-              <section id="comocomprar" className="bg-[#0f1218] border-t border-b border-white/5 py-16">
+              <section id="comocomprar" className="bg-[#0e0806] border-t border-b border-white/5 py-16">
                 <div className="max-w-5xl mx-auto px-4 text-center">
                   <div className="inline-block bg-amber-500/10 text-amber-400 border border-amber-500/30 px-4 py-1 rounded-full text-xs font-extrabold uppercase tracking-widest mb-3">
                     PASO A PASO
@@ -1413,7 +1455,7 @@
                   </h2>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-                    <div className="bg-[#141821] p-6 rounded-2xl border border-white/5">
+                    <div className="bg-[#140d0a] p-6 rounded-2xl border border-white/5">
                       <div className="w-12 h-12 rounded-full bg-amber-500 text-black font-black text-xl flex items-center justify-center mb-4">
                         1
                       </div>
@@ -1423,7 +1465,7 @@
                       </p>
                     </div>
 
-                    <div className="bg-[#141821] p-6 rounded-2xl border border-white/5">
+                    <div className="bg-[#140d0a] p-6 rounded-2xl border border-white/5">
                       <div className="w-12 h-12 rounded-full bg-amber-500 text-black font-black text-xl flex items-center justify-center mb-4">
                         2
                       </div>
@@ -1433,7 +1475,7 @@
                       </p>
                     </div>
 
-                    <div className="bg-[#141821] p-6 rounded-2xl border border-white/5">
+                    <div className="bg-[#140d0a] p-6 rounded-2xl border border-white/5">
                       <div className="w-12 h-12 rounded-full bg-emerald-500 text-black font-black text-xl flex items-center justify-center mb-4">
                         3
                       </div>
@@ -1454,31 +1496,28 @@
                ========================================================================= */}
           {role === 'client' && currentView === 'cart' && (
             <div className="max-w-2xl mx-auto px-4 py-8 w-full flex-1">
-              <div className="bg-[#141821] border border-[#262f3f] rounded-3xl p-6 shadow-2xl">
+              <div className="bg-[#140d0a] border border-[#2e1b12] rounded-3xl p-6 shadow-2xl">
                 
-                {/* Sub-tabs Carrito / Pedidos */}
-                <div className="flex gap-2 mb-4 bg-black/40 p-1 rounded-2xl border border-white/5">
-                  <button 
-                    onClick={() => setCurrentView('cart')} 
-                    className="flex-1 py-2 text-xs font-bold rounded-xl transition bg-amber-500 text-black shadow"
-                  >
-                    🛒 Carrito ({cart.reduce((a, b) => a + b.quantity, 0)})
-                  </button>
-                  <button 
-                    onClick={() => setCurrentView('orders')} 
-                    className="flex-1 py-2 text-xs font-bold rounded-xl transition text-gray-400 hover:text-white"
-                  >
-                    🛵 Seguimiento ({orders.length})
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
-                  <h2 className="text-xl font-black font-display text-white flex items-center gap-2">
-                    🛒 Tu Carrito
-                  </h2>
-                  <button onClick={() => setCurrentView('menu')} className="text-xs font-bold text-amber-400 hover:underline">
-                    + Seguir comprando
-                  </button>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-white/10 mb-4 gap-3">
+                  <div>
+                    <h2 className="text-xl font-black font-display text-white flex items-center gap-2">
+                      🛒 Tu Carrito de Compras
+                    </h2>
+                    <p className="text-xs text-gray-400 mt-0.5">Revisa tus productos antes del Pago Móvil Provincial</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {orders.length > 0 && (
+                      <button 
+                        onClick={() => setCurrentView('orders')} 
+                        className="text-xs bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 font-bold px-3 py-1.5 rounded-full transition"
+                      >
+                        🛵 Ver mis órdenes ({orders.length})
+                      </button>
+                    )}
+                    <button onClick={() => setCurrentView('menu')} className="text-xs font-bold text-amber-400 hover:underline">
+                      + Seguir comprando
+                    </button>
+                  </div>
                 </div>
 
                 {cart.length === 0 ? (
@@ -1535,7 +1574,7 @@
                ========================================================================= */}
           {role === 'client' && currentView === 'checkout' && (
             <div className="max-w-2xl mx-auto px-4 py-8 w-full flex-1">
-              <div className="bg-[#141821] border border-[#262f3f] rounded-3xl p-6 shadow-2xl space-y-6">
+              <div className="bg-[#140d0a] border border-[#2e1b12] rounded-3xl p-6 shadow-2xl space-y-6">
                 <div className="flex items-center justify-between pb-3 border-b border-white/10">
                   <button onClick={() => setCurrentView('cart')} className="text-xs text-gray-400 font-bold">
                     ← Volver
@@ -1590,90 +1629,242 @@
           )}
 
           {/* =========================================================================
-               VIEW: ÓRDENES / SEGUIMIENTO EN VIVO (4 ESTADOS)
+               VIEW: PÁGINA APARTE DEDICADA A "ÓRDENES" Y SEGUIMIENTO EN VIVO
                ========================================================================= */}
           {role === 'client' && currentView === 'orders' && (
-            <div className="max-w-2xl mx-auto px-4 py-8 w-full flex-1">
-              <div className="bg-[#141821] border border-[#262f3f] rounded-3xl p-6 shadow-2xl space-y-6">
-                
-                {/* Sub-tabs Carrito / Pedidos */}
-                <div className="flex gap-2 mb-2 bg-black/40 p-1 rounded-2xl border border-white/5">
-                  <button 
-                    onClick={() => setCurrentView('cart')} 
-                    className="flex-1 py-2 text-xs font-bold rounded-xl transition text-gray-400 hover:text-white"
-                  >
-                    🛒 Carrito ({cart.reduce((a, b) => a + b.quantity, 0)})
-                  </button>
-                  <button 
-                    onClick={() => setCurrentView('orders')} 
-                    className="flex-1 py-2 text-xs font-bold rounded-xl transition bg-amber-500 text-black shadow"
-                  >
-                    🛵 Seguimiento ({orders.length})
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                  <h3 className="text-xl font-black font-display text-white">🛵 Seguimiento de Pedidos</h3>
-                  <button onClick={() => setCurrentView('menu')} className="text-xs font-bold text-amber-400 hover:underline">
-                    ← Menú
-                  </button>
-                </div>
-
-                {orders.length === 0 ? (
-                  <div className="text-center py-12">
-                    <p className="text-gray-400 text-sm">Aún no tienes ningún pedido activo.</p>
-                    <button onClick={() => setCurrentView('menu')} className="mt-4 bg-amber-500 text-black font-bold px-6 py-2 rounded-full text-xs">
-                      Explorar Menú
+            <div className="max-w-4xl mx-auto px-4 py-8 w-full flex-1 space-y-6">
+              
+              {/* Encabezado Principal de la Página de Órdenes */}
+              <div className="bg-[#140d0a] border border-[#2e1b12] rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div>
+                    <div className="inline-flex items-center gap-2 bg-amber-500/10 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider mb-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                      SEGUIMIENTO EN TIEMPO REAL
+                    </div>
+                    <h2 className="text-2xl sm:text-3xl font-black font-display text-white">
+                      🛵 Centro de Órdenes & Pedidos
+                    </h2>
+                    <p className="text-xs sm:text-sm text-gray-400 mt-1 max-w-xl">
+                      Monitorea el avance de tu comida desde la cocina hasta tu puerta, valida tus pagos de Pago Móvil Provincial y chatea directamente con el negocio.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button 
+                      onClick={() => setCurrentView('menu')}
+                      className="bg-amber-500 hover:bg-amber-400 text-black font-black text-xs px-5 py-3 rounded-full shadow-lg transition transform hover:-translate-y-0.5 active:scale-95 flex items-center gap-1.5"
+                    >
+                      <span>+ Nuevo Pedido</span>
                     </button>
                   </div>
-                ) : (
-                  orders.map(order => (
-                    <div key={order.id} className="bg-black/40 border border-white/5 rounded-2xl p-5 space-y-4">
-                      <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                        <div>
-                          <span className="text-lg font-black text-white font-display">#{order.id}</span>
-                          <span className="text-xs text-gray-400 block">{order.customerName} • Ref: {order.reference}</span>
+                </div>
+
+                {/* Pestañas de Filtro */}
+                <div className="flex flex-wrap gap-2 pt-6 mt-6 border-t border-white/5">
+                  <button
+                    onClick={() => setOrdersFilter('all')}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
+                      ordersFilter === 'all' ? 'bg-amber-500 text-black shadow' : 'bg-black/40 text-gray-400 hover:text-white border border-white/5'
+                    }`}
+                  >
+                    Todas las Órdenes ({orders.length})
+                  </button>
+                  <button
+                    onClick={() => setOrdersFilter('active')}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
+                      ordersFilter === 'active' ? 'bg-amber-500 text-black shadow' : 'bg-black/40 text-gray-400 hover:text-white border border-white/5'
+                    }`}
+                  >
+                    En Preparación / Delivery ({orders.filter(o => o.status === 2 || o.status === 3).length})
+                  </button>
+                  <button
+                    onClick={() => setOrdersFilter('pending')}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
+                      ordersFilter === 'pending' ? 'bg-amber-500 text-black shadow' : 'bg-black/40 text-gray-400 hover:text-white border border-white/5'
+                    }`}
+                  >
+                    Por Pagar ({orders.filter(o => o.status === 1).length})
+                  </button>
+                  <button
+                    onClick={() => setOrdersFilter('completed')}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
+                      ordersFilter === 'completed' ? 'bg-amber-500 text-black shadow' : 'bg-black/40 text-gray-400 hover:text-white border border-white/5'
+                    }`}
+                  >
+                    Entregadas ({orders.filter(o => o.status === 4).length})
+                  </button>
+                </div>
+              </div>
+
+              {/* Listado de Tarjetas de Órdenes */}
+              {(() => {
+                const filtered = orders.filter(o => {
+                  if (ordersFilter === 'active') return o.status === 2 || o.status === 3;
+                  if (ordersFilter === 'pending') return o.status === 1;
+                  if (ordersFilter === 'completed') return o.status === 4;
+                  return true;
+                });
+
+                if (filtered.length === 0) {
+                  return (
+                    <div className="bg-[#140d0a] border border-[#2e1b12] rounded-3xl p-12 text-center shadow-xl space-y-4">
+                      <div className="text-4xl">🛵</div>
+                      <h3 className="text-lg font-bold text-white">No hay órdenes en esta categoría</h3>
+                      <p className="text-xs text-gray-400 max-w-sm mx-auto">
+                        {orders.length === 0 
+                          ? 'Aún no has registrado ningún pedido. ¡Explora nuestro menú y ordena los mejores pepitos de Barquisimeto!' 
+                          : 'No tienes pedidos con el filtro seleccionado.'}
+                      </p>
+                      <button 
+                        onClick={() => setCurrentView('menu')}
+                        className="bg-amber-500 hover:bg-amber-400 text-black font-black text-xs px-6 py-2.5 rounded-full shadow"
+                      >
+                        Explorar Menú
+                      </button>
+                    </div>
+                  );
+                }
+
+                return filtered.map(order => (
+                  <div 
+                    key={order.id} 
+                    className="bg-[#140d0a] border border-[#2e1b12] hover:border-amber-500/40 rounded-3xl p-6 sm:p-7 shadow-2xl space-y-6 transition-all"
+                  >
+                    {/* Encabezado de la Tarjeta */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-white/10 gap-3">
+                      <div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-xl sm:text-2xl font-black text-amber-400 font-display">
+                            #{order.id}
+                          </span>
+                          <span className={`text-xs font-extrabold px-3 py-1 rounded-full border ${
+                            order.status === 1 ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-300' :
+                            order.status === 2 ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300' :
+                            order.status === 3 ? 'bg-blue-500/10 border-blue-500/30 text-blue-300' : 'bg-purple-500/10 border-purple-500/30 text-purple-300'
+                          }`}>
+                            {order.status === 1 ? '🟡 1. Por Pagar' :
+                             order.status === 2 ? '🟢 2. Pago Verificado Provincial' :
+                             order.status === 3 ? '🔵 3. En Cocina / Delivery' : '🟣 4. Entregado'}
+                          </span>
                         </div>
-                        <span className={`text-xs font-bold px-3 py-1 rounded-full ${
-                          order.status === 1 ? 'bg-yellow-500/20 text-yellow-300' :
-                          order.status === 2 ? 'bg-emerald-500/20 text-emerald-300' :
-                          order.status === 3 ? 'bg-blue-500/20 text-blue-300' : 'bg-purple-500/20 text-purple-300'
-                        }`}>
-                          {order.status === 1 ? '🟡 Por Pagar' :
-                           order.status === 2 ? '🟢 Pago Verificado' :
-                           order.status === 3 ? '🔵 En Preparación / Delivery' : '🟣 Entregado'}
-                        </span>
+                        <div className="text-xs text-gray-400 mt-1 flex flex-wrap gap-2 items-center">
+                          <span>Cliente: <strong className="text-white">{order.customerName}</strong></span>
+                          <span>•</span>
+                          <span>Telf: {order.phone}</span>
+                          <span>•</span>
+                          <span>Fecha: {order.date}</span>
+                        </div>
                       </div>
 
-                      <div className="grid grid-cols-4 gap-1 text-center text-[10px] font-bold">
-                        <div className={`p-1.5 rounded-lg ${order.status >= 1 ? 'bg-amber-500 text-black' : 'bg-white/5 text-gray-500'}`}>1. Por pagar</div>
-                        <div className={`p-1.5 rounded-lg ${order.status >= 2 ? 'bg-emerald-500 text-black' : 'bg-white/5 text-gray-500'}`}>2. Verificado</div>
-                        <div className={`p-1.5 rounded-lg ${order.status >= 3 ? 'bg-blue-500 text-black' : 'bg-white/5 text-gray-500'}`}>3. Cocina</div>
-                        <div className={`p-1.5 rounded-lg ${order.status >= 4 ? 'bg-purple-600 text-white' : 'bg-white/5 text-gray-500'}`}>4. Entregado</div>
+                      {/* Total */}
+                      <div className="text-left sm:text-right">
+                        <div className="text-2xl font-black text-white font-display">
+                          ${(order.items.reduce((acc, it) => acc + (it.price * it.quantity), 0) + 1.50).toFixed(2)}
+                        </div>
+                        <div className="text-xs font-bold text-amber-400">
+                          Bs. {order.totalBs} (Tasa BCV)
+                        </div>
                       </div>
+                    </div>
 
-                      <div className="text-xs text-gray-300 space-y-1">
+                    {/* Línea de tiempo interactiva (4 Estados) */}
+                    <div className="space-y-2">
+                      <div className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                        Línea de tiempo del pedido:
+                      </div>
+                      <div className="grid grid-cols-4 gap-2 text-center text-[10px] sm:text-xs font-bold">
+                        <div className={`p-2.5 rounded-xl border transition ${order.status >= 1 ? 'bg-amber-500/20 border-amber-500 text-amber-300 font-black' : 'bg-black/30 border-white/5 text-gray-600'}`}>
+                          1. Por pagar
+                        </div>
+                        <div className={`p-2.5 rounded-xl border transition ${order.status >= 2 ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300 font-black' : 'bg-black/30 border-white/5 text-gray-600'}`}>
+                          2. Verificado ✓
+                        </div>
+                        <div className={`p-2.5 rounded-xl border transition ${order.status >= 3 ? 'bg-blue-500/20 border-blue-500 text-blue-300 font-black' : 'bg-black/30 border-white/5 text-gray-600'}`}>
+                          3. Cocina & Ruta 🛵
+                        </div>
+                        <div className={`p-2.5 rounded-xl border transition ${order.status >= 4 ? 'bg-purple-600/30 border-purple-500 text-purple-200 font-black' : 'bg-black/30 border-white/5 text-gray-600'}`}>
+                          4. Entregado 🎉
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Resumen de Productos y Pago */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-black/40 p-4 rounded-2xl border border-white/5 text-xs">
+                      <div className="space-y-2">
+                        <span className="text-gray-400 font-bold block uppercase text-[10px]">Detalle de Productos:</span>
                         {order.items.map((it, idx) => (
-                          <div key={idx} className="flex justify-between">
-                            <span>{it.quantity}x {it.name}</span>
+                          <div key={idx} className="flex justify-between items-center text-gray-300 py-0.5">
+                            <div>
+                              <span className="font-bold text-white">{it.quantity}x {it.name}</span>
+                              {it.sauces && it.sauces.length > 0 && (
+                                <span className="block text-[11px] text-gray-400">{it.sauces.join(', ')}</span>
+                              )}
+                            </div>
                             <span className="text-amber-400 font-bold">${(it.price * it.quantity).toFixed(2)}</span>
                           </div>
                         ))}
                       </div>
 
-                      <div className="pt-2 flex justify-between items-center text-xs">
-                        <span className="text-gray-400">Repartidor: <strong className="text-white">{order.assignedDriver}</strong></span>
-                        <button 
-                          onClick={() => { setActiveChatOrder(order); setChatOpen(true); }}
-                          className="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg font-bold"
-                        >
-                          💬 Chat
-                        </button>
+                      <div className="space-y-2 border-t md:border-t-0 md:border-l border-white/10 md:pl-4 pt-3 md:pt-0">
+                        <span className="text-gray-400 font-bold block uppercase text-[10px]">Información de Entrega y Pago:</span>
+                        <div className="text-gray-300 space-y-1">
+                          <div><strong>Pago Móvil:</strong> Banco Provincial (0108)</div>
+                          <div><strong>Referencia:</strong> <span className="font-mono text-amber-300 font-bold">****{order.reference}</span></div>
+                          <div><strong>Dirección:</strong> {order.address}</div>
+                          <div><strong>Repartidor Asignado:</strong> <span className="text-white font-bold">{order.assignedDriver}</span></div>
+                        </div>
                       </div>
                     </div>
-                  ))
-                )}
-              </div>
+
+                    {/* Acciones de la Orden: Abrir Chat y Simulación */}
+                    <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                      <div className="flex items-center gap-2">
+                        {order.status === 1 && (
+                          <button
+                            onClick={() => triggerProvincialSMS(order.id, order.reference, order.totalBs)}
+                            className="bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/40 text-xs font-bold px-3.5 py-2 rounded-xl transition"
+                            title="Simula la detección automática de SMS del Provincial"
+                          >
+                            📲 Simular SMS Provincial (Aprobar)
+                          </button>
+                        )}
+                        {order.status === 2 && (
+                          <button
+                            onClick={() => setOrders(orders.map(o => o.id === order.id ? { ...o, status: 3 } : o))}
+                            className="bg-blue-600/30 hover:bg-blue-600 text-blue-300 hover:text-white border border-blue-500/40 text-xs font-bold px-3.5 py-2 rounded-xl transition"
+                          >
+                            🍳 Pasar a Cocina / Despacho
+                          </button>
+                        )}
+                        {order.status === 3 && (
+                          <button
+                            onClick={() => setOrders(orders.map(o => o.id === order.id ? { ...o, status: 4 } : o))}
+                            className="bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-500/40 text-xs font-bold px-3.5 py-2 rounded-xl transition"
+                          >
+                            🛵 Marcar como Entregado
+                          </button>
+                        )}
+                      </div>
+
+                      {/* BOTÓN PRINCIPAL: ABRIR CHAT EN PANEL ENTERO */}
+                      <button 
+                        onClick={() => { setActiveChatOrder(order); setChatOpen(true); }}
+                        className="bg-amber-500 hover:bg-amber-400 text-black font-extrabold px-5 py-2.5 rounded-xl text-xs sm:text-sm flex items-center gap-2 shadow-lg transition transform hover:-translate-y-0.5 active:scale-95"
+                      >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        <span>Abrir Chat del Pedido</span>
+                        <span className="bg-black/25 text-black px-2 py-0.5 rounded-full text-xs font-black">
+                          {order.messages ? order.messages.length : 0}
+                        </span>
+                      </button>
+                    </div>
+
+                  </div>
+                ));
+              })()}
+
             </div>
           )}
 
@@ -1682,7 +1873,7 @@
                ========================================================================= */}
           {role === 'admin' && (
             <div className="max-w-4xl mx-auto px-4 py-8 w-full flex-1 space-y-6">
-              <div className="bg-[#141821] border border-[#262f3f] rounded-3xl p-6 shadow-2xl">
+              <div className="bg-[#140d0a] border border-[#2e1b12] rounded-3xl p-6 shadow-2xl">
                 <div className="flex justify-between items-center pb-4 border-b border-white/10">
                   <div>
                     <h2 className="text-2xl font-black font-display text-white">📦 Panel de Almacén & Administración</h2>
@@ -1717,7 +1908,7 @@
 
               <div className="space-y-4">
                 {orders.map(order => (
-                  <div key={order.id} className="bg-[#141821] border border-[#262f3f] rounded-2xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                  <div key={order.id} className="bg-[#140d0a] border border-[#2e1b12] rounded-2xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-black text-white font-display">#{order.id}</span>
@@ -1754,9 +1945,9 @@
                       )}
                       <button 
                         onClick={() => { setActiveChatOrder(order); setChatOpen(true); }}
-                        className="bg-white/10 hover:bg-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-lg"
+                        className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold px-3 py-1.5 rounded-lg transition"
                       >
-                        Chat
+                        💬 Chat
                       </button>
                     </div>
                   </div>
@@ -1768,7 +1959,7 @@
           {/* =========================================================================
                FOOTER
                ========================================================================= */}
-          <footer className="bg-[#07080a] border-t border-white/5 py-10 text-center text-xs text-gray-500">
+          <footer className="bg-[#050302] border-t border-white/5 py-10 text-center text-xs text-gray-500">
             <div className="max-w-4xl mx-auto px-4 space-y-2">
               <div className="font-display font-black text-amber-400 text-sm">PEPITO LA NEGRA</div>
               <p>El auténtico sabor venezolano • Barquisimeto, Estado Lara • Tel: 0412-0424336</p>
@@ -1809,7 +2000,7 @@
           {/* MODAL PERSONALIZAR */}
           {selectedProduct && (
             <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-              <div className="bg-[#141821] border border-amber-500/40 rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
+              <div className="bg-[#140d0a] border border-amber-500/40 rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
                 <button onClick={() => setSelectedProduct(null)} className="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">✕</button>
                 <img src={selectedProduct.image} alt={selectedProduct.name} className="w-full h-44 object-cover rounded-2xl mb-4" />
                 <h3 className="text-lg font-black text-white font-display">{selectedProduct.name}</h3>
@@ -1827,32 +2018,172 @@
             </div>
           )}
 
-          {/* CHAT MODAL */}
+          {/* =========================================================================
+               CHAT EN PANEL ENTERO (WORKSPACE COMPLETO PARA CLIENTE Y GERENTE)
+               ========================================================================= */}
           {chatOpen && activeChatOrder && (
-            <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-              <div className="bg-[#141821] border border-[#262f3f] rounded-3xl max-w-md w-full h-[450px] flex flex-col p-4 shadow-2xl relative">
-                <div className="flex justify-between items-center pb-2 border-b border-white/10">
-                  <h4 className="font-bold text-white text-sm">Chat Pedido #{activeChatOrder.id}</h4>
-                  <button onClick={() => setChatOpen(false)} className="text-gray-400 hover:text-white text-lg">✕</button>
-                </div>
-                <div className="flex-1 overflow-y-auto py-3 space-y-2 text-xs">
-                  {activeChatOrder.messages.map((m, i) => (
-                    <div key={i} className={`p-2.5 rounded-xl max-w-[80%] ${m.sender === 'system' ? 'bg-amber-500/20 text-amber-300 mx-auto text-center' : (m.sender === 'customer' ? 'bg-amber-500 text-black ml-auto' : 'bg-white/10 text-white')}`}>
-                      {m.text}
+            <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col justify-center items-center p-0 md:p-6 animate-fade-in">
+              <div className="bg-[#120b08] border border-amber-500/30 w-full h-full md:max-w-5xl md:h-[94vh] md:rounded-3xl shadow-2xl flex flex-col overflow-hidden relative">
+                
+                {/* 1. Header del Panel Entero */}
+                <div className="bg-[#1a0f0a] border-b border-amber-500/20 p-4 sm:px-6 flex items-center justify-between gap-4 flex-shrink-0">
+                  <div className="flex items-center gap-3">
+                    <button 
+                      onClick={() => setChatOpen(false)}
+                      className="w-10 h-10 rounded-full bg-white/5 hover:bg-amber-500/20 text-white hover:text-amber-400 flex items-center justify-center transition text-lg"
+                      title="Volver"
+                    >
+                      ←
+                    </button>
+                    <div className="relative">
+                      <img src="./assets/logo-opt.jpg" alt="Logo" className="w-11 h-11 rounded-full object-cover border border-amber-500/40" />
+                      <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-[#1a0f0a] rounded-full"></span>
                     </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-black text-white text-base font-display">Pepitos La Negra</h3>
+                        <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded-full">En línea</span>
+                      </div>
+                      <p className="text-xs text-amber-400/90 font-mono">
+                        Chat Pedido #{activeChatOrder.id} • {activeChatOrder.customerName}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Controles de Modo para Demostración */}
+                  <div className="flex items-center gap-3">
+                    <div className="hidden sm:flex items-center bg-black/50 p-1 rounded-full border border-white/10 text-xs">
+                      <span className="text-gray-400 px-2 text-[11px]">Hablar como:</span>
+                      <button
+                        onClick={() => setRole('client')}
+                        className={`px-3 py-1 rounded-full font-bold transition text-xs ${role === 'client' ? 'bg-amber-500 text-black shadow' : 'text-gray-400 hover:text-white'}`}
+                      >
+                        👤 Cliente
+                      </button>
+                      <button
+                        onClick={() => setRole('admin')}
+                        className={`px-3 py-1 rounded-full font-bold transition text-xs ${role === 'admin' ? 'bg-amber-500 text-black shadow' : 'text-gray-400 hover:text-white'}`}
+                      >
+                        👨‍🍳 Gerente
+                      </button>
+                    </div>
+
+                    <button 
+                      onClick={() => setChatOpen(false)}
+                      className="text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 w-9 h-9 rounded-full flex items-center justify-center transition"
+                      title="Cerrar Panel de Chat"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+
+                {/* 2. Barra de Resumen de la Orden */}
+                <div className="bg-[#150d09] border-b border-white/5 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs gap-3 flex-shrink-0">
+                  <div className="flex items-center gap-4 text-gray-300">
+                    <span><strong>Total:</strong> <span className="text-amber-400 font-bold">${(activeChatOrder.items.reduce((a, b) => a + (b.price * b.quantity), 0) + 1.50).toFixed(2)}</span> (Bs. {activeChatOrder.totalBs})</span>
+                    <span>•</span>
+                    <span><strong>Pago:</strong> Provincial Ref: ****{activeChatOrder.reference}</span>
+                    <span className="hidden md:inline">•</span>
+                    <span className="hidden md:inline"><strong>Dirección:</strong> {activeChatOrder.address}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
+                      activeChatOrder.status === 1 ? 'bg-yellow-500/20 text-yellow-300' :
+                      activeChatOrder.status === 2 ? 'bg-emerald-500/20 text-emerald-300' :
+                      activeChatOrder.status === 3 ? 'bg-blue-500/20 text-blue-300' : 'bg-purple-500/20 text-purple-300'
+                    }`}>
+                      {activeChatOrder.status === 1 ? '🟡 Por Pagar' :
+                       activeChatOrder.status === 2 ? '🟢 Pago Verificado' :
+                       activeChatOrder.status === 3 ? '🔵 En Cocina / Delivery' : '🟣 Entregado'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 3. Área de Mensajes Amplia (Full Scroll) */}
+                <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-[#0e0806]">
+                  {activeChatOrder.messages.map((m, i) => {
+                    const isMe = m.sender === (role === 'admin' ? 'admin' : 'customer');
+                    return (
+                      <div key={i} className={`flex flex-col ${m.sender === 'system' ? 'items-center' : (isMe ? 'items-end' : 'items-start')}`}>
+                        {m.sender === 'system' ? (
+                          <div className="bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs px-4 py-2 rounded-2xl max-w-lg text-center my-1 font-mono">
+                            {m.text}
+                          </div>
+                        ) : (
+                          <div className="max-w-[85%] sm:max-w-md">
+                            <span className="text-[10px] text-gray-500 px-1 mb-1 block">
+                              {m.sender === 'admin' ? '👨‍🍳 Gerente / Cocina' : '👤 Cliente'} • {m.time || 'Ahora'}
+                            </span>
+                            <div className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed shadow-lg ${
+                              isMe
+                                ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black font-semibold rounded-tr-none'
+                                : 'bg-[#1e130e] text-white border border-amber-500/20 rounded-tl-none'
+                            }`}>
+                              {m.text}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                  <div ref={chatEndRef} />
+                </div>
+
+                {/* 4. Sugerencias Rápidas de Respuesta */}
+                <div className="bg-[#150d09] border-t border-white/5 px-4 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar flex-shrink-0">
+                  <span className="text-[11px] text-gray-400 whitespace-nowrap">Respuestas rápidas:</span>
+                  {(role === 'client' ? [
+                    '¿En cuánto tiempo llega mi pedido?',
+                    'Ya realicé el Pago Móvil Provincial 💸',
+                    '¿Me le pueden colocar salsa tártara extra?',
+                    '¡Muchas gracias, estaré atento al delivery!'
+                  ] : [
+                    '¡Hola! Tu pedido ya está en cocina preparándose 👨‍🍳',
+                    'Pago Provincial verificado exitosamente ✓',
+                    'El repartidor va saliendo a tu dirección 🛵',
+                    '¡Buen provecho! Gracias por preferir Pepitos La Negra.'
+                  ]).map((chip, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => sendChatMessage(chip)}
+                      className="whitespace-nowrap bg-black/40 hover:bg-amber-500/20 border border-white/10 hover:border-amber-500/40 text-gray-300 hover:text-amber-300 px-3 py-1.5 rounded-full text-xs transition"
+                    >
+                      {chip}
+                    </button>
                   ))}
                 </div>
-                <form onSubmit={(e) => {
-                  e.preventDefault();
-                  if (!newMessage.trim()) return;
-                  const updated = orders.map(o => o.id === activeChatOrder.id ? { ...o, messages: [...o.messages, { sender: role === 'admin' ? 'admin' : 'customer', text: newMessage, time: 'Ahora' }] } : o);
-                  setOrders(updated);
-                  setActiveChatOrder(updated.find(o => o.id === activeChatOrder.id));
-                  setNewMessage('');
-                }} className="flex gap-2 pt-2 border-t border-white/10">
-                  <input value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Escribe un mensaje..." className="flex-1 bg-black border border-white/10 rounded-xl px-3 py-2 text-xs text-white" />
-                  <button type="submit" className="bg-amber-500 text-black px-4 py-2 rounded-xl text-xs font-bold">Enviar</button>
+
+                {/* 5. Input de Mensaje de Panel Completo */}
+                <form 
+                  onSubmit={(e) => { 
+                    e.preventDefault(); 
+                    if (newMessage.trim()) { 
+                      sendChatMessage(newMessage); 
+                    } 
+                  }} 
+                  className="bg-[#1a0f0a] border-t border-amber-500/20 p-3 sm:p-4 flex gap-3 flex-shrink-0"
+                >
+                  <input
+                    type="text"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder={role === 'admin' ? "Escribe una respuesta como Gerente de Pepitos La Negra..." : "Escribe un mensaje al restaurante..."}
+                    className="flex-1 bg-[#0a0705] border border-amber-500/30 focus:border-amber-400 text-white rounded-2xl px-4 py-3 text-sm outline-none transition placeholder-gray-500"
+                    autoFocus
+                  />
+                  <button
+                    type="submit"
+                    className="bg-amber-500 hover:bg-amber-400 text-black font-black px-6 py-3 rounded-2xl text-sm transition-all shadow-lg flex items-center gap-2 active:scale-95 flex-shrink-0"
+                  >
+                    <span>Enviar</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="22" y1="2" x2="11" y2="13"></line>
+                      <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                  </button>
                 </form>
+
               </div>
             </div>
           )}
